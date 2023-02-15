@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Online Waiter</string>
+
+    <!--Main activity-->
+    <string name="act_main_btn_login">Login</string>
+    <string name="act_main_btn_application">Application</string>
+    <string name="act_main_logo_description">Online waiter logo</string>
+
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Online Waiter</string>
+
+    <!--Main activity-->
+    <string name="act_main_btn_login">Prijava</string>
+    <string name="act_main_btn_application">Aplikacija</string>
+    <string name="act_main_logo_description">Online konobar logo</string>
+
+</resources>
