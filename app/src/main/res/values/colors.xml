@@ -19,8 +19,11 @@
     <color name="drink_card_view">#ED92ABB1</color>
     <color name="cart_drink_card_view">#EDCFAF96</color>
 
-    <!--Other colors-->
+    <!--Other standard colors-->
     <color name="black">#000</color>
     <color name="white">#fff</color>
+    <color name="grey">#808080</color>
 
+    <!--Other colors-->
+    <color name="pager_background_grey">#a1e4e8e8</color>
 </resources>

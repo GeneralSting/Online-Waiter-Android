@@ -6,5 +6,18 @@
     <string name="act_main_btn_login">Prijava</string>
     <string name="act_main_btn_application">Aplikacija</string>
     <string name="act_main_logo_description">Online konobar logo</string>
+    <string name="act_main_pager_app_purpose_header">Svrha aplikacije:</string>
+    <string name="act_main_pager_app_user_purpsoe_header">Korisnikov zadatak:</string>
+    <string name="act_main_pager_no_news">Nema novih vijesti</string>
+    <string name="act_main_pager_more_description"><a href="https://github.com/GeneralSting">Saznaj više</a></string>
+    <string name="act_main_dialog_alert_phone_number_body">Odbijanjem pristupa broja vašeg mobitela, nećete moći nastaviti s daljnim korištenjem ove aplikacije!</string>
+    <string name="act_main_dialog_alert_phone_number_header">Upozorenje!</string>
 
+
+    <!--universal-->
+    <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>
+    <string name="database_on_cancel_dialog_description">Probajte ponovno pokrenuti aplikaciju. Ako i dalje ne radi, postoji mogućnost da se akcije aplikacije ne izvrše.</string>
+    <string name="i_understand">Razumijem</string>
+    <string name="accept">Prihvati</string>
+    <string name="cancel">Odustani</string>
 </resources>

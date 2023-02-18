@@ -5,5 +5,18 @@
     <string name="act_main_btn_login">Login</string>
     <string name="act_main_btn_application">Application</string>
     <string name="act_main_logo_description">Online waiter logo</string>
+    <string name="act_main_pager_app_purpose_header">This App Purpose:</string>
+    <string name="act_main_pager_app_user_purpsoe_header">User Task:</string>
+    <string name="act_main_pager_no_news">No News</string>
+    <string name="act_main_pager_more_description"><a href="https://github.com/GeneralSting">More about</a></string>
+    <string name="act_main_dialog_alert_phone_number_body">You need to allow Phone Number permission. If you disable this permission, You will not able to procced!</string>
+    <string name="act_main_dialog_alert_phone_number_header">Alert message!</string>
+
+    <!--universal-->
+    <string name="database_on_cancel_dialog_header">Server error! We are working on it.</string>
+    <string name="database_on_cancel_dialog_description">Try restarting the application. If it still doesn\'t work, there\'s a chance that the app\'s actions aren\'t being executed.</string>
+    <string name="i_understand">I Understand</string>
+    <string name="accept">Accept</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

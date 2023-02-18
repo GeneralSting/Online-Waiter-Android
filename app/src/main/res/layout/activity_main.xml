@@ -33,20 +33,18 @@
         app:layout_constraintStart_toStartOf="@+id/ivMainAppLogo"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnMainApplication"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:backgroundTint="@color/tumbleweed"
-        android:drawableEnd="@drawable/ic_question_mark_20"
-        android:text="@string/act_main_btn_application"
-        android:textSize="20sp"
-        android:elevation="4dp"
-        android:translationZ="4dp"
-        android:stateListAnimator="@null"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpMainDialogPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="64dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="32dp"
+        android:background="@color/pager_background_grey"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/ivMainAppLogo"
-        app:layout_constraintStart_toStartOf="@+id/ivMainAppLogo" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnMainLogin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
