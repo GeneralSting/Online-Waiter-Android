@@ -4,6 +4,117 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".LoginActivity"
+    android:background="@drawable/login_act_bg">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtLoginHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:gravity="center_horizontal"
+            android:text="@string/act_login_enter_phone_number"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivLoginNumberQuestion"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/custom_spinner_rounded"
+            android:src="@drawable/icon_baseline_question_mark_16"
+            app:layout_constraintBottom_toTopOf="@+id/etLoginEnterNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLoginHeader" />
+
+        <EditText
+            android:id="@+id/etLoginEnterNumber"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/custom_login_input"
+            android:drawableStart="@drawable/custom_contact_icon"
+            android:drawablePadding="16sp"
+            android:hint="@string/act_login_phone_number_example"
+            android:inputType="phone"
+            android:maxLength="13"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLoginHeader" />
+
+        <Button
+            android:id="@+id/btnLoginSendOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/act_login_send_otp_code"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etLoginEnterNumber" />
+
+        <ProgressBar
+            android:id="@+id/pbLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:indeterminateTint="@color/light_cyan"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/etLoginEnterOtp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendOtp" />
+
+        <EditText
+            android:id="@+id/etLoginEnterOtp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/custom_login_input"
+            android:drawableStart="@drawable/icon_otp"
+            android:drawablePadding="16sp"
+            android:hint="@string/act_login_enter_otp_code"
+            android:inputType="number"
+            android:maxLength="6"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendOtp" />
+
+        <Button
+            android:id="@+id/btnLoginVerifyOtp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:enabled="false"
+            android:text="@string/act_login_check_otp_code"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etLoginEnterOtp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

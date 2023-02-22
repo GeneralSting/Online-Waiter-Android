@@ -1,49 +1,35 @@
 package com.example.onlinewaiter.Adapter;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
-import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.onlinewaiter.MainActivity;
 import com.example.onlinewaiter.Models.ViewPagerItem;
-import com.example.onlinewaiter.Other.TextSpan;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.ViewPagerItemHolder;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
 
     ArrayList<ViewPagerItem> viewPagerItems;
-    private Context context;
+    private final Context context;
 
-    public AppPagerAdapter(ArrayList<ViewPagerItem> viewPagerItems) {
+    public AppPagerAdapter(Context context, ArrayList<ViewPagerItem> viewPagerItems) {
+        this.context = context;
         this.viewPagerItems = viewPagerItems;
     }
 
     @NonNull
     @Override
     public ViewPagerItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        context = parent.getContext();
         View viewPagerItem = LayoutInflater.from(context)
                 .inflate(R.layout.main_pager_item, parent, false);
         return new ViewPagerItemHolder(viewPagerItem);
@@ -52,7 +38,10 @@ public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewPagerItemHolder holder, int position) {
         ViewPagerItem viewPagerItem = viewPagerItems.get(position);
-        Glide.with(context).load(viewPagerItem.getImageID()).centerCrop().into(holder.ivPagerItemImage);
+        Glide.with(context).load(viewPagerItem.getImageId()).centerCrop().into(holder.ivPagerItemImage);
+        if(!viewPagerItem.isShowScrollIcon()) {
+            holder.ivScrollPager.setVisibility(View.GONE);
+        }
         holder.txtPagerItemHeader.setText(viewPagerItem.getHeader());
         if(viewPagerItem.getDescription().length() > 150) {
             viewPagerItem.setDescription(viewPagerItem.getDescription().substring(0, 150));
@@ -74,6 +63,6 @@ public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
 
     @Override
     public int getItemCount() {
-        return viewPagerItems.size();
+        return viewPagerItems != null ? viewPagerItems.size() : 0;
     }
 }

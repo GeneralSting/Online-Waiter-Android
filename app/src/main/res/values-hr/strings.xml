@@ -14,6 +14,14 @@
     <string name="act_main_dialog_alert_phone_number_header">Upozorenje!</string>
 
 
+    <!--Login activity-->
+    <string name="act_login_check_otp_code">Potvrdi PIN</string>
+    <string name="act_login_enter_otp_code">Unesite PIN primljen u poruci</string>
+    <string name="act_login_send_otp_code">Pošalji broj</string>
+    <string name="act_login_phone_number_example">+385 12 345 6789</string>
+    <string name="act_login_enter_phone_number">Unesite broj Vašeg mobitela</string>
+    <string name="act_login_successful_taken_number">Unjeli smo Vaš broj</string>
+
     <!--universal-->
     <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>
     <string name="database_on_cancel_dialog_description">Probajte ponovno pokrenuti aplikaciju. Ako i dalje ne radi, postoji mogućnost da se akcije aplikacije ne izvrše.</string>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:background="@color/grey"
+        android:layout_margin="8dp"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/ivDropdownItemImage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/icon_otp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtDropDownItemName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@+id/ivDropdownItemImage"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/txtDropDownItemCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivDropdownItemImage"
+            app:layout_constraintStart_toEndOf="@+id/ivDropdownItemImage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

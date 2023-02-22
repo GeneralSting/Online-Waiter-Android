@@ -29,6 +29,8 @@ import android.widget.Toast;
 import com.example.onlinewaiter.Adapter.AppPagerAdapter;
 import com.example.onlinewaiter.Models.AppInfo;
 import com.example.onlinewaiter.Models.ViewPagerItem;
+import com.example.onlinewaiter.Other.CustomAlertDialog;
+import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,17 +50,20 @@ public class MainActivity extends AppCompatActivity {
 
     //global variables/objects
     private String phoneNumber = "";
-
+    CustomAlertDialog customAlertDialog;
+    private static MainActivity instance;
 
     //premissions codes
     int REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER = 102;
 
     //firebase
+    String appInfo = "appInfo";
     DatabaseReference appInfoRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(R.anim.fade_in, android.R.anim.slide_in_left);
         setContentView(R.layout.activity_main);
 
         //This flag is not normally set by application code, but set for you by the system
@@ -71,16 +76,21 @@ public class MainActivity extends AppCompatActivity {
         /*
         Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
         btnApplication.startAnimation(shake);*/
+        instance = this;
         vpMainPager = findViewById(R.id.vpMainDialogPager);
         insertMainPager();
         btnLogin = findViewById(R.id.btnMainLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String[] askPhoneNumberPermission = {Manifest.permission.READ_PHONE_NUMBERS};
-                requestPermissions(askPhoneNumberPermission, REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER);
+                proba();
             }
         });
+    }
+
+    public void proba() {
+        String[] askPhoneNumberPermission = {Manifest.permission.READ_PHONE_NUMBERS};
+        requestPermissions(askPhoneNumberPermission, REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER);
     }
 
     @Override
@@ -105,33 +115,22 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    public static MainActivity getInstance() {
+        return instance;
+    }
+
     //a modal that will be displayed if permission is not accepted the first time
     private void getWarningDialog() {
-        Dialog alertDialog;
-        alertDialog = new Dialog(MainActivity.this);
-        alertDialog.setContentView(R.layout.dialog_alert);
-        TextView txtDialogHeader = alertDialog.findViewById(R.id.txtDialogAlertHeader);
-        txtDialogHeader.setText(getResources().getString(R.string.act_main_dialog_alert_phone_number_header));
-        TextView txtDialogBody = alertDialog.findViewById(R.id.txtDialogAlertDescription);
-        txtDialogBody.setText(getResources().getString(R.string.act_main_dialog_alert_phone_number_body));
-        alertDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.bg_dialog_alert));
-        alertDialog.setCancelable(false);
-        alertDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAlertAnimation;
-
-        Button btnOk = alertDialog.findViewById(R.id.btnDialogAlertOk);
-        btnOk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_NUMBERS},
-                        REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER);
-            }
-        });
-        alertDialog.show();
+        customAlertDialog = new CustomAlertDialog(MainActivity.this,
+                getResources().getString(R.string.act_main_dialog_alert_phone_number_header),
+                getResources().getString(R.string.act_main_dialog_alert_phone_number_body),
+                getResources().getDrawable(R.drawable.dialog_warning),
+                0);
+        customAlertDialog.makeAlertDialog();
     }
 
     private void insertMainPager() {
-        appInfoRef = FirebaseDatabase.getInstance().getReference("appInfo");
+        appInfoRef = FirebaseDatabase.getInstance().getReference(appInfo);
         appInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -144,10 +143,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String[] pagerDecriptions = {appInfo.getAppNews(), appInfo.getAppPurpose(), appInfo.getAppUserPurpose()};
                 for (int i = 0; i < pagerImages.length; i++) {
-                    ViewPagerItem viewPagerItem = new ViewPagerItem(pagerImages[i], pagerHeaders[i], pagerDecriptions[i]);
+                    ViewPagerItem viewPagerItem;
+                    if(i == 0) {
+                        viewPagerItem = new ViewPagerItem(pagerImages[i], pagerHeaders[i], pagerDecriptions[i], true);
+                    }
+                    else {
+                        viewPagerItem = new ViewPagerItem(pagerImages[i], pagerHeaders[i], pagerDecriptions[i], false);
+                    }
                     viewPagerItems.add(viewPagerItem);
                 }
-                AppPagerAdapter appPagerAdapter = new AppPagerAdapter(viewPagerItems);
+                AppPagerAdapter appPagerAdapter = new AppPagerAdapter(MainActivity.this, viewPagerItems);
                 vpMainPager.setAdapter(appPagerAdapter);
                 vpMainPager.setClipToPadding(false);
                 vpMainPager.setClipChildren(false);
@@ -157,21 +162,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Dialog alertDialog;
-                alertDialog = new Dialog(MainActivity.this);
-                alertDialog.setContentView(R.layout.dialog_alert);
-                alertDialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.bg_dialog_alert));
-                alertDialog.setCancelable(false);
-                alertDialog.getWindow().getAttributes().windowAnimations = R.style.DialogAlertAnimation;
-
-                Button btnOk = alertDialog.findViewById(R.id.btnDialogAlertOk);
-                btnOk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                    }
-                });
-                alertDialog.show();
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(MainActivity.this);
+                serverAlertDialog.makeAlertDialog();
             }
         });
     }

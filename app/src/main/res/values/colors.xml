@@ -23,7 +23,10 @@
     <color name="black">#000</color>
     <color name="white">#fff</color>
     <color name="grey">#808080</color>
+    <color name="dark_gray">#a9a9a9</color>
 
     <!--Other colors-->
+    <color name="green_positive">#44EA63</color>
+    <color name="red_negative">#ea4444</color>
     <color name="pager_background_grey">#a1e4e8e8</color>
 </resources>
