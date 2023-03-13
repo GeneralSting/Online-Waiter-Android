@@ -54,13 +54,13 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
+            android:textColorHint="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtLoginHeader" />
 
         <Button
-            android:id="@+id/btnLoginSendOtp"
+            android:id="@+id/btnLoginSendNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -81,7 +81,7 @@
             app:layout_constraintBottom_toTopOf="@+id/etLoginEnterOtp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendOtp" />
+            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendNumber" />
 
         <EditText
             android:id="@+id/etLoginEnterOtp"
@@ -97,10 +97,10 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
+            android:textColorHint="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendOtp" />
+            app:layout_constraintTop_toBottomOf="@+id/btnLoginSendNumber" />
 
         <Button
             android:id="@+id/btnLoginVerifyOtp"

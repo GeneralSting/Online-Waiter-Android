@@ -3,36 +3,24 @@ package com.example.onlinewaiter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.onlinewaiter.Adapter.AppPagerAdapter;
 import com.example.onlinewaiter.Models.AppInfo;
 import com.example.onlinewaiter.Models.ViewPagerItem;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -40,7 +28,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
     //Activity views
@@ -51,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     //global variables/objects
     private String phoneNumber = "";
     CustomAlertDialog customAlertDialog;
-    private static MainActivity instance;
 
     //premissions codes
     int REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER = 102;
@@ -63,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        overridePendingTransition(R.anim.fade_in, android.R.anim.slide_in_left);
         setContentView(R.layout.activity_main);
 
         //This flag is not normally set by application code, but set for you by the system
@@ -76,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         /*
         Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
         btnApplication.startAnimation(shake);*/
-        instance = this;
         vpMainPager = findViewById(R.id.vpMainDialogPager);
         insertMainPager();
         btnLogin = findViewById(R.id.btnMainLogin);
@@ -86,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 proba();
             }
         });
+
     }
 
     public void proba() {
@@ -115,17 +100,13 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public static MainActivity getInstance() {
-        return instance;
-    }
 
     //a modal that will be displayed if permission is not accepted the first time
     private void getWarningDialog() {
         customAlertDialog = new CustomAlertDialog(MainActivity.this,
                 getResources().getString(R.string.act_main_dialog_alert_phone_number_header),
                 getResources().getString(R.string.act_main_dialog_alert_phone_number_body),
-                getResources().getDrawable(R.drawable.dialog_warning),
-                0);
+                getResources().getDrawable(R.drawable.dialog_warning));
         customAlertDialog.makeAlertDialog();
     }
 

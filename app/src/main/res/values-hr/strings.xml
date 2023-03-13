@@ -21,10 +21,19 @@
     <string name="act_login_phone_number_example">+385 12 345 6789</string>
     <string name="act_login_enter_phone_number">Unesite broj Vašeg mobitela</string>
     <string name="act_login_successful_taken_number">Unjeli smo Vaš broj</string>
+    <string name="act_login_dialog_no_number_header">Neuspješno dohvaćanje broja</string>
+    <string name="act_login_dialog_no_number_body">Mobilni operater ne dopušta pristup broju mobitela, samostalno unesite broj mobitela.</string>
+    <string name="act_login_phone_number_incorrect">Neispravan oblik broja mobitela</string>
+    <string name="act_login_otp_sent">PIN je poslan!</string>
+    <string name="act_login_empty_otp">Unesite PIN!</string>
+    <string name="act_login_wrong_otp">Netočan PIN!</string>
+    <string name="act_login_dialog_no_user_header">Broj nije pronađen!</string>
+    <string name="act_login_dialog_no_user_body">Broj koji ste unijeli nije sadržan u sustavu te nije moguća prijava s unesenim brojem.</string>
+    <string name="act_login_verification_failed">Dogodila se pogreška, pokušajte ponovno</string>
 
     <!--universal-->
     <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>
-    <string name="database_on_cancel_dialog_description">Probajte ponovno pokrenuti aplikaciju. Ako i dalje ne radi, postoji mogućnost da se akcije aplikacije ne izvrše.</string>
+    <string name="database_on_cancel_dialog_description">Probajte ponovno pokrenuti aplikaciju. Ako i dalje ne radi, postoji mogućnost da se akcije aplikacije ne izvrše točno.</string>
     <string name="i_understand">Razumijem</string>
     <string name="accept">Prihvati</string>
     <string name="cancel">Odustani</string>
