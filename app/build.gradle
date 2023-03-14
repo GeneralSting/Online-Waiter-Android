@@ -59,4 +59,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     //viewpager2
     implementation 'androidx.viewpager2:viewpager2:1.1.0-beta01'
+    //google play services for SMS Retriver API
+    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
 }

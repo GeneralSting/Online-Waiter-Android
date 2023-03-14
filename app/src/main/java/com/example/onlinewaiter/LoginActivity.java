@@ -1,10 +1,11 @@
 package com.example.onlinewaiter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,9 +15,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.SmsBroadcastReceiver;
 import com.example.onlinewaiter.Other.ToastMessage;
+import com.google.android.gms.auth.api.phone.SmsRetriever;
+import com.google.android.gms.auth.api.phone.SmsRetrieverClient;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,6 +36,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -45,6 +52,9 @@ public class LoginActivity extends AppCompatActivity {
     String authNumber, verificationId;
     Boolean employeeFounded, bossFounded, showProgressBar;
     ToastMessage toastMessage;
+    private static final int REQ_USER_CONSENT = 200;
+    SmsBroadcastReceiver smsBroadcastReceiver;
+
 
     //firebase
     FirebaseAuth mAuth;
@@ -80,8 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                     customAlertDialog.makeAlertDialog();
                 }
             });
-        }
-        else {
+        } else {
             ivNumberQuestion.setImageResource(R.drawable.icon_baseline_download_done_16);
             ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,10 +109,9 @@ public class LoginActivity extends AppCompatActivity {
                 String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
                 if (!(etPhoneNumber.getText().toString().matches(phoneNumberValidator))) {
                     toastMessage.showToast(getResources().getString(R.string.act_login_phone_number_incorrect), 0);
-                }
-                else {
+                } else {
                     authNumber = etPhoneNumber.getText().toString();
-                    if(showProgressBar) {
+                    if (showProgressBar) {
                         loginProgressBar.setVisibility(View.VISIBLE);
                         showProgressBar = false;
                     }
@@ -117,14 +125,94 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (TextUtils.isEmpty(etRecivedOtp.getText().toString())) {
                     toastMessage.showToast(getResources().getString(R.string.act_login_empty_otp), 0);
-                }
-                else {
+                } else {
                     verifycode(etRecivedOtp.getText().toString());
                 }
             }
         });
+        otpReceiver();
     }
 
+    private void otpReceiver() {
+        SmsRetrieverClient client = SmsRetriever.getClient(this);
+        client.startSmsUserConsent(null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_USER_CONSENT) {
+            if ((resultCode == RESULT_OK) && (data != null)) {
+                String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
+                getOtpFromMessage(message);
+            }
+        }
+    }
+
+    private void getOtpFromMessage(String message) {
+        Pattern otpPattern = Pattern.compile("(|^)\\d{6}");
+        Matcher matcher = otpPattern.matcher(message);
+        if (matcher.find()) {
+            btnVerifyOtp.setEnabled(false);
+            loginProgressBar.setEnabled(true);
+            etRecivedOtp.setText(matcher.group(0));
+            verifycode(etRecivedOtp.getText().toString());
+        }
+    }
+
+    private void registerBroadcastReceiver() {
+        smsBroadcastReceiver = new SmsBroadcastReceiver();
+        smsBroadcastReceiver.initListener(new SmsBroadcastReceiverListener() {
+            @Override
+            public void onSuccess(Intent intent) {
+                startActivityForResult(intent, REQ_USER_CONSENT);
+            }
+
+            @Override
+            public void onFailure() {
+                Log.d("PROBA123", "onFailure: ");
+
+            }
+        });
+
+        IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
+        registerReceiver(smsBroadcastReceiver, intentFilter);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        //additional verification measure, currentUser should not be true, user can not go to loginActivity
+        //if he is not logout from firebase first
+        if (currentUser != null) {
+            //boss is already login, open BossActivity
+            if(bossFounded) {
+                /*Intent intent = new Intent(this, BossActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
+                finishAffinity();
+                startActivity(intent);*/
+            }
+            else {
+                //user is already login, open HomeActivity
+                Intent intent = new Intent(this, EmployeeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
+                finishAffinity();
+                startActivity(intent);
+            }
+        }
+        registerBroadcastReceiver();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(smsBroadcastReceiver);
+    }
 
     private void checkEmployee() {
         DatabaseReference cafesEmployeesRef = FirebaseDatabase.getInstance().getReference("cafesEmployees");
@@ -143,6 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                     checkBoss();
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(LoginActivity.this);
@@ -171,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);*/
                     //}
                 }
-                if(!employeeFounded && !bossFounded) {
+                if (!employeeFounded && !bossFounded) {
                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
                             getResources().getString(R.string.act_login_dialog_no_user_header),
                             getResources().getString(R.string.act_login_dialog_no_user_body),
@@ -194,7 +283,7 @@ public class LoginActivity extends AppCompatActivity {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(phoneNumber)  // Phone number to verify
-                        .setTimeout(30L, TimeUnit.SECONDS) // Timeout and unit
+                        .setTimeout(0L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity(this)                 // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
@@ -217,6 +306,7 @@ public class LoginActivity extends AppCompatActivity {
             toastMessage.showToast(getResources().getString(R.string.act_login_verification_failed), 0);
             btnSendPhoneNumber.setEnabled(true);
             loginProgressBar.setVisibility(View.INVISIBLE);
+            Log.d("PROBA123", e.toString());
         }
 
         @Override
@@ -241,49 +331,21 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if(employeeFounded) {
-                        Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
-                        //flag -> If set, this activity will become the start of a new task on this history stack.
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                        //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
-                        //afinitet, srodstvo
-                        finishAffinity();
-                        startActivity(intent);
-                        }
-                        else {
+                        if (employeeFounded) {
+                            Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
+                            //flag -> If set, this activity will become the start of a new task on this history stack.
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
+                            //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
+                            //afinitet, srodstvo
+                            finishAffinity();
+                            startActivity(intent);
+                        } else {
                             //intent boss activity
                         }
-                    }
-                    else {
+                    } else {
                         toastMessage.showToast(getResources().getString(R.string.act_login_wrong_otp), 0);
                     }
                 });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //additional verification measure, currentUser should not be true, user can not go to loginActivity
-        //if he is not logout from firebase first
-        if (currentUser != null) {
-            //boss is already login, open BossActivity
-            if(bossFounded) {
-                /*Intent intent = new Intent(this, BossActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                finishAffinity();
-                startActivity(intent);*/
-            }
-            else {
-                //user is already login, open HomeActivity
-                Intent intent = new Intent(this, EmployeeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                finishAffinity();
-                startActivity(intent);
-            }
-        }
     }
 }

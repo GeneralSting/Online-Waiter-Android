@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "358595572815",
+    "firebase_url": "https://online-waiter-db1c0-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "online-waiter-db1c0",
+    "storage_bucket": "online-waiter-db1c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358595572815:android:10f8745226290caf9e663a",
+        "android_client_info": {
+          "package_name": "com.example.onlinewaiter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358595572815-ark5r3fi91ni9ojj5kkjomp6hh22uima.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH2X4DChvrYupB_LpKH8hPCifUbBTs2aE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358595572815-ark5r3fi91ni9ojj5kkjomp6hh22uima.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
