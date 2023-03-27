@@ -9,8 +9,10 @@
     <string name="act_main_pager_app_user_purpsoe_header">User Task:</string>
     <string name="act_main_pager_no_news">No News</string>
     <string name="act_main_pager_more_description"><a href="https://github.com/GeneralSting">More about</a></string>
-    <string name="act_main_dialog_alert_phone_number_body">You need to allow Phone Number permission. If you disable this permission, You will not able to procced!</string>
-    <string name="act_main_dialog_alert_phone_number_header">Alert message!</string>
+    <string name="act_main_dialog_permissions_warning_body">You need to allow all asked permissions. If you disable them, You will not be able to procced!</string>
+    <string name="act_main_dialog_permissions_warning_header">Alert message!</string>
+    <string name="act_main_dialog_permissions_denied_body">Permissions denied!</string>
+    <string name="act_main_dialog_permissions_denied_header">You will not be asked again for permissions but we can not allow you to go any further with this app!</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Verify OTP</string>
@@ -29,6 +31,40 @@
     <string name="act_login_dialog_no_user_body">The number you entered is not included in the system, so it is not possible to log in with the entered number.</string>
     <string name="act_login_verification_failed">An error occurred, please try again</string>
 
+    <!--Employee activity-->
+    <string name="employee_back_button_pressed">One more time to logout.</string>
+    <string name="act_employee_notification_header">Order ready for table:</string>
+    <string name="act_employee_notification_body">Your order is ready to be delivered to table number:</string>
+
+    <!--Employe activity menu fragment-->
+    <string name="menu_drink_name_placeholder">Drink Name</string>
+    <string name="menu_drink_description_placeholder">Drink Description</string>
+    <string name="menu_drink_price_placeholder">0.00$</string>
+    <string name="menu_drink_description_dialog_title">Description for a drink: </string>
+
+
+    <!--Employee activity order fragment-->
+    <string name="order_drink_name_txt">Drink Name</string>
+    <string name="order_drink_price_txt">Price: </string>
+    <string name="order_drink_total_price_txt">Total price: </string>
+    <string name="order_summary_amount_empty">No Products.</string>
+    <string name="order_summary_amount">Products.</string>
+    <string name="order_summary_total_price_zero">0.00</string>
+    <string name="order_dialog_complete_btn">Make Order</string>
+    <string name="order_dialog_title">Order for table: </string>
+
+    <!--Employee activity-->
+
+
+    <!--Employee nav header-->
+    <string name="employee_nav_menu_title">Menu</string>
+    <string name="employee_nav_orders_title">Order</string>
+    <string name="employee_nav_pending_orders_title">Pending Orders</string>
+    <string name="employee_nav_cafe_update_title">Cafe Update</string>
+    <string name="employee_nav_logout_title">Logout</string>
+    <string name="employee_nav_cafe_name_not_found">Welcome!</string>
+
+
     <!--Custom dialog ok button parameter-->
     <string name="btn_ok_action_request_number_permission" translatable="false">request_number_permission</string>
 
@@ -38,6 +74,12 @@
     <string name="i_understand">I Understand</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
+    <string name="country_currency">$</string>
+    <string name="etc_dots" translatable="false">…</string>
+    <string name="drink_btn_add_placeholder" translatable="false">+</string>
+    <string name="drink_btn_remove_placeholder" translatable="false">-</string>
+    <string name="drink_amount_placeholder" translatable="false">0</string>
+
     <string name="title_activity_employee">EmployeeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -45,9 +87,5 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
 
 </resources>

@@ -3,7 +3,7 @@ package com.example.onlinewaiter;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
@@ -11,36 +11,43 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.onlinewaiter.Adapter.AppPagerAdapter;
+import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.AppInfo;
 import com.example.onlinewaiter.Models.ViewPagerItem;
+import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
+import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.ToastMessage;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     //Activity views
     Button btnLogin;
     ViewPager2 vpMainPager;
     ArrayList<ViewPagerItem> viewPagerItems = new ArrayList<>();
-
-    //global variables/objects
-    private String phoneNumber = "";
     CustomAlertDialog customAlertDialog;
+    ToastMessage toastMessage;
 
     //premissions codes
-    int REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER = 102;
+    final int MULTIPLE_PERMISSIONS = 124;
 
     //firebase
     String appInfo = "appInfo";
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        toastMessage = new ToastMessage(this);
         /*
         Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
         btnApplication.startAnimation(shake);*/
@@ -67,45 +75,98 @@ public class MainActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                proba();
+                askRequiredPermissions();
             }
         });
-
     }
 
-    public void proba() {
-        String[] askPhoneNumberPermission = {Manifest.permission.READ_PHONE_NUMBERS};
-        requestPermissions(askPhoneNumberPermission, REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER);
+    public void askRequiredPermissions() {
+        if (checkRequiredPermissions()) {
+            enterLogin();
+        }
+    }
+
+    private boolean checkRequiredPermissions() {
+        String[] requiredAppPermissions = new String[]{
+                Manifest.permission.READ_PHONE_NUMBERS,
+                Manifest.permission.POST_NOTIFICATIONS
+        };
+        int result;
+        List<String> missingPermissions = new ArrayList<>();
+        for (String permission : requiredAppPermissions) {
+            result = ContextCompat.checkSelfPermission(getApplicationContext(), permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                missingPermissions.add(permission);
+            }
+        }
+
+        if (!missingPermissions.isEmpty()) {
+            ActivityCompat.requestPermissions(this, missingPermissions.toArray(new String[0]), MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+
+    private void enterLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        //global variables/objects
+        intent.putExtra("phoneNumber", telephonyManager.getLine1Number().toString());
+        startActivity(intent);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_CODE_ASK_PERMISSION_READ_PHONE_NUMBER) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Intent intent = new Intent(this, LoginActivity.class);
-                TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                //mandatory to have another permission check
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_NUMBERS) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    return;
+        switch (grantResults.length) {
+            case 1: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    enterLogin();
                 }
-                phoneNumber = telephonyManager.getLine1Number().toString();
-                intent.putExtra("phoneNumber", telephonyManager.getLine1Number().toString());
-                startActivity(intent);
+                else {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
+                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        permissionsDialogWarning();
+                    } else {
+                        permissionDeniedDialog();
+                    }
+                }
             }
-            else if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS)) //permission deined for the first time -> opening warning modal
-                getWarningDialog();
+            break;
+            case 2: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    enterLogin();
+                }
+                else {
+                    if(shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
+                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        permissionsDialogWarning();
+                    }
+                    else {
+                        permissionDeniedDialog();
+                    }
+                }
+            }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
-    //a modal that will be displayed if permission is not accepted the first time
-    private void getWarningDialog() {
+    private void permissionsDialogWarning() {
         customAlertDialog = new CustomAlertDialog(MainActivity.this,
-                getResources().getString(R.string.act_main_dialog_alert_phone_number_header),
-                getResources().getString(R.string.act_main_dialog_alert_phone_number_body),
+                getResources().getString(R.string.act_main_dialog_permissions_warning_header),
+                getResources().getString(R.string.act_main_dialog_permissions_warning_body),
+                getResources().getDrawable(R.drawable.dialog_danger));
+        customAlertDialog.makeAlertDialog();
+    }
+
+    private void permissionDeniedDialog() {
+        customAlertDialog = new CustomAlertDialog(MainActivity.this,
+                getResources().getString(R.string.act_main_dialog_permissions_denied_header),
+                getResources().getString(R.string.act_main_dialog_permissions_denied_body),
                 getResources().getDrawable(R.drawable.dialog_warning));
         customAlertDialog.makeAlertDialog();
     }
@@ -152,16 +213,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        /*
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //user is already login, open LoginActivity
+        //user did not manaully logged out,
         if(currentUser != null) {
-            Intent intent = new Intent(this, HomeActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.putExtra("phoneNumber", phoneNumber.toString());
-            finishAffinity();
-            startActivity(intent);
+            FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
+            DatabaseReference appErrors = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppErrors());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+            String currentDateTime = simpleDateFormat.format(new Date());
+            AppError appError = new AppError(
+                    AppErrorMessages.Messages.CAFE_NOT_FOUND,
+                    currentUser.getPhoneNumber().toString(),
+                    AppErrorMessages.Messages.USER_NOT_LOGGED_OUT,
+                    currentDateTime
+            );
+            String dbKey = appErrors.push().getKey();
+            appErrors.child(dbKey).setValue(appError);
+            FirebaseAuth mAuth;
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.signOut();
         }
-        */
     }
 }

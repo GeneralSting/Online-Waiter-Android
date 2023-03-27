@@ -7,6 +7,7 @@ public class Cafe {
     Integer cafeTables;
     HashMap<String, CafeDrinksCategory> cafeDrinksCategories;
     HashMap<String, CafeBill> cafeBills;
+    HashMap<String, CafeEmployee> cafeEmployees;
 
     public Cafe() {
         // Default constructor required for calls to DataSnapshot.getValue(Cafe.class)

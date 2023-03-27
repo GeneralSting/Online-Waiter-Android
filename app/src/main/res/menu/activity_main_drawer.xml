@@ -5,16 +5,28 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_employee_menu"
+            android:icon="@drawable/icon_baseline_local_drink_24"
+            android:title="@string/employee_nav_menu_title" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_employee_orders"
+            android:icon="@drawable/icon_baseline_shopping_cart_24"
+            android:title="@string/employee_nav_orders_title" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/menu_slideshow" />
+            android:id="@+id/nav_employee_pending_orders"
+            android:icon="@drawable/icon_baseline_pending_24"
+            android:title="@string/employee_nav_pending_orders_title" />
+        <item
+            android:id="@+id/nav_employee_cafe_update"
+            android:icon="@drawable/icon_baseline_edit_note_24"
+            android:title="@string/employee_nav_cafe_update_title" />
+        <!--"dummy" item for extra space-->
+        <item
+            android:title=""
+            android:enabled="false"/>
+        <item
+            android:id="@+id/nav_employee_logout"
+            android:icon="@drawable/icon_baseline_logout_24"
+            android:title="@string/employee_nav_logout_title" />
     </group>
 </menu>

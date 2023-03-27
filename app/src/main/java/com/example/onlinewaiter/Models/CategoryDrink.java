@@ -1,26 +1,16 @@
 package com.example.onlinewaiter.Models;
 
 public class CategoryDrink {
-    String categoryDrinkId, categoryDrinkName, categoryDrinkDescription, categoryDrinkImage, categoryDrinkCategoryId;
+    String categoryDrinkName, categoryDrinkDescription, categoryDrinkImage;
     float categoryDrinkPrice;
 
     public CategoryDrink() {}
 
-    public CategoryDrink(String categoryDrinkId, String categoryDrinkName, String categoryDrinkDescription, String categoryDrinkImage, String categoryDrinkCategoryId, float categoryDrinkPrice) {
-        this.categoryDrinkId = categoryDrinkId;
-        this.categoryDrinkName = categoryDrinkName;
+    public CategoryDrink(String categoryDrinkDescription, String categoryDrinkImage, String categoryDrinkName, float categoryDrinkPrice) {
         this.categoryDrinkDescription = categoryDrinkDescription;
         this.categoryDrinkImage = categoryDrinkImage;
-        this.categoryDrinkCategoryId = categoryDrinkCategoryId;
+        this.categoryDrinkName = categoryDrinkName;
         this.categoryDrinkPrice = categoryDrinkPrice;
-    }
-
-    public String getCategoryDrinkId() {
-        return categoryDrinkId;
-    }
-
-    public void setCategoryDrinkId(String categoryDrinkId) {
-        this.categoryDrinkId = categoryDrinkId;
     }
 
     public String getCategoryDrinkName() {
@@ -47,13 +37,6 @@ public class CategoryDrink {
         this.categoryDrinkImage = categoryDrinkImage;
     }
 
-    public String getCategoryDrinkCategoryId() {
-        return categoryDrinkCategoryId;
-    }
-
-    public void setCategoryDrinkCategoryId(String categoryDrinkCategoryId) {
-        this.categoryDrinkCategoryId = categoryDrinkCategoryId;
-    }
 
     public float getCategoryDrinkPrice() {
         return categoryDrinkPrice;

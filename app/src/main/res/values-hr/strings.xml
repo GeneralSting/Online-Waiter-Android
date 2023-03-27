@@ -10,9 +10,10 @@
     <string name="act_main_pager_app_user_purpsoe_header">Korisnikov zadatak:</string>
     <string name="act_main_pager_no_news">Nema novih vijesti</string>
     <string name="act_main_pager_more_description"><a href="https://github.com/GeneralSting">Saznaj više</a></string>
-    <string name="act_main_dialog_alert_phone_number_body">Odbijanjem pristupa broja vašeg mobitela, nećete moći nastaviti s daljnim korištenjem ove aplikacije!</string>
-    <string name="act_main_dialog_alert_phone_number_header">Upozorenje!</string>
-
+    <string name="act_main_dialog_permissions_warning_body">Bez odobravanja svih dopuštenja, nećete moći nastaviti s daljnim korištenjem ove aplikacije!</string>
+    <string name="act_main_dialog_permissions_warning_header">Upozorenje!</string>
+    <string name="act_main_dialog_permissions_denied_header">Dopuštenja su odbijena!</string>
+    <string name="act_main_dialog_permissions_denied_body">Nećemo Te više pitati za dopuštenja, ali nemaš pristup ostalim mogućnostima ove apliakcije!</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Potvrdi PIN</string>
@@ -31,10 +32,46 @@
     <string name="act_login_dialog_no_user_body">Broj koji ste unijeli nije sadržan u sustavu te nije moguća prijava s unesenim brojem.</string>
     <string name="act_login_verification_failed">Dogodila se pogreška, pokušajte ponovno</string>
 
+
+    <!--Employee activity-->
+    <string name="employee_back_button_pressed">Još jednom za odjavu</string>
+    <string name="act_employee_notification_header">Narudžba spremna za stol:</string>
+    <string name="act_employee_notification_body">Vaša narudžba je spremna za isporuku za stol:</string>
+
+    <!--Employee activity menu fragment-->
+    <string name="menu_drink_name_placeholder">Naziv Pića</string>
+    <string name="menu_drink_description_placeholder">Opis Pića</string>
+    <string name="menu_drink_price_placeholder">0,00€</string>
+    <string name="menu_drink_description_dialog_title">Opis za piće: </string>
+
+
+    <!--Employee activity order fragment-->
+    <string name="order_drink_name_txt">Naziv Pića</string>
+    <string name="order_drink_price_txt">Cijena: </string>
+    <string name="order_drink_total_price_txt">Ukupna cijena: </string>
+    <string name="order_summary_amount_empty">Nema Proizvoda.</string>
+    <string name="order_summary_amount">Proizvoda.</string>
+    <string name="order_summary_total_price_zero">0,00</string>
+    <string name="order_dialog_complete_btn">Potvrdi narudžbu</string>
+    <string name="order_dialog_title">Narudžba za stol: </string>
+
+
+    <!--Employee Activity-->
+
+
+    <!--Employee nav header-->
+    <string name="employee_nav_menu_title">Meni</string>
+    <string name="employee_nav_orders_title">Narudža</string>
+    <string name="employee_nav_pending_orders_title">Narudžbe u tijeku</string>
+    <string name="employee_nav_cafe_update_title">Ažuriranje kafića</string>
+    <string name="employee_nav_logout_title">Odjava</string>
+    <string name="employee_nav_cafe_name_not_found">Dobrodošao!</string>
+
     <!--universal-->
     <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>
     <string name="database_on_cancel_dialog_description">Probajte ponovno pokrenuti aplikaciju. Ako i dalje ne radi, postoji mogućnost da se akcije aplikacije ne izvrše točno.</string>
     <string name="i_understand">Razumijem</string>
     <string name="accept">Prihvati</string>
     <string name="cancel">Odustani</string>
+    <string name="country_currency">€</string>
 </resources>

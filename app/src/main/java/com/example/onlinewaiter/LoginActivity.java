@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
+import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.SmsBroadcastReceiver;
@@ -49,12 +50,11 @@ public class LoginActivity extends AppCompatActivity {
 
     //global variables/objects
     String phoneNumber = "";
-    String authNumber, verificationId;
-    Boolean employeeFounded, bossFounded, showProgressBar;
+    String authNumber, verificationId, numberRole, numberCafeId;
+    Boolean numberFounded, showProgressBar, backPressEnabled;
     ToastMessage toastMessage;
     private static final int REQ_USER_CONSENT = 200;
     SmsBroadcastReceiver smsBroadcastReceiver;
-
 
     //firebase
     FirebaseAuth mAuth;
@@ -65,9 +65,9 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         toastMessage = new ToastMessage(this);
-        showProgressBar = true;
-        authNumber = "";
-        employeeFounded = bossFounded = false;
+        showProgressBar = backPressEnabled = true;
+        authNumber = numberRole = "";
+        numberFounded = false;
         mAuth = FirebaseAuth.getInstance();
 
         etPhoneNumber = findViewById(R.id.etLoginEnterNumber);
@@ -105,18 +105,20 @@ public class LoginActivity extends AppCompatActivity {
         btnSendPhoneNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btnSendPhoneNumber.setEnabled(false);
+                backPressEnabled = false;
                 // regex to check the validity of the mobile phone number, it works for Croatian numbers and other countries
                 String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
                 if (!(etPhoneNumber.getText().toString().matches(phoneNumberValidator))) {
                     toastMessage.showToast(getResources().getString(R.string.act_login_phone_number_incorrect), 0);
-                } else {
+                }
+                else {
                     authNumber = etPhoneNumber.getText().toString();
                     if (showProgressBar) {
                         loginProgressBar.setVisibility(View.VISIBLE);
                         showProgressBar = false;
                     }
-                    btnSendPhoneNumber.setEnabled(false);
-                    checkEmployee();
+                    checkNumber();
                 }
             }
         });
@@ -170,7 +172,6 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onFailure() {
-                Log.d("PROBA123", "onFailure: ");
 
             }
         });
@@ -187,25 +188,10 @@ public class LoginActivity extends AppCompatActivity {
         //additional verification measure, currentUser should not be true, user can not go to loginActivity
         //if he is not logout from firebase first
         if (currentUser != null) {
-            //boss is already login, open BossActivity
-            if(bossFounded) {
-                /*Intent intent = new Intent(this, BossActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                finishAffinity();
-                startActivity(intent);*/
-            }
-            else {
-                //user is already login, open HomeActivity
-                Intent intent = new Intent(this, EmployeeActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                finishAffinity();
-                startActivity(intent);
-            }
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.signOut();
         }
         registerBroadcastReceiver();
-
     }
 
     @Override
@@ -214,21 +200,29 @@ public class LoginActivity extends AppCompatActivity {
         unregisterReceiver(smsBroadcastReceiver);
     }
 
-    private void checkEmployee() {
-        DatabaseReference cafesEmployeesRef = FirebaseDatabase.getInstance().getReference("cafesEmployees");
+    private void checkNumber() {
+        DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference("registeredNumbers");
         //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
-        cafesEmployeesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot employeeSnapshot : snapshot.getChildren()) {
-                    if (authNumber.equals(employeeSnapshot.getKey())) {
-                        employeeFounded = true;
+                for (DataSnapshot numberSnapshot : snapshot.getChildren()) {
+                    if (authNumber.equals(numberSnapshot.getKey())) {
+                        numberFounded = true;
+                        RegisteredNumber registeredNumber = numberSnapshot.getValue(RegisteredNumber.class);
+                        numberRole = registeredNumber.getRole();
+                        numberCafeId = registeredNumber.getCafeId();
                         sendverificationcode(authNumber);
-
                     }
                 }
-                if (!employeeFounded) {
-                    checkBoss();
+                if (!numberFounded) {
+                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
+                            getResources().getString(R.string.act_login_dialog_no_user_header),
+                            getResources().getString(R.string.act_login_dialog_no_user_body),
+                            getResources().getDrawable(R.drawable.dialog_no_number));
+                    customAlertDialog.makeAlertDialog();
+                    loginProgressBar.setVisibility(View.INVISIBLE);
+                    showProgressBar = true;
                 }
             }
 
@@ -238,52 +232,14 @@ public class LoginActivity extends AppCompatActivity {
                 serverAlertDialog.makeAlertDialog();
             }
         });
-    }
-
-    public void checkBoss() {
-        DatabaseReference cafesRef = FirebaseDatabase.getInstance().getReference("cafes");
-        //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
-        cafesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot cafeSnapshot : snapshot.getChildren()) {
-                    //Cafe cafe = cafeSnapshot.getValue(Cafe.class);
-                    //if (authNumber.equals(cafe.getCafeOwnerPhoneNumber())) {
-                    //bossFounded = true;
-                        /*Intent intent = new Intent(LoginActivity.this, BossActivity.class);
-                        //flag -> If set, this activity will become the start of a new task on this history stack.
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
-                        //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
-                        //afinitet, srodstvo
-                        finishAffinity();
-                        startActivity(intent);*/
-                    //}
-                }
-                if (!employeeFounded && !bossFounded) {
-                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
-                            getResources().getString(R.string.act_login_dialog_no_user_header),
-                            getResources().getString(R.string.act_login_dialog_no_user_body),
-                            getResources().getDrawable(R.drawable.dialog_no_number));
-                    customAlertDialog.makeAlertDialog();
-                    btnSendPhoneNumber.setEnabled(true);
-                    loginProgressBar.setVisibility(View.INVISIBLE);
-                    showProgressBar = true;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                toastMessage.showToast(getResources().getString(R.string.database_on_cancel_dialog_header), 0);
-            }
-        });
+        btnSendPhoneNumber.setEnabled(true);
     }
 
     private void sendverificationcode(String phoneNumber) {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(phoneNumber)  // Phone number to verify
-                        .setTimeout(0L, TimeUnit.SECONDS) // Timeout and unit
+                        .setTimeout(0L, TimeUnit.SECONDS) // Timeout and unit, 0L because of sms receiver
                         .setActivity(this)                 // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
                         .build();
@@ -292,8 +248,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks
             mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        // never been called
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
+            Log.d("PROBA123", "onVerificationCompleted: ");
             final String code = credential.getSmsCode();
             if (code != null) {
                 verifycode(code);
@@ -302,16 +260,16 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            //this might not be enough good code to work alright verification fails
+            backPressEnabled = true;
             toastMessage.showToast(getResources().getString(R.string.act_login_verification_failed), 0);
             btnSendPhoneNumber.setEnabled(true);
             loginProgressBar.setVisibility(View.INVISIBLE);
-            Log.d("PROBA123", e.toString());
         }
 
         @Override
         public void onCodeSent(@NonNull String s,
                                @NonNull PhoneAuthProvider.ForceResendingToken token) {
+            backPressEnabled = false;
             super.onCodeSent(s, token);
             verificationId = s;
             toastMessage.showToast(getResources().getString(R.string.act_login_otp_sent), 0);
@@ -331,21 +289,31 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (employeeFounded) {
+                        if (numberRole.equals("waiter") && numberFounded) {
                             Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                             //flag -> If set, this activity will become the start of a new task on this history stack.
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("cafeId", numberCafeId);
                             intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
                             //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                             //afinitet, srodstvo
                             finishAffinity();
                             startActivity(intent);
-                        } else {
+                        }
+                        else if(numberRole.equals("owner") && numberFounded) {
                             //intent boss activity
                         }
-                    } else {
+                    }
+                    else {
                         toastMessage.showToast(getResources().getString(R.string.act_login_wrong_otp), 0);
                     }
                 });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(backPressEnabled) {
+            super.onBackPressed();
+        }
     }
 }
