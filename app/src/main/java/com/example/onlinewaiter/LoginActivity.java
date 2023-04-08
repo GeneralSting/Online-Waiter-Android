@@ -251,7 +251,6 @@ public class LoginActivity extends AppCompatActivity {
         // never been called
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
-            Log.d("PROBA123", "onVerificationCompleted: ");
             final String code = credential.getSmsCode();
             if (code != null) {
                 verifycode(code);
@@ -260,6 +259,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
+            Log.d("PROBA123", e.toString());
             backPressEnabled = true;
             toastMessage.showToast(getResources().getString(R.string.act_login_verification_failed), 0);
             btnSendPhoneNumber.setEnabled(true);

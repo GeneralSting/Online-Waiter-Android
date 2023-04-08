@@ -8,36 +8,40 @@
 
     <NumberPicker
         android:id="@+id/npOrderDialogTableNumber"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="128dp"
-        android:layout_marginLeft="128dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:scaleY="1.25"
         android:scaleX="1.25"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleY="1.25"
+        app:layout_constraintEnd_toStartOf="@+id/vglOrderCompletionHalfDivider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnOrderDialogAccept"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:backgroundTint="@color/green_positive"
         android:text="@string/order_dialog_complete_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/vglOrderCompletionHalfDivider"
         app:layout_constraintTop_toBottomOf="@+id/npOrderDialogTableNumber" />
 
     <Button
         android:id="@+id/btnOrderDialogCancel"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
         android:backgroundTint="@color/red_negative"
         android:text="@string/cancel"
+        app:layout_constraintBottom_toBottomOf="@+id/btnOrderDialogAccept"
+        app:layout_constraintEnd_toStartOf="@+id/vglOrderCompletionHalfDivider"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/npOrderDialogTableNumber" />
 
@@ -45,9 +49,21 @@
         android:id="@+id/cbMyOrder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:button="@null"
+        android:drawableTop="?android:attr/listChoiceIndicatorMultiple"
         android:text="Pravim narudžbu"
-        app:layout_constraintBottom_toBottomOf="@+id/btnOrderDialogAccept"
-        app:layout_constraintEnd_toStartOf="@+id/btnOrderDialogAccept"
-        app:layout_constraintStart_toEndOf="@+id/btnOrderDialogCancel" />
+        app:layout_constraintBottom_toBottomOf="@+id/npOrderDialogTableNumber"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/vglOrderCompletionHalfDivider"
+        app:layout_constraintTop_toTopOf="@+id/npOrderDialogTableNumber" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vglOrderCompletionHalfDivider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

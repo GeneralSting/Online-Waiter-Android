@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.Cafe;
+import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Services.OnAppKilledService;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -37,6 +38,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onlinewaiter.databinding.ActivityEmployeeBinding;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +46,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class EmployeeActivity extends AppCompatActivity {
@@ -62,6 +65,7 @@ public class EmployeeActivity extends AppCompatActivity {
     NotificationManagerCompat notificationManagerCompat;
     NotificationCompat.Builder builder;
     final String channelId = "ORDER_NOTIFICATION_CHANNEL";
+    int notificationId = 0;
 
     private ChildEventListener cafeChildsEventListener;
     DatabaseReference cafeRef;
@@ -143,8 +147,22 @@ public class EmployeeActivity extends AppCompatActivity {
         binding.appBarEmployee.ordersNumberFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                int cartDrinksNumber = 0;
+                orderViewModel = new ViewModelProvider(EmployeeActivity.this).get(OrderViewModel.class);
+                HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+                if (orderDrinks != null && !orderDrinks.isEmpty()) {
+                    for (String key : orderDrinks.keySet()) {
+                        CafeBillDrink cafeBillDrink = orderDrinks.get(key);
+                        cartDrinksNumber += cafeBillDrink.getDrinkAmount();
+                    }
+                    Snackbar.make(view, getResources().getString(R.string.act_employee_order_fab_txt) + " " + cartDrinksNumber
+                                    , Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                else {
+                    Snackbar.make(view, getResources().getString(R.string.act_employee_empty_order_fab_txt), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
             }
         });
         DrawerLayout drawer = binding.drawerLayout;
@@ -214,7 +232,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                                     builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + " " +
                                             cafeSnapshot.getValue(Integer.class));
-                            notificationManagerCompat.notify(1, builder.build());
+                            notificationManagerCompat.notify(notificationId++, builder.build());
                         }
                 }
             }
@@ -245,7 +263,7 @@ public class EmployeeActivity extends AppCompatActivity {
                     super.onBackPressed();
                     logout();
                 } else {
-                    toastMessage.showToast(getResources().getString(R.string.employee_back_button_pressed), 0);
+                    toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
                 }
                 back_pressed = System.currentTimeMillis();
             } else {
@@ -264,9 +282,12 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void logout() {
         //firebase
-        FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
-        finish();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
+            finish();
+        }
     }
 
     @Override
@@ -274,6 +295,10 @@ public class EmployeeActivity extends AppCompatActivity {
         super.onDestroy();
         if (cafeRef != null) {
             cafeRef.removeEventListener(cafeChildsEventListener);
+        }
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null) {
+            FirebaseAuth.getInstance().signOut();
         }
     }
 }

@@ -223,7 +223,7 @@ public class MenuFragment extends Fragment {
                         if(!emptyOrder) {
                             for(String key: addedOrderDrinks.keySet()) {
                                 CafeBillDrink cafeBillDrink = addedOrderDrinks.get(key);
-                                if(cafeBillDrink.getDrinkId() == categoryDrinkSnapshot.getKey()) {
+                                if(Objects.equals(cafeBillDrink.getDrinkId(), categoryDrinkSnapshot.getKey())) {
                                     drinkAmountCounter[0] = cafeBillDrink.getDrinkAmount();
                                 }
                             }

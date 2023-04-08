@@ -19,11 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
-import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
-import com.example.onlinewaiter.Models.CafeBill;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -262,23 +261,35 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void saveOrder(int tableNumber, boolean myOrder) {
         newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefPathCafes() + menuViewModel.getCafeId().getValue() +
-                firebaseRefPaths.getRefPathCafesBills());
+                firebaseRefPaths.getRefPathCafeCurrentOrders());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
         String currentDateTime = simpleDateFormat.format(new Date());
-        HashMap<String, CafeBillDrink> orderDrinks = new HashMap<>();
 
-        CafeBill cafeBill = new CafeBill(
-                currentDateTime,
-                cafeBillDrinkTotalPrice,
-                menuViewModel.getPhoneNumber().getValue(),
-                cafeBillDrinkAmount,
-                tableNumber,
-                cafeBillDrinks
-        );
+        CafeCurrentOrder cafeCurrentOrder;
+        if(myOrder) {
+            cafeCurrentOrder = new CafeCurrentOrder(
+                    currentDateTime,
+                    cafeBillDrinkTotalPrice,
+                    menuViewModel.getPhoneNumber().getValue(),
+                    menuViewModel.getPhoneNumber().getValue(),
+                    cafeBillDrinkAmount,
+                    tableNumber,
+                    cafeBillDrinks
+            );
+        }
+        else {
+            cafeCurrentOrder = new CafeCurrentOrder(
+                    currentDateTime,
+                    cafeBillDrinkTotalPrice,
+                    menuViewModel.getPhoneNumber().getValue(),
+                    cafeBillDrinkAmount,
+                    tableNumber,
+                    cafeBillDrinks
+            );
+        }
         String dbKey = newCafeBillRef.push().getKey();
-        toastMessage.showToast(String.valueOf(myOrder), 0);
         removeOrderDrinks();
-        newCafeBillRef.child(dbKey).setValue(cafeBill);
+        newCafeBillRef.child(dbKey).setValue(cafeCurrentOrder);
     }
 
     @Override

@@ -34,9 +34,11 @@
 
 
     <!--Employee activity-->
-    <string name="employee_back_button_pressed">Još jednom za odjavu</string>
+    <string name="act_employee_back_button_pressed">Još jednom za odjavu</string>
     <string name="act_employee_notification_header">Narudžba spremna za stol:</string>
     <string name="act_employee_notification_body">Vaša narudžba je spremna za isporuku za stol:</string>
+    <string name="act_employee_order_fab_txt">Broj pića u trenutnoj narudžbi:</string>
+    <string name="act_employee_empty_order_fab_txt">Narudžba je prazna</string>
 
     <!--Employee activity menu fragment-->
     <string name="menu_drink_name_placeholder">Naziv Pića</string>

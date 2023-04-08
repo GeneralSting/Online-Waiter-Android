@@ -5,6 +5,12 @@ public class DrinksCategory {
 
     public DrinksCategory() {}
 
+    public DrinksCategory(String categoryName, String categoryDescription, String cateogryImage) {
+        this.categoryName = categoryName;
+        this.categoryDescription = categoryDescription;
+        this.cateogryImage = cateogryImage;
+    }
+
     public DrinksCategory(String categoryName, String categoryDescription, String cateogryImage, String categoryId) {
         this.categoryName = categoryName;
         this.categoryDescription = categoryDescription;

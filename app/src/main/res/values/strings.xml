@@ -32,9 +32,13 @@
     <string name="act_login_verification_failed">An error occurred, please try again</string>
 
     <!--Employee activity-->
-    <string name="employee_back_button_pressed">One more time to logout.</string>
+    <string name="act_employee_back_button_pressed">One more time to logout.</string>
     <string name="act_employee_notification_header">Order ready for table:</string>
     <string name="act_employee_notification_body">Your order is ready to be delivered to table number:</string>
+    <string name="act_employee_order_fab_txt">Number of drinks in current order:</string>
+    <string name="act_employee_empty_order_fab_txt">Order is empty</string>
+
+
 
     <!--Employe activity menu fragment-->
     <string name="menu_drink_name_placeholder">Drink Name</string>

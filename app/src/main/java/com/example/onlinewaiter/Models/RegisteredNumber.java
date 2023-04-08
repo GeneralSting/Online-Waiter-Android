@@ -5,6 +5,11 @@ public class RegisteredNumber {
 
     public RegisteredNumber() {}
 
+    public RegisteredNumber(String cafeId, String role) {
+        this.cafeId = cafeId;
+        this.role = role;
+    }
+
     public RegisteredNumber(String number, String cafeId, String role) {
         this.number = number;
         this.cafeId = cafeId;

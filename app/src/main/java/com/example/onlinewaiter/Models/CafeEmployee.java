@@ -3,12 +3,11 @@ package com.example.onlinewaiter.Models;
 import java.util.Date;
 
 public class CafeEmployee {
-    String employeeId, employeeName, employeeLastname, employeeGmail, employeeGender;
-    Date employeeBirthDate;
+    String employeeId, employeeName, employeeLastname, employeeGmail, employeeGender, employeeBirthDate;
 
     public CafeEmployee() {}
 
-    public CafeEmployee(String employeeId, String employeeName, String employeeLastname, String employeeGmail, String employeeGender, Date employeeBirthDate) {
+    public CafeEmployee(String employeeId, String employeeName, String employeeLastname, String employeeGmail, String employeeGender, String employeeBirthDate) {
         this.employeeId = employeeId;
         this.employeeName = employeeName;
         this.employeeLastname = employeeLastname;
@@ -57,11 +56,11 @@ public class CafeEmployee {
         this.employeeGender = employeeGender;
     }
 
-    public Date getEmployeeBirthDate() {
+    public String getEmployeeBirthDate() {
         return employeeBirthDate;
     }
 
-    public void setEmployeeBirthDate(Date employeeBirthDate) {
+    public void setEmployeeBirthDate(String employeeBirthDate) {
         this.employeeBirthDate = employeeBirthDate;
     }
 }

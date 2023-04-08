@@ -74,13 +74,12 @@
             android:id="@+id/llOrderSecondColumn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/ivOrderDrinkImage"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/llOrderFirstColumn"
             app:layout_constraintEnd_toStartOf="@+id/vglOrderThirdSection"
             app:layout_constraintStart_toStartOf="@+id/vglOrderSecondSection"
-            app:layout_constraintTop_toTopOf="@+id/hglOrderDivider">
+            app:layout_constraintTop_toTopOf="@+id/llOrderFirstColumn">
 
             <TextView
                 android:id="@+id/tvOrderDrinkPrice"
