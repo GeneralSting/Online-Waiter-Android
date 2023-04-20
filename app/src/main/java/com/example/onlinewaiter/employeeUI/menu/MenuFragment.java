@@ -21,6 +21,7 @@ import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
@@ -48,7 +49,7 @@ public class MenuFragment extends Fragment {
     RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
     RecyclerView.LayoutManager rvCategoriesLayoutManager, rvDrinksLayoutManager;
 
-    //global variables/obejcts
+    //global variables/objects
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     Boolean emptyOrder;
@@ -61,6 +62,7 @@ public class MenuFragment extends Fragment {
     ValueEventListener menuCategoriesListener, menuCategoryDrinksListener;
     FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder> adapterDrinks;
+    FirebaseRefPaths firebaseRefPaths;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +71,7 @@ public class MenuFragment extends Fragment {
         View root = binding.getRoot();
 
         toastMessage = new ToastMessage(getActivity());
+        firebaseRefPaths = new FirebaseRefPaths(getActivity());
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         rvMenuCategories = (RecyclerView) binding.rvMenuCategories;
@@ -84,13 +87,13 @@ public class MenuFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        menuViewModel = new ViewModelProvider(Objects.requireNonNull(getActivity())).get(MenuViewModel.class);
-        orderViewModel = new ViewModelProvider(Objects.requireNonNull(getActivity())).get(OrderViewModel.class);
+        menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         insertCafeCategories();
     }
 
     private void insertCafeCategories() {
-        menuCategoriesRef = firebaseDatabase.getReference("cafes/" + menuViewModel.getCafeId().getValue() + "/cafeDrinksCategories");
+        menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
         Query query = menuCategoriesRef;
         FirebaseRecyclerOptions<CafeDrinksCategory> options = new FirebaseRecyclerOptions
                 .Builder<CafeDrinksCategory>()
@@ -99,8 +102,7 @@ public class MenuFragment extends Fragment {
         adapterCategories = new FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull CafeDrinksCategory model) {
-                menuCategoryRef = firebaseDatabase.getReference(
-                        "cafes/" + menuViewModel.getCafeId().getValue() + "/cafeDrinksCategories/" + getRef(position).getKey());
+                menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(getRef(position).getKey()));
                 menuCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
@@ -108,10 +110,10 @@ public class MenuFragment extends Fragment {
                             return;
                         }
                         String categoryImage, categoryName;
-                        categoryImage = Objects.requireNonNull(categorySnapshot.child("image").getValue()).toString();
-                        categoryName = Objects.requireNonNull(categorySnapshot.child("name").getValue()).toString();
+                        categoryImage = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryImage()).getValue()).toString();
+                        categoryName = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryName()).getValue()).toString();
                         holder.tvMenuCategory.setText(categoryName);
-                        Glide.with(Objects.requireNonNull(getActivity())).load(categoryImage).into(holder.ivMenuCategory);
+                        Glide.with(requireActivity()).load(categoryImage).into(holder.ivMenuCategory);
 
                         holder.setItemClickListener(new ItemClickListener() {
                             @Override
@@ -166,8 +168,7 @@ public class MenuFragment extends Fragment {
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
-        menuCategoryDrinksRef = firebaseDatabase.getReference(
-                "cafes/" + menuViewModel.getCafeId().getValue() + "/cafeDrinksCategories/" + clickedCategoryId + "/categoryDrinks");
+        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
                 .Builder<CategoryDrink>()
                 .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
@@ -175,9 +176,7 @@ public class MenuFragment extends Fragment {
         adapterDrinks = new FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuDrinkViewHolder holder, int position, @NonNull CategoryDrink model) {
-                menuCategoryDrinkRef = firebaseDatabase.getReference(
-                        "cafes/" + menuViewModel.getCafeId().getValue() + "/cafeDrinksCategories/" +
-                                clickedCategoryId + "/categoryDrinks/" + getRef(position).getKey());
+                menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(clickedCategoryId, getRef(position).getKey()));
                 menuCategoryDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {
@@ -186,13 +185,11 @@ public class MenuFragment extends Fragment {
                         }
                         CategoryDrink categoryDrink = categoryDrinkSnapshot.getValue(CategoryDrink.class);
                         holder.tvMenuDrinkName.setText(categoryDrink.getCategoryDrinkName());
-                        holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) +
-                                getResources().getString(R.string.country_currency));
+                        holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + getResources().getString(R.string.country_currency));
                         Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 
                         if(categoryDrink.getCategoryDrinkDescription().length() > 45) {
-                            holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription().substring(0, 42) +
-                                    getResources().getString(R.string.etc_dots));
+                            holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription().substring(0, 42) + getResources().getString(R.string.etc_dots));
                             holder.tvMenuDrinkDescription.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

@@ -58,6 +58,27 @@
     <string name="order_dialog_title">Narudžba za stol: </string>
 
 
+    <!--Employee activity cafe update fragment-->
+    <string name="cafe_update_menu_txt">Ažuriraj meni</string>
+    <string name="cafe_update_new_drink_txt">Dodaj novo piće</string>
+    <string name="cafe_update_tables_txt">Ažuriraj broj stolova</string>
+    <string name="cafe_update_drink_iv_description">Slika pića</string>
+    <string name="cafe_update_drink_ib_accept_description">Prihvati promjene</string>
+    <string name="cafe_update_drink_ib_remove_description">Obriši piće</string>
+    <string name="cafe_update_drink_no_change">Nema promjene za ažuriranje</string>
+    <string name="cafe_update_drink_remove_dialog_title">Obrisati piće:</string>
+    <string name="cafe_update_drink_remove_dialog_order_title">Obrisati piće (trenutno u narudžbi):</string>
+    <string name="cafe_update_drink_image_picker_camera">Kamera</string>
+    <string name="cafe_update_drink_image_picker_gallery">Galerija</string>
+    <string name="cafe_update_drink_image_uploading">Ažuriranje slike pića…</string>
+    <string name="cafe_update_drink_name_condition_failed">Ime pića 1–25 znakova</string>
+    <string name="cafe_update_drink_description_condition_failed">Opis pića 1–60 znakova</string>
+    <string name="cafe_update_drink_price_condition_failed">Cijena pića 0–999999.99</string>
+    <string name="cafe_update_drink_price_input_failed">Neispravn unos cijene</string>
+    <string name="cafe_update_drink_info_uploading">Ažuriranje informacija pića…</string>
+    <string name="cafe_update_drink_deletion">Brisanje pića…</string>
+
+
     <!--Employee Activity-->
 
 

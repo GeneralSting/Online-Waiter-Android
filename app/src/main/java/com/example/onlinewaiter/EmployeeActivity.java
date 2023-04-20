@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -86,6 +87,7 @@ public class EmployeeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
+        orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(this).get(CafeUpdateViewModel.class);
 
         Bundle bundle = getIntent().getExtras();
@@ -133,7 +135,7 @@ public class EmployeeActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         toastMessage = new ToastMessage(this);
-        firebaseRefPaths = new FirebaseRefPaths();
+        firebaseRefPaths = new FirebaseRefPaths(this);
         setSupportActionBar(binding.appBarEmployee.toolbar);
 
         //liveData for onBackPressed
@@ -148,7 +150,6 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int cartDrinksNumber = 0;
-                orderViewModel = new ViewModelProvider(EmployeeActivity.this).get(OrderViewModel.class);
                 HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
                 if (orderDrinks != null && !orderDrinks.isEmpty()) {
                     for (String key : orderDrinks.keySet()) {
@@ -181,6 +182,7 @@ public class EmployeeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         navigationView.getMenu().findItem(R.id.nav_employee_logout).setOnMenuItemClickListener(menuItem -> {
+            Log.d("PROBA123", "LOGOUT: ");
             logout();
             return true;
         });
@@ -189,19 +191,17 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void getCafeInfo(NavigationView navigationView) {
-        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefPathCafes() + employeeCafeId);
+        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Cafe cafe = snapshot.getValue(Cafe.class);
-                orderViewModel = new ViewModelProvider(EmployeeActivity.this).get(OrderViewModel.class);
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
                 tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNavHeader);
                 if (!cafe.getCafeName().equals("")) {
                     tvCafeName.setText(cafe.getCafeName());
                 }
-                cafeUpdateViewModel.setCafeTables(cafe.getCafeTables());
             }
 
             @Override
@@ -213,7 +213,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void setCategoriesListener() {
-        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefPathCafes() + employeeCafeId);
+        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -227,7 +227,6 @@ public class EmployeeActivity extends AppCompatActivity {
 
                         break;
                     case "cafeTables":
-                        orderViewModel = new ViewModelProvider(EmployeeActivity.this).get(OrderViewModel.class);
                         orderViewModel.setCafeTablesNumber(cafeSnapshot.getValue(Integer.class));
                         if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                                     builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + " " +
@@ -270,6 +269,38 @@ public class EmployeeActivity extends AppCompatActivity {
                 MenuViewModel menuViewModel = new ViewModelProvider(EmployeeActivity.this).get(MenuViewModel.class);
                 menuViewModel.setDisplayingCategories(true);
             }
+        }
+        else if(navigationView.getMenu().findItem(R.id.nav_employee_cafe_update).isChecked()) {
+            switch (cafeUpdateViewModel.getCafeUpdateRvDispalyed().getValue()) {
+                case 0:
+                    if(back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+                        super.onBackPressed();
+                        logout();
+                    }
+                    else {
+                        toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
+                    }
+                    back_pressed = System.currentTimeMillis();
+                    break;
+                case 1:
+                    cafeUpdateViewModel.setCafeUpdateDisplayChange(true);
+                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(0);
+                    break;
+                case 2:
+                    cafeUpdateViewModel.setCafeUpdateDisplayChange(true);
+                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
+                    break;
+            }
+        }
+        else {
+            if(back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+                super.onBackPressed();
+                logout();
+            }
+            else {
+                toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
+            }
+            back_pressed = System.currentTimeMillis();
         }
     }
 

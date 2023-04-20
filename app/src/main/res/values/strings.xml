@@ -57,6 +57,27 @@
     <string name="order_dialog_complete_btn">Make Order</string>
     <string name="order_dialog_title">Order for table: </string>
 
+
+    <!--Employee activity cafe update fragment-->
+    <string name="cafe_update_menu_txt">Update menu</string>
+    <string name="cafe_update_new_drink_txt">Add new drink</string>
+    <string name="cafe_update_tables_txt">Update tables</string>
+    <string name="cafe_update_drink_iv_description">Drink image</string>
+    <string name="cafe_update_drink_ib_accept_description">Accept changes</string>
+    <string name="cafe_update_drink_ib_remove_description">Delete drink</string>
+    <string name="cafe_update_drink_no_change">No change to update</string>
+    <string name="cafe_update_drink_remove_dialog_title">Delete drink:</string>
+    <string name="cafe_update_drink_remove_dialog_order_title">Delete drink (Drink in order):</string>
+    <string name="cafe_update_drink_image_picker_camera">Camera</string>
+    <string name="cafe_update_drink_image_picker_gallery">Gallery</string>
+    <string name="cafe_update_drink_image_uploading">Updating drink image…</string>
+    <string name="cafe_update_drink_name_condition_failed">Drink name 1–25 characters</string>
+    <string name="cafe_update_drink_description_condition_failed">Drink description 1–60 characters</string>
+    <string name="cafe_update_drink_price_condition_failed">Drink price 0–999999.99</string>
+    <string name="cafe_update_drink_price_input_failed">Incorrect price input</string>
+    <string name="cafe_update_drink_info_uploading">Updating drink information…</string>
+    <string name="cafe_update_drink_deletion">Deleting drink…</string>
+    
     <!--Employee activity-->
 
 

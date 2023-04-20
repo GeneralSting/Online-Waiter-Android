@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
 import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
+import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.SmsBroadcastReceiver;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -201,7 +202,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkNumber() {
-        DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference("registeredNumbers");
+        FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
+        DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefRegisteredNumbers());
         //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
         registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -259,7 +261,6 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            Log.d("PROBA123", e.toString());
             backPressEnabled = true;
             toastMessage.showToast(getResources().getString(R.string.act_login_verification_failed), 0);
             btnSendPhoneNumber.setEnabled(true);

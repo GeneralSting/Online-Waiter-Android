@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_employee_pending_orders"
-        android:name="com.example.onlinewaiter.employeeUI.cafeUpdate.CafeUpdateFragment"
+        android:name="com.example.onlinewaiter.employeeUI.pendingOrders.PendingOrdersFragment"
         android:label="@string/employee_nav_pending_orders_title"
         tools:layout="@layout/fragment_pending_orders" />
 

@@ -74,7 +74,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         View root = binding.getRoot();
 
         toastMessage = new ToastMessage(getActivity());
-        firebaseRefPaths = new FirebaseRefPaths();
+        firebaseRefPaths = new FirebaseRefPaths(getActivity());
 
         tvOrderBillAmount = (TextView)binding.tvOrderAmount;
         tvOrderBillTotalPrice = (TextView)binding.tvOrderTotalPrice;
@@ -109,8 +109,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void insertOrderDrinks() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefPathCafes() +
-                menuViewModel.getCafeId().getValue() + firebaseRefPaths.getRefPathCafeDrinksCategories());
+        cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
         cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot categoriesSnapshot) {
@@ -128,9 +127,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void checkDrinksByCategory(String drinksCategoryId) {
-        categoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefPathCafes() +
-                menuViewModel.getCafeId().getValue() + firebaseRefPaths.getRefPathCafeDrinksCategories() +
-                drinksCategoryId + firebaseRefPaths.getRefPathCategoryDrinks());
+        categoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(drinksCategoryId));
         categoryDrinksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot categoryDrinksSnapshot) {
@@ -260,8 +257,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void saveOrder(int tableNumber, boolean myOrder) {
-        newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefPathCafes() + menuViewModel.getCafeId().getValue() +
-                firebaseRefPaths.getRefPathCafeCurrentOrders());
+        newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeBills());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
         String currentDateTime = simpleDateFormat.format(new Date());
 
