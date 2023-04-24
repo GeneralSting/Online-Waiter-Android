@@ -7,12 +7,18 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeBillDrink;
+import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Services.OnAppKilledService;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -28,6 +34,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -47,7 +54,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 public class EmployeeActivity extends AppCompatActivity {
@@ -65,9 +75,12 @@ public class EmployeeActivity extends AppCompatActivity {
     FirebaseRefPaths firebaseRefPaths;
     NotificationManagerCompat notificationManagerCompat;
     NotificationCompat.Builder builder;
-    final String channelId = "ORDER_NOTIFICATION_CHANNEL";
     int notificationId = 0;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
+    private AppError appError;
 
+
+    //firebase
     private ChildEventListener cafeChildsEventListener;
     DatabaseReference cafeRef;
 
@@ -91,21 +104,23 @@ public class EmployeeActivity extends AppCompatActivity {
         cafeUpdateViewModel = new ViewModelProvider(this).get(CafeUpdateViewModel.class);
 
         Bundle bundle = getIntent().getExtras();
-        employeeCafeId = bundle.getString("cafeId");
-        phoneNumber = bundle.getString("phoneNumber");
+        employeeCafeId = bundle.getString(AppConstValue.constValue.BUNDLE_CAFE_ID);
+        phoneNumber = "pavo";
+        phoneNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
 
         //when app is closed in background
-        if ((Objects.equals(bundle.getString("cafeId"), "") || Objects.equals(bundle.get("phoneNumber"), ""))) {
+        if ((Objects.equals(AppConstValue.constValue.BUNDLE_CAFE_ID, AppConstValue.constValue.EMPTY_VALUE) ||
+                Objects.equals(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, AppConstValue.constValue.EMPTY_VALUE))) {
             logout();
         } else {
             menuViewModel.setCafeId(employeeCafeId);
-            menuViewModel.setPhoneNumber(bundle.getString("phoneNumber"));
+            menuViewModel.setPhoneNumber(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
         }
 
         PendingIntent notificationEmptyIntent =
                 PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
 
-        builder = new NotificationCompat.Builder(this, channelId)
+        builder = new NotificationCompat.Builder(this, AppConstValue.constValue.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.nav_header_img)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
@@ -120,11 +135,10 @@ public class EmployeeActivity extends AppCompatActivity {
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        CharSequence name = "notificationChannelForOrders";
-        String description = "Waiters recieve notification when their order is ready to serve";
         int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(channelId, name, importance);
-        channel.setDescription(description);
+        NotificationChannel channel = new NotificationChannel(
+                AppConstValue.constValue.NOTIFICATION_CHANNEL_ID, AppConstValue.constValue.NOTIFICATION_CHANNEL_NAME, importance);
+        channel.setDescription(AppConstValue.constValue.NOTIFICATION_CHANNEL_DESCRIPTION);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -182,7 +196,6 @@ public class EmployeeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         navigationView.getMenu().findItem(R.id.nav_employee_logout).setOnMenuItemClickListener(menuItem -> {
-            Log.d("PROBA123", "LOGOUT: ");
             logout();
             return true;
         });
@@ -199,7 +212,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
                 tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNavHeader);
-                if (!cafe.getCafeName().equals("")) {
+                if (!cafe.getCafeName().equals(AppConstValue.constValue.EMPTY_VALUE)) {
                     tvCafeName.setText(cafe.getCafeName());
                 }
             }
@@ -208,6 +221,16 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
                 serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
             }
         });
     }
@@ -222,22 +245,27 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                switch (Objects.requireNonNull(cafeSnapshot.getKey())) {
-                    case "cafeDrinksCategories":
+                if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                    removeCafeListener();
+                }
+                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
+                    checkDrinkDeletion();
 
-                        break;
-                    case "cafeTables":
-                        orderViewModel.setCafeTablesNumber(cafeSnapshot.getValue(Integer.class));
-                        if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                                    builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + " " +
-                                            cafeSnapshot.getValue(Integer.class));
-                            notificationManagerCompat.notify(notificationId++, builder.build());
-                        }
+                }
+                else if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeTablesChild())) {
+                    if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                        builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + " " +
+                                cafeSnapshot.getValue(Integer.class));
+                        notificationManagerCompat.notify(notificationId++, builder.build());
+                    }
+                }
+                else {
+
                 }
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            public void onChildRemoved(@NonNull DataSnapshot cafeSnapshot) {
 
             }
 
@@ -248,9 +276,70 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                serverAlertDialog.makeAlertDialog();
 
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
             }
         });
+    }
+
+    private void checkDrinkDeletion() {
+
+        HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+        final boolean[] deletedDrinkFounded = {false};
+        if(orderDrinks != null && !orderDrinks.isEmpty()) {
+            for(String key : orderDrinks.keySet()) {
+                if(!deletedDrinkFounded[0]) {
+                    DatabaseReference cafeDrinksCategoriesRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+                    cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
+                            boolean drinkDeleted = true;
+                            for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
+                                for(DataSnapshot drinkSnapshot: categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild()).getChildren()) {
+                                    if(Objects.equals(drinkSnapshot.getKey(), key)) {
+                                        drinkDeleted = false;
+                                    }
+                                }
+                            }
+                            if(drinkDeleted) {
+                                deletedDrinkFounded[0] = true;
+                                CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
+                                        getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.constValue.CHARACTER_SPACING +
+                                                orderDrinks.get(key).getDrinkName(),
+                                        getResources().getString(R.string.act_employee_drink_deleted_body),
+                                        getResources().getDrawable(R.drawable.dialog_danger));
+                                customAlertDialog.makeAlertDialog();
+
+                                HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
+                                updatedDrinksInOrder.remove(key);
+                                orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    private void removeCafeListener() {
+        if (cafeRef != null) {
+            cafeRef.removeEventListener(cafeChildsEventListener);
+        }
     }
 
     @Override
@@ -324,9 +413,8 @@ public class EmployeeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (cafeRef != null) {
-            cafeRef.removeEventListener(cafeChildsEventListener);
-        }
+        Log.d("PROBA123", "onDestroy: ");
+        removeCafeListener();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null) {
             FirebaseAuth.getInstance().signOut();

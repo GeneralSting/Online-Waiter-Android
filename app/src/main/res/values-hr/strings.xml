@@ -39,6 +39,8 @@
     <string name="act_employee_notification_body">Vaša narudžba je spremna za isporuku za stol:</string>
     <string name="act_employee_order_fab_txt">Broj pića u trenutnoj narudžbi:</string>
     <string name="act_employee_empty_order_fab_txt">Narudžba je prazna</string>
+    <string name="act_employee_drink_deleted_title">Obrisano piće:</string>
+    <string name="act_employee_drink_deleted_body">Piće se nalazilo u vašoj trenutnoj naruđžbi, obrisano je iz vaše naruđžbe</string>
 
     <!--Employee activity menu fragment-->
     <string name="menu_drink_name_placeholder">Naziv Pića</string>
@@ -73,10 +75,26 @@
     <string name="cafe_update_drink_image_uploading">Ažuriranje slike pića…</string>
     <string name="cafe_update_drink_name_condition_failed">Ime pića 1–25 znakova</string>
     <string name="cafe_update_drink_description_condition_failed">Opis pića 1–60 znakova</string>
-    <string name="cafe_update_drink_price_condition_failed">Cijena pića 0–999999.99</string>
+    <string name="cafe_update_drink_price_condition_failed">Cijena pića 0.00–999999.99</string>
     <string name="cafe_update_drink_price_input_failed">Neispravn unos cijene</string>
     <string name="cafe_update_drink_info_uploading">Ažuriranje informacija pića…</string>
     <string name="cafe_update_drink_deletion">Brisanje pića…</string>
+    <string name="cafe_update_new_drink_dialog_title">Novo piće u kategoriju:</string>
+    <string name="cafe_update_drink_price_incorrect">Netočan unos cijene</string>
+    <string name="cafe_update_new_drink_price_hint">2.00</string>
+    <string name="cafe_update_new_drink_successfully_added">Uspješno dodano novo piće</string>
+    <string name="cafe_update_drink_update_successful">Uspješno ažuriranje pića</string>
+    <string name="cafe_update_drink_info_update_successful">Meni informacije ažurirane</string>
+    <string name="cafe_update_drink_img_update_successful">Slika pića ažurirana</string>
+    <string name="cafe_update_new_drink_adding">Dodavanje novoh pića…</string>
+    <string name="cafe_update_current_tables">Trenutno stanje:</string>
+    <string name="cafe_update_new_tables_state">Novo stanje:</string>
+    <string name="cafe_update_new_tables_state_hint">15</string>
+    <string name="cafe_update_update_tables_title">Ažurirajte stanje stolova</string>
+    <string name="cafe_update_tables_state_zero">Broj stolova ne može biti 0</string>
+    <string name="cafe_update_table_state_empty">Unesite novo stanje stolova</string>
+    <string name="cafe_update_tables_state_updated">Stanje stolova ažurirano</string>
+    <string name="cafe_update_tables_state_same">Uneseno isto stanje, ažuriranje odbijeno</string>
 
 
     <!--Employee Activity-->

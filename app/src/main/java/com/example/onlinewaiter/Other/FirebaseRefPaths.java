@@ -27,23 +27,28 @@ public class FirebaseRefPaths {
     private final String refCafeCategoryImage = "/cafeCategoryImage/";
     private final String refSingleCafeCategoryImage = "cafeCategoryImage";
     private final String refCategoryDrinkImage = "/categoryDrinkImage";
-
+    private final String refCafeCategoriesChild = "cafeDrinksCategories";
+    private final String refCafeTablesChild = "cafeTables";
+    private final String refCafeTables = "/cafeTables/";
+    private final String refCategoryDrinksChild = "categoryDrinks";
 
     /*countriesNumber*/
 
 
 
     /*drinksCategories*/
-
+    private final String refDrinksCategories = "drinksCategories/";
 
 
     /*registeredNumbers*/
     private final String refRegisteredNumbers = "registeredNumbers/";
+    private final String refRegisteredNumberWaiter = "waiter";
+    private final String refRegisteredNumberOwner = "owner";
 
 
 
     /*firebase storage*/
-    private final String storageCategoryDrinksNoImage = "https://firebasestorage.googleapis.com/v0/b/online-waiter-db1c0.appspot.com/o/no_image.jpg?alt=media&token=c4d8f902-fb98-40ac-bd6a-a67db2dd2973";
+    private final String storageCategoryDrinksNoImage = "https://firebasestorage.googleapis.com/v0/b/online-waiter-db1c0.appspot.com/o/appImages%2Fstandard%2Fno_image.jpg?alt=media&token=34103017-4678-451f-acb2-6247186c6d07";
     private final String storageCategoryDrinks = "categoryDrinks/";
     private final String storageCategories = "categories/";
     private final String storageCountryFlags = "countryFlags/";
@@ -126,26 +131,58 @@ public class FirebaseRefPaths {
         return refSingleCafeCategoryDescription;
     }
 
+    public String getRefCafeCategoriesChild() {
+        return refCafeCategoriesChild;
+    }
+
+    public String getRefCafeTablesChild() {
+        return refCafeTablesChild;
+    }
 
     public String getRefCafeCurrentOrders() {
         return getRefCafe() + refCafeCurrentOrders;
     }
 
     public String getRefCafeBills() {
-        return refCafeBills;
+        return getRefCafes() + menuViewModel.getCafeId().getValue() + refCafeBills;
+    }
+
+    public String getRefCafeTables() {
+        return getRefCafe() + refCafeTables;
+    }
+
+    public String getRefCategoryDrinksChild() {
+        return refCategoryDrinksChild;
     }
 
     /*countriesNumber*/
 
 
     /*drinksCategories*/
+    public String getRefDrinksCategories() {
+        return refDrinksCategories;
+    }
 
+    public String getRefDrinksCategory(String drinksCategoryId) {
+        return getRefDrinksCategories() + drinksCategoryId;
+    }
+
+    public String getRefDrinksCategoriesChild(String drinksCategoryId) {
+        return drinksCategoryId;
+    }
 
     /*registeredNumbers*/
     public String getRefRegisteredNumbers() {
         return refRegisteredNumbers;
     }
 
+    public String getRefRegisteredNumberWaiter() {
+        return refRegisteredNumberWaiter;
+    }
+
+    public String getRefRegisteredNumberOwner() {
+        return refRegisteredNumberOwner;
+    }
     /*firebase storage*/
 
     public String getStorageCategoryDrinks() {

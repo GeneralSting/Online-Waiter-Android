@@ -37,6 +37,8 @@
     <string name="act_employee_notification_body">Your order is ready to be delivered to table number:</string>
     <string name="act_employee_order_fab_txt">Number of drinks in current order:</string>
     <string name="act_employee_empty_order_fab_txt">Order is empty</string>
+    <string name="act_employee_drink_deleted_title">Deleted drink:</string>
+    <string name="act_employee_drink_deleted_body">This drink was in your current order, it is deleted and removed from order</string>
 
 
 
@@ -73,11 +75,27 @@
     <string name="cafe_update_drink_image_uploading">Updating drink image…</string>
     <string name="cafe_update_drink_name_condition_failed">Drink name 1–25 characters</string>
     <string name="cafe_update_drink_description_condition_failed">Drink description 1–60 characters</string>
-    <string name="cafe_update_drink_price_condition_failed">Drink price 0–999999.99</string>
+    <string name="cafe_update_drink_price_condition_failed">Drink price 0.00–999999.99</string>
     <string name="cafe_update_drink_price_input_failed">Incorrect price input</string>
     <string name="cafe_update_drink_info_uploading">Updating drink information…</string>
     <string name="cafe_update_drink_deletion">Deleting drink…</string>
-    
+    <string name="cafe_update_new_drink_dialog_title">New drink for category:</string>
+    <string name="cafe_update_drink_price_incorrect">Incorrect price input</string>
+    <string name="cafe_update_new_drink_price_hint">2.00</string>
+    <string name="cafe_update_new_drink_successfully_added">Successfully added new drink</string>
+    <string name="cafe_update_drink_update_successful">Drink update successful</string>
+    <string name="cafe_update_drink_info_update_successful">Menu informations updated successfully</string>
+    <string name="cafe_update_drink_img_update_successful">Drink image update successful</string>
+    <string name="cafe_update_new_drink_adding">Adding new drink…</string>
+    <string name="cafe_update_current_tables">Current tables:</string>
+    <string name="cafe_update_new_tables_state">New state:</string>
+    <string name="cafe_update_new_tables_state_hint">15</string>
+    <string name="cafe_update_update_tables_title">Update cafe tables state</string>
+    <string name="cafe_update_tables_state_zero">Table number cannot be 0</string>
+    <string name="cafe_update_table_state_empty">Enter new tables state</string>
+    <string name="cafe_update_tables_state_updated">Tables state updated</string>
+    <string name="cafe_update_tables_state_same">Entered current state, nothing to update</string>
+
     <!--Employee activity-->
 
 

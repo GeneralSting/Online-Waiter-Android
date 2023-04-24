@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,12 +14,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,6 +45,8 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Models.DrinksCategory;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -78,14 +84,11 @@ import java.util.Objects;
 
 public class CafeUpdateFragment extends Fragment {
     //permissions
-    private static final int CAMERA_PERMISSION_CODE = 101;
-    private static final int CAMERA_REQUEST_CODE = 102;
-    private static final int GALLERY_REQUEST_CODE = 105;
+
 
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
-    boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkSecondConfirm, newDrinkImageSelected,
-            firstDrinkNewCategory;
+    boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkSecondConfirm, newDrinkImageSelected, addingNewDrink;
     ToastMessage toastMessage;
     OrderViewModel orderViewModel;
     MenuViewModel menuViewModel;
@@ -96,7 +99,7 @@ public class CafeUpdateFragment extends Fragment {
 
     //fragment views
     LinearLayoutCompat linearLayoutContainer;
-    Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnUpdateDialogAccept;
+    Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnNewDrinkDialogAccept;
     TextView tvCafeUpdateNewDrink, tvCafeUpdateMenu, tvCafeUpdateTables;
     ImageView ivDrinkGlobalContainer;
     RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
@@ -105,9 +108,11 @@ public class CafeUpdateFragment extends Fragment {
     //firebase
     private FirebaseRefPaths firebaseRefPaths;
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference menuCategoriesRef, menuCategoryRef, menuCategoryDrinksRef, menuCategoryDrinkRef, removeDrinkRef, deleteCafeCategoryRef, categoryDrinkRef, appErrorRef;
+    private DatabaseReference menuCategoriesRef, menuCategoryRef, menuCategoryDrinksRef, menuCategoryDrinkRef,
+            removeDrinkRef, deleteCafeCategoryRef, categoryDrinkRef, drinksCategoriesRef, drinksCategoryRef, cafeTablesRef;
     private FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     private FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder> adapterCategoryDrinks;
+    private FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder> adapterDrinksCategory;
     StorageReference storageRef, storageDeleteImageRef;
     private final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     private AppError appError;
@@ -124,8 +129,9 @@ public class CafeUpdateFragment extends Fragment {
         cafeUpdateViewModel = new ViewModelProvider(requireActivity()).get(CafeUpdateViewModel.class);
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
-        appErrorRef = firebaseDatabase.getReference(firebaseRefPaths.getRefAppErrors());
+        progressDialog = new ProgressDialog(getActivity());
         decimalFormat = new DecimalFormat("0.00");
+        addingNewDrink = false;
 
         linearLayoutContainer = binding.llCafeUpdateContainer;
         btnCafeUpdateMenu = binding.btnCafeUpdateMenu;
@@ -161,17 +167,18 @@ public class CafeUpdateFragment extends Fragment {
         cafeUpdateViewModel.getCafeUpdateRvDispalyed().observe(requireActivity(), viewDisplayedObserver);
         cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
         cafeUpdateViewModel.setCafeUpdateRvDisplayed(0);
-        setBtnActions();
+        setBtnsAction();
 
         return root;
     }
 
-    private void setBtnActions() {
+    private void setBtnsAction() {
         btnCafeUpdateMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
                 cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
+                addingNewDrink = false;
                 insertCafeCategories();
                 tvCafeUpdateMenu.setVisibility(View.GONE);
                 linearLayoutContainer.setVisibility(View.GONE);
@@ -193,6 +200,7 @@ public class CafeUpdateFragment extends Fragment {
                 cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
                 cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
                 linearLayoutContainer.setVisibility(View.GONE);
+                addingNewDrink = true;
                 insertAllCategories();
                 tvCafeUpdateNewDrink.setVisibility(View.GONE);
                 rvCafeUpdateCategories.setVisibility(View.VISIBLE);
@@ -241,7 +249,6 @@ public class CafeUpdateFragment extends Fragment {
                         holder.setItemClickListener(new ItemClickListener() {
                             @Override
                             public void onClick(View view, int position, boolean isLongClick) {
-                                rvCafeUpdateCategories.setVisibility(View.GONE);
                                 insertCategoryDrinks(getRef(position).getKey());
                             }
                         });
@@ -249,18 +256,18 @@ public class CafeUpdateFragment extends Fragment {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        closeProgressDialog();
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
                         String currentDateTime = simpleDateFormat.format(new Date());
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.IMAGE_UPLOAD_TASK_FAILED,
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
                                 currentDateTime
                         );
-
-                        String dbKey = appErrorRef.push().getKey();
-                        appErrorRef.child(dbKey).setValue(appError);
+                        appError.sendError(appError);
                     }
                 });
             }
@@ -329,6 +336,7 @@ public class CafeUpdateFragment extends Fragment {
                                     priceToTextConverter(categoryDrink.getCategoryDrinkPrice()).equals(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()))) {
                                         if(!imageSame) {
                                             updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
+                                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
                                         }
                                         else {
                                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_no_change), 0);
@@ -339,11 +347,13 @@ public class CafeUpdateFragment extends Fragment {
                                             if(updateDrinkCheck(updatedCategoryDrink)) {
                                                 updateDrinkInfo(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink);
                                                 updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
+                                                toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_update_successful), 0);
                                             }
                                         }
                                         else {
                                             if(updateDrinkCheck(updatedCategoryDrink)) {
                                                 updateDrinkInfo(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink);
+                                                toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_info_update_successful), 0);
                                             }
                                         }
                                     }
@@ -361,43 +371,25 @@ public class CafeUpdateFragment extends Fragment {
                                 @Override
                                 public void onClick(View view) {
                                     ivDrinkGlobalContainer = holder.ivUpdateDrink;
-                                    View imagePickerView = getLayoutInflater().inflate(R.layout.dialog_bottom_image_picker, null);
-                                    final BottomSheetDialog dialogImagePicker = new BottomSheetDialog(getActivity());
-                                    dialogImagePicker.setContentView(imagePickerView);
-                                    ImageView ivDrinkCamera = imagePickerView.findViewById(R.id.ivDrinkImageCamera);
-                                    ImageView ivDrinkGallery = imagePickerView.findViewById(R.id.ivDrinkImageGallery);
-
-                                    Glide.with(imagePickerView)
-                                            .load(getResources().getDrawable(R.drawable.cafe_update_drink_camera))
-                                            .transform(new RoundedCorners(350))
-                                            .into(ivDrinkCamera);
-
-                                    Glide.with(imagePickerView)
-                                            .load(getResources().getDrawable(R.drawable.cafe_update_drink_gallery))
-                                            .transform(new RoundedCorners(350))
-                                            .into(ivDrinkGallery);
-
-                                    dialogImagePicker.show();
-                                    ivDrinkCamera.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            askCameraPermission();
-                                        }
-                                    });
-                                    ivDrinkGallery.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            openDeviceGallery();
-                                        }
-                                    });
+                                    bottomImagePikcer();
                                 }
                             });
                         }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
+                        closeProgressDialog();
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
                     }
                 });
             }
@@ -414,17 +406,404 @@ public class CafeUpdateFragment extends Fragment {
         adapterCategoryDrinks.startListening();
     }
 
-    private void insertAllCategories() {
+    private void bottomImagePikcer() {
+        View imagePickerView = getLayoutInflater().inflate(R.layout.dialog_bottom_image_picker, null);
+        final BottomSheetDialog dialogImagePicker = new BottomSheetDialog(getActivity());
+        dialogImagePicker.setContentView(imagePickerView);
+        ImageView ivDrinkCamera = imagePickerView.findViewById(R.id.ivDrinkImageCamera);
+        ImageView ivDrinkGallery = imagePickerView.findViewById(R.id.ivDrinkImageGallery);
 
+        Glide.with(imagePickerView)
+                .load(getResources().getDrawable(R.drawable.cafe_update_drink_camera))
+                .transform(new RoundedCorners(350))
+                .into(ivDrinkCamera);
+
+        Glide.with(imagePickerView)
+                .load(getResources().getDrawable(R.drawable.cafe_update_drink_gallery))
+                .transform(new RoundedCorners(350))
+                .into(ivDrinkGallery);
+
+        dialogImagePicker.show();
+        ivDrinkCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askCameraPermission();
+            }
+        });
+        ivDrinkGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDeviceGallery();
+            }
+        });
     }
-    private void updateTables() {
 
+    private void insertAllCategories() {
+        drinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefDrinksCategories());
+        Query query = drinksCategoriesRef;
+        FirebaseRecyclerOptions<DrinksCategory> drinksCategoryOptions = new FirebaseRecyclerOptions.Builder<DrinksCategory>()
+                .setQuery(query, DrinksCategory.class)
+                .build();
+
+        FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder> adapterDrinksCategory =
+                new FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder>(drinksCategoryOptions) {
+            @Override
+            protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull DrinksCategory model) {
+                drinksCategoriesRef.child(firebaseRefPaths.getRefDrinksCategoriesChild(getRef(position).getKey())).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {
+                        if(!categoryDrinkSnapshot.exists()) {
+                            return;
+                        }
+                        DrinksCategory drinksCategory = categoryDrinkSnapshot.getValue(DrinksCategory.class);
+                        holder.tvMenuCategory.setText(drinksCategory.getCategoryName());
+                        Glide.with(getActivity()).load(drinksCategory.getCategoryImage()).into(holder.ivMenuCategory);
+
+                        holder.setItemClickListener(new ItemClickListener() {
+                            @Override
+                            public void onClick(View view, int position, boolean isLongClick) {
+                                createNewDrink(getRef(position).getKey());
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        closeProgressDialog();
+                        ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                        serverAlertDialog.makeAlertDialog();
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
+                    }
+                });
+            }
+
+            @NonNull
+            @Override
+            public MenuCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.menu_category_item, parent, false);
+                return new MenuCategoryViewHolder(view);
+            }
+        };
+        rvCafeUpdateCategories.setAdapter(adapterDrinksCategory);
+        adapterDrinksCategory.startListening();
+    }
+
+    private void createNewDrink(String categoryId) {
+        checkNewDrinkName = checkNewDrinkDescription = checkNewDrinkPrice = false;
+        newDrinkSecondConfirm = newDrinkImageSelected = true;
+
+        View newDrinkView = getLayoutInflater().inflate(R.layout.dialog_new_drink, null);
+        EditText etNewDrinkName = newDrinkView.findViewById(R.id.etNewDrinkName);
+        EditText etNewDrinkDescription = newDrinkView.findViewById(R.id.etNewDrinkDescription);
+        EditText etNewDrinkPrice = newDrinkView.findViewById(R.id.etNewDrinkPrice);
+        etNewDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
+        Button btnNewDrinkDialogCancel = newDrinkView.findViewById(R.id.newDrinkDialogCancel);
+
+        ivDrinkGlobalContainer = newDrinkView.findViewById(R.id.ivNewDrink);
+        btnNewDrinkDialogAccept = newDrinkView.findViewById(R.id.newDrinkDialogAccept);
+
+        final AlertDialog newDrinkDialog = new AlertDialog.Builder(getActivity())
+                .setView(newDrinkView)
+                .setTitle(getResources().getString(R.string.cafe_update_new_drink_dialog_title) + " " + categoryId)
+                .create();
+        newDrinkDialog.setCanceledOnTouchOutside(false);
+        newDrinkDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                etNewDrinkName.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        newDrinkSecondConfirm = true;
+                        btnNewDrinkDialogAccept.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        if(etNewDrinkName.getText().length() >= 25) {
+                            checkNewDrinkName = true;
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_name_condition_failed), 0);
+                            etNewDrinkName.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red_negative)));
+                        }
+                        else if(checkNewDrinkName) {
+                            etNewDrinkName.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.tumbleweed)));
+                            checkNewDrinkName = false;
+                        }
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                etNewDrinkDescription.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        newDrinkSecondConfirm = true;
+                        btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        if(etNewDrinkDescription.getText().length() >= 60) {
+                            checkNewDrinkDescription = true;
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_description_condition_failed), 0);
+                            etNewDrinkDescription.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red_negative)));
+                        }
+                        else if(checkNewDrinkDescription) {
+                            etNewDrinkDescription.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.tumbleweed)));
+                            checkNewDrinkDescription = false;
+                        }
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                etNewDrinkPrice.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        newDrinkSecondConfirm = true;
+                        btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        if(etNewDrinkPrice.getText().length() == 2 &&
+                                etNewDrinkPrice.getText().charAt(0) == '0' &&
+                                etNewDrinkPrice.getText().charAt(1) != '.' ||
+                                etNewDrinkPrice.getText().length() == 1 &&
+                                        etNewDrinkPrice.getText().charAt(0) == '.') {
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_incorrect), 0);
+                            etNewDrinkPrice.setText("");
+                        }
+                        if(etNewDrinkPrice.getText().length() >= 9) {
+                            checkNewDrinkPrice = true;
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_condition_failed), 0);
+                            etNewDrinkPrice.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red_negative)));
+                        }
+                        else if(checkNewDrinkPrice) {
+                            etNewDrinkPrice.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.tumbleweed)));
+                            checkNewDrinkPrice = false;
+                        }
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                ivDrinkGlobalContainer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bottomImagePikcer();
+                    }
+                });
+
+                btnNewDrinkDialogAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0) {
+                            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+                            double drinkPrice = Double.parseDouble(etNewDrinkPrice.getText().toString());
+                            if(decimalFormat.format(drinkPrice).toString().equals(",00")) {
+                                if(!newDrinkSecondConfirm) {
+                                    newDrinkSecondConfirm = true;
+                                }
+                                else {
+                                    newDrinkSecondConfirm = false;
+                                    btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_danger_16, 0, 0, 0);
+                                }
+                            }
+                            else if(ivDrinkGlobalContainer.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.item_no_image).getConstantState()) {
+                                if(!newDrinkSecondConfirm) {
+                                    newDrinkSecondConfirm = true;
+                                    newDrinkImageSelected = false;
+                                }
+                                else {
+                                    newDrinkSecondConfirm = false;
+                                    btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_warning_16, 0, 0, 0);
+                                }
+                            }
+                            if(newDrinkSecondConfirm) {
+                                newDrinkDialog.dismiss();
+                                //cafeDrinkImage is empty string, image will be added after
+                                //if we chose not to pick image, drink will get default no_image
+                                CategoryDrink newCategoryDrink = new CategoryDrink(
+                                        etNewDrinkDescription.getText().toString(),
+                                        "",
+                                        etNewDrinkName.getText().toString(),
+                                        Float.parseFloat(etNewDrinkPrice.getText().toString()));
+                                if(newDrinkImageSelected) {
+                                    uploadNewDrinkImage(categoryId, newCategoryDrink);
+                                }
+                                else {
+                                    checkNewCafeCategory(categoryId, newCategoryDrink, newDrinkImageSelected);
+                                }
+                            }
+                        }
+                    }
+                });
+                btnNewDrinkDialogCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        newDrinkDialog.dismiss();
+                    }
+                });
+            }
+        });
+        newDrinkDialog.show();
+    }
+
+    private void uploadNewDrinkImage(String categoryId, CategoryDrink newCategoryDrink) {
+        setProgressDialog(getResources().getString(R.string.cafe_update_drink_image_uploading));
+        Date currentDate = new Date();
+        String imageName = menuViewModel.getCafeId().getValue() + "_" + newCategoryDrink.getCategoryDrinkName() + "_" + simpleDateFormat.format(currentDate);
+        Bitmap bitmap = ((BitmapDrawable) ivDrinkGlobalContainer.getDrawable()).getBitmap();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteData = byteArrayOutputStream.toByteArray();
+        storageRef = firebaseStorage.getReference(firebaseRefPaths.getStorageCategoryDrinks() + imageName);
+        UploadTask uploadTask = storageRef.putBytes(byteData);
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Task<Uri> downloadImageUri = taskSnapshot.getStorage().getDownloadUrl();
+                downloadImageUri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        closeProgressDialog();
+                        newCategoryDrink.setCategoryDrinkImage(downloadImageUri.getResult().toString());
+                        checkNewCafeCategory(categoryId, newCategoryDrink, true);
+                    }
+                });
+                downloadImageUri.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        closeProgressDialog();
+                        ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                        serverAlertDialog.makeAlertDialog();
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                e.toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
+                    }
+                });
+            }
+        });
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                closeProgressDialog();
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.IMAGE_UPLOAD_TASK_FAILED,
+                        e.toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void checkNewCafeCategory(String categoryId, CategoryDrink newCategoryDrink, boolean hasImage) {
+        menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(categoryId));
+        menuCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot cafeCategorySnapshot) {
+                if(cafeCategorySnapshot.exists()) {
+                    addNewDrink(categoryId, newCategoryDrink, hasImage);
+                }
+                else {
+                    drinksCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefDrinksCategory(categoryId));
+                    drinksCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot drinksCategorySnapshot) {
+                            DrinksCategory drinksCategory = drinksCategorySnapshot.getValue(DrinksCategory.class);
+                            CafeDrinksCategory newCafeDrinksCategory = new CafeDrinksCategory(
+                                drinksCategory.getCategoryDescription().toString(),
+                                drinksCategory.getCategoryImage().toString(),
+                                drinksCategory.getCategoryName().toString(),
+                                null
+                            );
+                            menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+                            menuCategoriesRef.child(categoryId).setValue(newCafeDrinksCategory);
+
+                            addNewDrink(categoryId, newCategoryDrink, hasImage);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            closeProgressDialog();
+                            ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                            serverAlertDialog.makeAlertDialog();
+
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    menuViewModel.getCafeId().getValue(),
+                                    menuViewModel.getPhoneNumber().getValue(),
+                                    AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                    error.getMessage().toString(),
+                                    currentDateTime
+                            );
+                            appError.sendError(appError);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                closeProgressDialog();
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void addNewDrink(String categoryId, CategoryDrink newCategoryDrink, boolean hasImage) {
+        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(categoryId));
+        setProgressDialog(getResources().getString(R.string.cafe_update_new_drink_adding));
+        if(!hasImage) {
+            newCategoryDrink.setCategoryDrinkImage(firebaseRefPaths.getStorageCategoryDrinksNoImage());
+        }
+        String dbKey = menuCategoryDrinksRef.push().getKey();
+        menuCategoryDrinksRef.child(dbKey).setValue(newCategoryDrink);
+        closeProgressDialog();
+        toastMessage.showToast(getResources().getString(R.string.cafe_update_new_drink_successfully_added), 0);
     }
 
     private void updateDrinkImage(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink, ImageView ivUpdatedDrink) {
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(getResources().getString(R.string.cafe_update_drink_image_uploading));
-        progressDialog.show();
+        setProgressDialog(getResources().getString(R.string.cafe_update_drink_image_uploading));
         Date currentDate = new Date();
         String imageName = menuViewModel.getCafeId().getValue() + "_" + updatedCategoryDrink.getCategoryDrinkName() + "_" + simpleDateFormat.format(currentDate);
         Bitmap bitmap = ((BitmapDrawable) ivUpdatedDrink.getDrawable()).getBitmap();
@@ -448,14 +827,13 @@ public class CafeUpdateFragment extends Fragment {
                             storageDeleteImageRef.delete();
                         }
                         insertCategoryDrinks(cafeCategoryId);
-                        if(progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
+                        closeProgressDialog();
                     }
                 });
                 downloadImageUri.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        closeProgressDialog();
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
                         String currentDateTime = simpleDateFormat.format(new Date());
@@ -463,11 +841,10 @@ public class CafeUpdateFragment extends Fragment {
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
                                 AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                e.toString(),
                                 currentDateTime
                         );
-
-                        String dbKey = appErrorRef.push().getKey();
-                        appErrorRef.child(dbKey).setValue(appError);
+                        appError.sendError(appError);
                     }
                 });
             }
@@ -475,6 +852,7 @@ public class CafeUpdateFragment extends Fragment {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                closeProgressDialog();
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                 serverAlertDialog.makeAlertDialog();
 
@@ -483,10 +861,10 @@ public class CafeUpdateFragment extends Fragment {
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
                         AppErrorMessages.Messages.IMAGE_UPLOAD_TASK_FAILED,
+                        e.toString(),
                         currentDateTime
                 );
-                String dbKey = appErrorRef.push().getKey();
-                appErrorRef.child(dbKey).setValue(appError);
+                appError.sendError(appError);
             }
         });
     }
@@ -518,14 +896,11 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void updateDrinkInfo(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink) {
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setTitle(getResources().getString(R.string.cafe_update_drink_info_uploading));
+        setProgressDialog(getResources().getString(R.string.cafe_update_drink_info_uploading));
         categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
         categoryDrinkRef.setValue(updatedCategoryDrink);
         insertCategoryDrinks(cafeCategoryId);
-        if(progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
+        closeProgressDialog();
     }
 
     private void removeDrink(String cafeCategoryId, String categoryDrinkId, CategoryDrink categoryDrink) {
@@ -555,8 +930,19 @@ public class CafeUpdateFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                closeProgressDialog();
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                 serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
             }
         });
 
@@ -597,8 +983,7 @@ public class CafeUpdateFragment extends Fragment {
                 btnRemoveDrinkAccept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        progressDialog = new ProgressDialog(getActivity());
-                        progressDialog.setTitle(getResources().getString(R.string.cafe_update_drink_deletion));
+                        setProgressDialog(getResources().getString(R.string.cafe_update_drink_deletion));
                         if(finalDrinkInCurrentOrder) {
                             orderDrinks.remove(categoryDrinkId);
                             orderViewModel.setDrinksInOrder(orderDrinks);
@@ -612,10 +997,7 @@ public class CafeUpdateFragment extends Fragment {
                         }
                         checkDeletedDrinkCategory(cafeCategoryId);
                         dialogRemoveDrink.dismiss();
-                        insertCategoryDrinks(categoryDrinkId);
-                        if(progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
+                        closeProgressDialog();
                     }
                 });
             }
@@ -634,10 +1016,109 @@ public class CafeUpdateFragment extends Fragment {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                closeProgressDialog();
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                 serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
             }
         });
+    }
+
+    private void updateTables() {
+        View tablesStateView = getLayoutInflater().inflate(R.layout.dialog_update_tables, null);
+        EditText etCurrentTablesState = (EditText) tablesStateView.findViewById(R.id.etTablesCurrentState);
+        EditText etNewTablesState = (EditText) tablesStateView.findViewById(R.id.etTablesNewState);
+        Button btnUpdateTablesCancel = (Button) tablesStateView.findViewById(R.id.btnUpdateTablesCancel);
+        Button btnUpdateTablesAccept = (Button) tablesStateView.findViewById(R.id.btnUpdateTablessAccept);
+
+        etCurrentTablesState.setText(String.valueOf(orderViewModel.getCafeTablesNumber().getValue()));
+        final AlertDialog tablesUpdateDialog = new AlertDialog.Builder(getActivity())
+                .setView(tablesStateView)
+                .setTitle(getResources().getString(R.string.cafe_update_update_tables_title))
+                .create();
+        tablesUpdateDialog.setCanceledOnTouchOutside(false);
+        tablesUpdateDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                etNewTablesState.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        if(editable.length() == 1 && editable.toString().equals(AppConstValue.constValue.ZERO_VALUE)) {
+                            etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_zero), 0);
+                        }
+                    }
+                });
+                btnUpdateTablesAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(etNewTablesState.length() > 0) {
+                            if(Integer.parseInt(String.valueOf(etNewTablesState.getText())) == orderViewModel.getCafeTablesNumber().getValue()) {
+                                toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_same), 0);
+                            }
+                            else {
+                                if(Integer.parseInt(String.valueOf(etNewTablesState.getText())) > 0) {
+                                    Integer cafeTables = Integer.parseInt(String.valueOf(etNewTablesState.getText()));
+                                    cafeTablesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeTables());
+                                    cafeTablesRef.setValue(cafeTables);
+
+                                    etCurrentTablesState.setText(String.valueOf(cafeTables));
+                                    etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
+                                    etNewTablesState.setHint(AppConstValue.constValue.EMPTY_VALUE);
+                                    orderViewModel.setCafeTablesNumber(cafeTables);
+                                    toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_updated), 0);
+                                }
+                                else {
+                                    etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
+                                    toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_zero), 0);
+                                }
+                            }
+                        }
+                        else {
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_table_state_empty), 0);
+                        }
+                    }
+                });
+                btnUpdateTablesCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        tablesUpdateDialog.dismiss();
+                    }
+                });
+            }
+        });
+        tablesUpdateDialog.show();
+    }
+
+    private void setProgressDialog(String title) {
+        progressDialog.setTitle(title);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if(progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     private boolean areImagesSame(ImageView firstImage, ImageView secondImage) {
@@ -655,7 +1136,7 @@ public class CafeUpdateFragment extends Fragment {
 
     private void askCameraPermission() {
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, AppConstValue.constValue.CAMERA_PERMISSION_CODE);
         }
         else {
             openDeviceCamera();
@@ -664,17 +1145,17 @@ public class CafeUpdateFragment extends Fragment {
 
     private void openDeviceCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, CAMERA_REQUEST_CODE);
+        startActivityForResult(cameraIntent, AppConstValue.constValue.CAMERA_REQUEST_CODE);
     }
 
     private void openDeviceGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE);
+        startActivityForResult(galleryIntent, AppConstValue.constValue.GALLERY_REQUEST_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == CAMERA_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if(requestCode == AppConstValue.constValue.CAMERA_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openDeviceCamera();
         }
     }
@@ -683,13 +1164,17 @@ public class CafeUpdateFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        newDrinkSecondConfirm = true;
+        if(addingNewDrink)
+            btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+
         switch (requestCode) {
-            case GALLERY_REQUEST_CODE:
+            case AppConstValue.constValue.GALLERY_REQUEST_CODE:
                 if(data != null && data.getData() != null) {
                     ivDrinkGlobalContainer.setImageURI(data.getData());
                 }
                 break;
-            case CAMERA_REQUEST_CODE:
+            case AppConstValue.constValue.CAMERA_REQUEST_CODE:
                 if(data != null) {
                     ivDrinkGlobalContainer.setImageBitmap((Bitmap) data.getExtras().get("data"));
                 }
@@ -698,22 +1183,17 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
         if(Objects.nonNull(adapterCategories)) {
             adapterCategories.stopListening();
-            Log.d("PROBA123", "onStop: ");
         }
         if(Objects.nonNull(adapterCategoryDrinks)) {
             adapterCategoryDrinks.stopListening();
-            Log.d("PROBA123", "onStop: 2");
+        }
+        if(Objects.nonNull(adapterDrinksCategory)) {
+            adapterDrinksCategory.stopListening();
         }
     }
 }

@@ -19,6 +19,7 @@ import com.example.onlinewaiter.Adapter.AppPagerAdapter;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.AppInfo;
 import com.example.onlinewaiter.Models.ViewPagerItem;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
@@ -47,10 +48,9 @@ public class MainActivity extends AppCompatActivity {
     ToastMessage toastMessage;
 
     //premissions codes
-    final int MULTIPLE_PERMISSIONS = 124;
 
     //firebase
-    String appInfo = "appInfo";
+    FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
     DatabaseReference appInfoRef;
 
     @Override
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!missingPermissions.isEmpty()) {
-            ActivityCompat.requestPermissions(this, missingPermissions.toArray(new String[0]), MULTIPLE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, missingPermissions.toArray(new String[0]), AppConstValue.constValue.MULTIPLE_PERMISSIONS);
             return false;
         }
         return true;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         //global variables/objects
-        intent.putExtra("phoneNumber", telephonyManager.getLine1Number().toString());
+        intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number().toString());
         startActivity(intent);
     }
 
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void insertMainPager() {
-        appInfoRef = FirebaseDatabase.getInstance().getReference(appInfo);
+        appInfoRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppInfo());
         appInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -216,8 +216,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         //user did not manaully logged out,
         if(currentUser != null) {
-            FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
-            DatabaseReference appErrors = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppErrors());
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(
@@ -226,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
                     AppErrorMessages.Messages.USER_NOT_LOGGED_OUT,
                     currentDateTime
             );
-            String dbKey = appErrors.push().getKey();
-            appErrors.child(dbKey).setValue(appError);
+            appError.sendError(appError);
+
             FirebaseAuth mAuth;
             mAuth = FirebaseAuth.getInstance();
             mAuth.signOut();

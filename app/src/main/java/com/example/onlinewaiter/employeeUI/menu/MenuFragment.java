@@ -18,9 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
+import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -40,7 +42,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Objects;
 
 public class MenuFragment extends Fragment {
@@ -50,6 +55,7 @@ public class MenuFragment extends Fragment {
     RecyclerView.LayoutManager rvCategoriesLayoutManager, rvDrinksLayoutManager;
 
     //global variables/objects
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     Boolean emptyOrder;
@@ -63,6 +69,7 @@ public class MenuFragment extends Fragment {
     FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder> adapterDrinks;
     FirebaseRefPaths firebaseRefPaths;
+    private AppError appError;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -129,6 +136,15 @@ public class MenuFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError error) {
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
                     }
                 });
             }
@@ -285,6 +301,15 @@ public class MenuFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError error) {
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
                     }
                 });
             }

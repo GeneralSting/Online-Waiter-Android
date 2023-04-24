@@ -6,7 +6,7 @@ public class AppErrorMessages {
         public static final String USER_NOT_FOUND = "";
         public static final String CAFE_NOT_FOUND = "";
         public static final String DOWNLOAD_IMAGE_URI_FAILED = "Failed to download image uri from firebase storage, unable to check weather image needs to be deleted from storage";
-        public static final String IMAGE_UPLOAD_TASK_FAILED = "Failed task for updating drink image, unable to storage updated drink image";
+        public static final String IMAGE_UPLOAD_TASK_FAILED = "Failed task for updating drink image";
         public static final String RETRIEVING_FIREBASE_DATA_FAILED = "Failed to get data for firebase recycler adapter";
     }
 }

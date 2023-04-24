@@ -18,6 +18,7 @@
     <color name="tuscany">#B19892</color>
     <color name="drink_card_view">#ED92ABB1</color>
     <color name="cart_drink_card_view">#EDCFAF96</color>
+    <color name="proba">#f0e0d3</color>
 
     <!--Other standard colors-->
     <color name="black">#000</color>

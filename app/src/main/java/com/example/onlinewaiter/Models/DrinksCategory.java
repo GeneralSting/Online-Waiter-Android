@@ -1,21 +1,14 @@
 package com.example.onlinewaiter.Models;
 
 public class DrinksCategory {
-    String categoryName, categoryDescription, cateogryImage, categoryId;
+    String categoryName, categoryDescription, categoryImage;
 
     public DrinksCategory() {}
 
-    public DrinksCategory(String categoryName, String categoryDescription, String cateogryImage) {
+    public DrinksCategory(String categoryName, String categoryDescription, String categoryImage) {
         this.categoryName = categoryName;
         this.categoryDescription = categoryDescription;
-        this.cateogryImage = cateogryImage;
-    }
-
-    public DrinksCategory(String categoryName, String categoryDescription, String cateogryImage, String categoryId) {
-        this.categoryName = categoryName;
-        this.categoryDescription = categoryDescription;
-        this.cateogryImage = cateogryImage;
-        this.categoryId = categoryId;
+        this.categoryImage = categoryImage;
     }
 
     public String getCategoryName() {
@@ -34,19 +27,11 @@ public class DrinksCategory {
         this.categoryDescription = categoryDescription;
     }
 
-    public String getCateogryImage() {
-        return cateogryImage;
+    public String getCategoryImage() {
+        return categoryImage;
     }
 
-    public void setCateogryImage(String cateogryImage) {
-        this.cateogryImage = cateogryImage;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryImage(String categoryImage) {
+        this.categoryImage = categoryImage;
     }
 }

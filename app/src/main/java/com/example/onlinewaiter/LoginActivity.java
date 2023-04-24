@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
 import com.example.onlinewaiter.Models.RegisteredNumber;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -59,6 +60,8 @@ public class LoginActivity extends AppCompatActivity {
 
     //firebase
     FirebaseAuth mAuth;
+    FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
         ivNumberQuestion = findViewById(R.id.ivLoginNumberQuestion);
 
         Bundle bundle = getIntent().getExtras();
-        if (Objects.equals(bundle.getString("phoneNumber"), "")) {
+        if (Objects.equals(bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER), AppConstValue.constValue.EMPTY_VALUE)) {
             ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_16);
             ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
                     toastMessage.showToast(getResources().getString(R.string.act_login_successful_taken_number), 0);
                 }
             });
-            phoneNumber = bundle.getString("phoneNumber");
+            phoneNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
             etPhoneNumber.setText(phoneNumber);
         }
 
@@ -202,7 +205,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkNumber() {
-        FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
         DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefRegisteredNumbers());
         //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
         registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -214,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                         RegisteredNumber registeredNumber = numberSnapshot.getValue(RegisteredNumber.class);
                         numberRole = registeredNumber.getRole();
                         numberCafeId = registeredNumber.getCafeId();
+                        phoneNumber = authNumber;
                         sendverificationcode(authNumber);
                     }
                 }
@@ -290,18 +293,18 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (numberRole.equals("waiter") && numberFounded) {
+                        if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {
                             Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                             //flag -> If set, this activity will become the start of a new task on this history stack.
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("cafeId", numberCafeId);
-                            intent.putExtra("phoneNumber", etPhoneNumber.getText().toString());
+                            intent.putExtra(AppConstValue.constValue.BUNDLE_CAFE_ID, numberCafeId);
+                            intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, phoneNumber);
                             //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                             //afinitet, srodstvo
                             finishAffinity();
                             startActivity(intent);
                         }
-                        else if(numberRole.equals("owner") && numberFounded) {
+                        else if(numberRole.equals(firebaseRefPaths.getRefRegisteredNumberOwner()) && numberFounded) {
                             //intent boss activity
                         }
                     }
