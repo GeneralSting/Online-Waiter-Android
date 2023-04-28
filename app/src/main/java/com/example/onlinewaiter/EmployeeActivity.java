@@ -105,7 +105,6 @@ public class EmployeeActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         employeeCafeId = bundle.getString(AppConstValue.constValue.BUNDLE_CAFE_ID);
-        phoneNumber = "pavo";
         phoneNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
 
         //when app is closed in background
@@ -114,7 +113,7 @@ public class EmployeeActivity extends AppCompatActivity {
             logout();
         } else {
             menuViewModel.setCafeId(employeeCafeId);
-            menuViewModel.setPhoneNumber(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
+            menuViewModel.setPhoneNumber(phoneNumber);
         }
 
         PendingIntent notificationEmptyIntent =

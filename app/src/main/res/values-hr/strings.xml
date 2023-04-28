@@ -97,6 +97,27 @@
     <string name="cafe_update_tables_state_same">Uneseno isto stanje, ažuriranje odbijeno</string>
 
 
+    <!--Employee activity PendingOrders fragment-->
+    <string name="pending_orders_order_pending">Narudžba je u tijeku za stol:</string>
+    <string name="pending_orders_order_declined">Narudžba je odbijena za stol:</string>
+    <string name="pending_orders_order_ready">Narudžba je spremna za stol:</string>
+    <string name="pending_orders_btn_look_order">Pregled narudžbe</string>
+    <string name="pending_orders_btn_order_pending">Obriši</string>
+    <string name="pending_orders_btn_order_declined">Poruka</string>
+    <string name="pending_orders_btn_order_ready">Plaćeno</string>
+    <string name="pending_orders_overview_dialog_title">Pića trenutne narudžbe:</string>
+    <string name="pending_orders_drink_name_col">Naziv</string>
+    <string name="pending_orders_drink_amount_col">Količina</string>
+    <string name="pending_orders_drink_price_col">Cijena</string>
+    <string name="pending_orders_drink_name_total">UKUPNO</string>
+    <string name="pending_orders_switch_txt">Sve narudžbe</string>
+    <string name="pending_orders_order_removal_request">Čekanje na prihvat odbijanja narudžbe za stol:</string>
+    <string name="pending_orders_btn_order_removal_request">Poništi zahtjev</string>
+    <string name="pending_orders_payment_received">Primljeno:</string>
+    <string name="pending_orders_payment_return">Vratiti:</string>
+    <string name="pending_orders_btn_remove">Obriši narudžbu</string>
+    <string name="pending_orders_message_title">Poruka za narudžbu stola:</string>
+
     <!--Employee Activity-->
 
 

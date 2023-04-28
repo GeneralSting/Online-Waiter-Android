@@ -878,7 +878,8 @@ public class CafeUpdateFragment extends Fragment {
             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_description_condition_failed), 0);
             return false;
         }
-        if(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()).length() > 9 ||
+        //here is max length 10 because france locale text number looks like: 123 456,89 -> additional space
+        if(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()).length() > 10 ||
                 priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()).length() < 1) {
             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_condition_failed), 0);
             return false;

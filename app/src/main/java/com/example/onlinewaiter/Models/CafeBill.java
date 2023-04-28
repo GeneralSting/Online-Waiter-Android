@@ -76,4 +76,12 @@ public class CafeBill {
     public void setCafeBillDrinks(HashMap<String, CafeBillDrink> cafeBillDrinks) {
         this.cafeBillDrinks = cafeBillDrinks;
     }
+
+    public String getCafeBillMakerEmployee() {
+        return cafeBillMakerEmployee;
+    }
+
+    public void setCafeBillMakerEmployee(String cafeBillMakerEmployee) {
+        this.cafeBillMakerEmployee = cafeBillMakerEmployee;
+    }
 }

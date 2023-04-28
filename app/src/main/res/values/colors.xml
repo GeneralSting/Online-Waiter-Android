@@ -35,7 +35,7 @@
     <color name="order_btn_disabled">#d8fcdf</color>
     <color name="order_txt_disabled">#878787</color>
     <color name="cv_cafe_update_blue_overlay">#995A7EA5</color>
-    <color name="cv_cafe_update_purpleoverlay">#99A55A7E</color>
+    <color name="cv_cafe_update_purple_overlay">#99A55A7E</color>
     <color name="cv_cafe_update_green_overlay">#997EA55A</color>
     <color name="cafe_update_txt_overlay">#e6333639</color>
     <color name="danger_overlay">#40ea4444</color>

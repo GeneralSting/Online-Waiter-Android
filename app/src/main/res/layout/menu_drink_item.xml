@@ -8,8 +8,7 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="8dp"
     app:cardMaxElevation="12dp"
-    app:cardBackgroundColor="@color/drink_card_view"
-    >
+    app:cardBackgroundColor="@color/drink_card_view">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginBottom="8dp"

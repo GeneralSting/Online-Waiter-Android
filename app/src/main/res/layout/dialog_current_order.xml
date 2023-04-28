@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="16dp"
+    android:paddingBottom="32dp"
+    android:layout_weight="1">
+
+    <TableLayout
+        android:id="@+id/tlCurrentOrderDrinks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="horizontal|vertical"
+        android:shrinkColumns="0">
+
+        <TableRow
+            android:id="@+id/trCurrentOrderDrinkTitle"
+            android:layout_width="match_parent"
+            android:weightSum="3"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="@string/pending_orders_drink_name_col"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="@string/pending_orders_drink_amount_col"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_weight="1" />
+
+            <TextView
+                android:text="@string/pending_orders_drink_price_col"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_weight="1" />
+
+        </TableRow>
+
+    </TableLayout>
+
+</ScrollView>
+
+

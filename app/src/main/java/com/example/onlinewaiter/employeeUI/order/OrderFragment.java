@@ -257,7 +257,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void saveOrder(int tableNumber, boolean myOrder) {
-        newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeBills());
+        newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
         String currentDateTime = simpleDateFormat.format(new Date());
 
@@ -270,7 +270,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     menuViewModel.getPhoneNumber().getValue(),
                     cafeBillDrinkAmount,
                     tableNumber,
-                    cafeBillDrinks
+                    cafeBillDrinks,
+                    0
             );
         }
         else {
@@ -280,7 +281,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     menuViewModel.getPhoneNumber().getValue(),
                     cafeBillDrinkAmount,
                     tableNumber,
-                    cafeBillDrinks
+                    cafeBillDrinks,
+                    0
             );
         }
         String dbKey = newCafeBillRef.push().getKey();

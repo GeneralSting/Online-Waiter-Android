@@ -3,14 +3,14 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeCurrentOrder {
-    String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee;
-    int currentOrderProductAmount, currentOrderTableNumber;
+    String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage;
+    int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
     HashMap<String, CafeBillDrink> currentOrderDrinks;
 
     public CafeCurrentOrder() {}
 
     public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String currentOrderMakerEmployee,
-                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks) {
+                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
@@ -18,16 +18,32 @@ public class CafeCurrentOrder {
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
+        this.currentOrderStatus = currentOrderStatus;
+    }
+
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String currentOrderMakerEmployee,
+                            String currentOrderMessage, int currentOrderProductAmount, int currentOrderTableNumber,
+                            HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+        this.currentOrderDatetime = currentOrderDatetime;
+        this.currentOrderTotalPrice = currentOrderTotalPrice;
+        this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
+        this.currentOrderMakerEmployee = currentOrderMakerEmployee;
+        this.currentOrderMessage = currentOrderMessage;
+        this.currentOrderProductAmount = currentOrderProductAmount;
+        this.currentOrderTableNumber = currentOrderTableNumber;
+        this.currentOrderDrinks = currentOrderDrinks;
+        this.currentOrderStatus = currentOrderStatus;
     }
 
     public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee,
-                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks) {
+                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
+        this.currentOrderStatus = currentOrderStatus;
     }
 
     public String getCurrentOrderDatetime() {
@@ -84,5 +100,21 @@ public class CafeCurrentOrder {
 
     public void setCurrentOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
         this.currentOrderDrinks = currentOrderDrinks;
+    }
+
+    public int getCurrentOrderStatus() {
+        return currentOrderStatus;
+    }
+
+    public void setCurrentOrderStatus(int currentOrderStatus) {
+        this.currentOrderStatus = currentOrderStatus;
+    }
+
+    public String getCurrentOrderMessage() {
+        return currentOrderMessage;
+    }
+
+    public void setCurrentOrderMessage(String cafeCurrentOrderMessage) {
+        this.currentOrderMessage = cafeCurrentOrderMessage;
     }
 }

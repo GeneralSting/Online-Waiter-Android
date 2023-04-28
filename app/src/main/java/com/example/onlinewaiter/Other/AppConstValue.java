@@ -14,5 +14,9 @@ public class AppConstValue {
         public static final int CAMERA_PERMISSION_CODE = 101;
         public static final int CAMERA_REQUEST_CODE = 102;
         public static final int GALLERY_REQUEST_CODE = 105;
+        public static final int ORDER_STATUS_PENDING = 0;
+        public static final int ORDER_STATUS_READY = 1;
+        public static final int ORDER_STATUS_DECLINED = 2;
+        public static final int ORDER_STATUS_REMOVAL_REQUEST = 3;
     }
 }

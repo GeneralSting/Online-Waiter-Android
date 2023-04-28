@@ -96,6 +96,28 @@
     <string name="cafe_update_tables_state_updated">Tables state updated</string>
     <string name="cafe_update_tables_state_same">Entered current state, nothing to update</string>
 
+
+    <!--Employee activity PendingOrders fragment-->
+    <string name="pending_orders_order_pending">Order is waiting for table:</string>
+    <string name="pending_orders_order_declined">Order is declined for table:</string>
+    <string name="pending_orders_order_ready">Order is ready for table:</string>
+    <string name="pending_orders_btn_look_order">Look order</string>
+    <string name="pending_orders_btn_order_pending">Delete</string>
+    <string name="pending_orders_btn_order_declined">Message</string>
+    <string name="pending_orders_btn_order_ready">Paid</string>
+    <string name="pending_orders_overview_dialog_title">Current order drinks:</string>
+    <string name="pending_orders_drink_name_col">Name</string>
+    <string name="pending_orders_drink_amount_col">Amount</string>
+    <string name="pending_orders_drink_price_col">Price</string>
+    <string name="pending_orders_drink_name_total">TOTAL</string>
+    <string name="pending_orders_switch_txt">All orders</string>
+    <string name="pending_orders_order_removal_request">Waiting for order rejection acceptance, table:</string>
+    <string name="pending_orders_btn_order_removal_request">Cancel removal</string>
+    <string name="pending_orders_payment_received">Received:</string>
+    <string name="pending_orders_payment_return">Return:</string>
+    <string name="pending_orders_btn_remove">Remove order</string>
+    <string name="pending_orders_message_title">Message for order, table:</string>
+
     <!--Employee activity-->
 
 
