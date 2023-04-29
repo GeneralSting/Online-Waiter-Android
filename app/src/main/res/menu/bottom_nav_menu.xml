@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_owner_main"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/owner_nav_main_title" />
+
+    <item
+        android:id="@+id/nav_owner_statistics"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="@string/owner_nav_statistics_title" />
+
+    <item
+        android:id="@+id/nav_owner_registered_numbers"
+        android:icon="@drawable/icon_baseline_contact_phone_24"
+        android:title="@string/owner_nav_registered_numbers_title" />
+
+    <item
+        android:id="@+id/nav_owner_logout"
+        android:icon="@drawable/icon_baseline_logout_24"
+        android:title="@string/owner_nav_logout_title" />
+
+</menu>

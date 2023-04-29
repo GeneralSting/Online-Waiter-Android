@@ -15,7 +15,7 @@ public class Cafe {
 
     public Cafe(String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String getCafeOwnerLastname, String cafeOwnerName,
                 String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories,
-                HashMap<String, CafeBill> cafeBills, HashMap<String, CafeEmployee> cafeEmployees) {
+                HashMap<String, CafeEmployee> cafeEmployees) {
         this.cafeLocation = cafeLocation;
         this.cafeName = cafeName;
         this.cafeTables = cafeTables;
@@ -25,7 +25,6 @@ public class Cafe {
         this.cafeOwnerOib = cafeOwnerOib;
         this.cafeOwnerPhoneNumber = cafeOwnerPhoneNumber;
         this.cafeDrinksCategories = cafeDrinksCategories;
-        this.cafeBills = cafeBills;
         this.cafeEmployees = cafeEmployees;
     }
 
@@ -107,5 +106,13 @@ public class Cafe {
 
     public void setCafeBills(HashMap<String, CafeBill> cafeBills) {
         this.cafeBills = cafeBills;
+    }
+
+    public HashMap<String, CafeEmployee> getCafeEmployees() {
+        return cafeEmployees;
+    }
+
+    public void setCafeEmployees(HashMap<String, CafeEmployee> cafeEmployees) {
+        this.cafeEmployees = cafeEmployees;
     }
 }

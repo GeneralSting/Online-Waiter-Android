@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation2"
+    app:startDestination="@+id/nav_owner_main">
+
+    <fragment
+        android:id="@+id/nav_owner_main"
+        android:name="com.example.onlinewaiter.ownerUI.main.MainFragment"
+        android:label="@string/owner_nav_main_title"
+        tools:layout="@layout/fragment_main" />
+
+    <fragment
+        android:id="@+id/nav_owner_statistics"
+        android:name="com.example.onlinewaiter.ownerUI.statistics.StatisticsFragment"
+        android:label="@string/owner_nav_statistics_title"
+        tools:layout="@layout/fragment_statistics" />
+
+    <fragment
+        android:id="@+id/nav_owner_registered_numbers"
+        android:name="com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersFragment"
+        android:label="@string/owner_nav_registered_numbers_title"
+        tools:layout="@layout/fragment_registered_numbers" />
+
+    <fragment
+        android:id="@+id/nav_owner_logout"
+        android:name="com.example.onlinewaiter.ownerUI.logout.LogoutFragment"
+        android:label="@string/owner_nav_logout_title"
+        tools:layout="@layout/fragment_logout" />
+</navigation>

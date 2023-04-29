@@ -10,6 +10,7 @@ public class AppConstValue {
         public static final CharSequence NOTIFICATION_CHANNEL_NAME = "notificationChannelForOrders";
         public static final String NOTIFICATION_CHANNEL_DESCRIPTION = "Waiters recieve notification when their order is ready to serve";
         public static final String ZERO_VALUE = "0";
+        public static final int EXIT_TIME_DELAY = 2000;
         public static final int MULTIPLE_PERMISSIONS = 124;
         public static final int CAMERA_PERMISSION_CODE = 101;
         public static final int CAMERA_REQUEST_CODE = 102;

@@ -305,7 +305,15 @@ public class LoginActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                         else if(numberRole.equals(firebaseRefPaths.getRefRegisteredNumberOwner()) && numberFounded) {
-                            //intent boss activity
+                            Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
+                            //flag -> If set, this activity will become the start of a new task on this history stack.
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra(AppConstValue.constValue.BUNDLE_CAFE_ID, numberCafeId);
+                            intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                            //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
+                            //afinitet, srodstvo
+                            finishAffinity();
+                            startActivity(intent);
                         }
                     }
                     else {

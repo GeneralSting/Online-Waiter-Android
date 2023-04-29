@@ -118,7 +118,6 @@
     <string name="pending_orders_btn_remove">Obriši narudžbu</string>
     <string name="pending_orders_message_title">Poruka za narudžbu stola:</string>
 
-    <!--Employee Activity-->
 
 
     <!--Employee nav header-->
@@ -128,6 +127,40 @@
     <string name="employee_nav_cafe_update_title">Ažuriranje kafića</string>
     <string name="employee_nav_logout_title">Odjava</string>
     <string name="employee_nav_cafe_name_not_found">Dobrodošao!</string>
+
+    <!--Employee Activity-->
+
+    <!--Owner Activity-->
+
+    <!--Owner nav header-->
+    <string name="owner_nav_main_title">Početna</string>
+    <string name="owner_nav_statistics_title">Statistika</string>
+    <string name="owner_nav_registered_numbers_title">Registrirani brojevi</string>
+    <string name="owner_nav_logout_title">Odjava</string>
+
+
+    <!--Owner activity main fragment-->
+    <string name="main_employee_name_title">Ime</string>
+    <string name="main_employee_lastname_title">Prezime</string>
+    <string name="main_employee_birth_date_title">Datum rođenja</string>
+    <string name="main_employee_gender_title">Spol</string>
+    <string name="main_employee_gmail_title">E-mail adresa</string>
+    <string name="main_cv_tables">Stolova u kafiću</string>
+    <string name="main_cv_employees">Zaposlenih u kafiću</string>
+    <string name="main_cv_categories">Kategorija u meniju kafića</string>
+    <string name="main_cv_drinks">Ukupno pića u meniju kafića</string>
+
+    <!--Owner Activity statistics fragment-->
+
+
+
+    <!--Owner activity registered numbers fragment-->
+
+
+
+    <!--Owner activity logout fragment-->
+
+    <!--Owner Activity-->
 
     <!--universal-->
     <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>

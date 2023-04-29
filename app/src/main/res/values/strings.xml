@@ -41,7 +41,6 @@
     <string name="act_employee_drink_deleted_body">This drink was in your current order, it is deleted and removed from order</string>
 
 
-
     <!--Employe activity menu fragment-->
     <string name="menu_drink_name_placeholder">Drink Name</string>
     <string name="menu_drink_description_placeholder">Drink Description</string>
@@ -118,8 +117,6 @@
     <string name="pending_orders_btn_remove">Remove order</string>
     <string name="pending_orders_message_title">Message for order, table:</string>
 
-    <!--Employee activity-->
-
 
     <!--Employee nav header-->
     <string name="employee_nav_menu_title">Menu</string>
@@ -129,6 +126,44 @@
     <string name="employee_nav_logout_title">Logout</string>
     <string name="employee_nav_cafe_name_not_found">Welcome!</string>
 
+    <!--Employee activity-->
+
+
+    <!--Owner Activity-->
+
+    <!--Owner nav header-->
+    <string name="owner_nav_main_title">Main</string>
+    <string name="owner_nav_statistics_title">Statistics</string>
+    <string name="owner_nav_registered_numbers_title">Registered numbers</string>
+    <string name="owner_nav_logout_title">Logout</string>
+
+    <!--Owner activity main fragment-->
+    <string name="main_employee_name_title">First name</string>
+    <string name="main_employee_lastname_title">Last name</string>
+    <string name="main_employee_birth_date_title">Birth date</string>
+    <string name="main_employee_gender_title">Gender</string>
+    <string name="main_employee_gmail_title">Gmail</string>
+    <string name="main_cv_tables">Tables in your cafe</string>
+    <string name="main_cv_employees">Employees working in your cafe</string>
+    <string name="main_cv_categories">Categories in your cafe menu</string>
+    <string name="main_cv_drinks">Total drinks in your cafe menu</string>
+
+
+
+
+    <!--Owner Activity statistics fragment-->
+
+
+
+    <!--Owner activity registered numbers fragment-->
+
+
+
+    <!--Owner activity logout fragment-->
+
+
+
+    <!--Owner Activity-->
 
     <!--Custom dialog ok button parameter-->
     <string name="btn_ok_action_request_number_permission" translatable="false">request_number_permission</string>

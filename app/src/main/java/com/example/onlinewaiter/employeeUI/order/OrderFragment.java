@@ -23,6 +23,7 @@ import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -271,7 +272,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    0
+                    AppConstValue.constValue.ORDER_STATUS_PENDING
             );
         }
         else {
@@ -282,7 +283,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    0
+                    AppConstValue.constValue.ORDER_STATUS_PENDING
             );
         }
         String dbKey = newCafeBillRef.push().getKey();

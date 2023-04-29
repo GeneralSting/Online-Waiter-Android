@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeBillDrink;
-import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
@@ -81,8 +81,8 @@ public class EmployeeActivity extends AppCompatActivity {
 
 
     //firebase
-    private ChildEventListener cafeChildsEventListener;
-    DatabaseReference cafeRef;
+    private ChildEventListener cafeChildsEventListener, cafeCurrentOrdersListener;
+    DatabaseReference cafeRef, cafeCurrentOrdersRef;
 
     //viewModels
     private MenuViewModel menuViewModel;
@@ -90,7 +90,6 @@ public class EmployeeActivity extends AppCompatActivity {
     private CafeUpdateViewModel cafeUpdateViewModel;
 
     //other
-    private static final int TIME_DELAY = 2000;
     private static long back_pressed;
 
     @Override
@@ -180,7 +179,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         });
         DrawerLayout drawer = binding.drawerLayout;
-        navigationView = binding.navView;
+        navigationView = binding.navOwnerView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -199,7 +198,7 @@ public class EmployeeActivity extends AppCompatActivity {
             return true;
         });
         getCafeInfo(navigationView);
-        setCategoriesListener();
+        setListeners();
     }
 
     private void getCafeInfo(NavigationView navigationView) {
@@ -234,7 +233,7 @@ public class EmployeeActivity extends AppCompatActivity {
         });
     }
 
-    private void setCategoriesListener() {
+    private void setListeners() {
         cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -249,22 +248,64 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
                     checkDrinkDeletion();
-
                 }
-                else if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeTablesChild())) {
-                    if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                        builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + " " +
-                                cafeSnapshot.getValue(Integer.class));
-                        notificationManagerCompat.notify(notificationId++, builder.build());
-                    }
-                }
-                else {
-
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
+                    tvCafeName.setText(cafeSnapshot.getValue(String.class));
                 }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot cafeSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+
+        cafeCurrentOrdersRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCurrentOrders());
+        cafeCurrentOrdersListener = cafeCurrentOrdersRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot orderSnapshot, @Nullable String previousChildName) {
+                if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                    removeCafeOrdersListener();
+                }
+                CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
+                if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
+                cafeCurrentOrder.getCurrentOrderStatus() == 1) {
+                    if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                        builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + AppConstValue.constValue.CHARACTER_SPACING +
+                                String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
+                        notificationManagerCompat.notify(notificationId++, builder.build());
+                    }
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
             }
 
@@ -327,7 +368,18 @@ public class EmployeeActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
+                            ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                            serverAlertDialog.makeAlertDialog();
 
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    menuViewModel.getCafeId().getValue(),
+                                    menuViewModel.getPhoneNumber().getValue(),
+                                    AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                    error.getMessage().toString(),
+                                    currentDateTime
+                            );
+                            appError.sendError(appError);
                         }
                     });
                 }
@@ -341,12 +393,18 @@ public class EmployeeActivity extends AppCompatActivity {
         }
     }
 
+    private void removeCafeOrdersListener() {
+        if (cafeCurrentOrdersRef != null) {
+            cafeCurrentOrdersRef.removeEventListener(cafeCurrentOrdersListener);
+        }
+    }
+
     @Override
     public void onBackPressed() {
         //if category drinks is displayed then close RV category drinks and show RV categories
         if (navigationView.getMenu().findItem(R.id.nav_employee_menu).isChecked()) {
             if (isCategoriesDisplayed) {
-                if (back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+                if (back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                     super.onBackPressed();
                     logout();
                 } else {
@@ -361,7 +419,7 @@ public class EmployeeActivity extends AppCompatActivity {
         else if(navigationView.getMenu().findItem(R.id.nav_employee_cafe_update).isChecked()) {
             switch (cafeUpdateViewModel.getCafeUpdateRvDispalyed().getValue()) {
                 case 0:
-                    if(back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+                    if(back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                         super.onBackPressed();
                         logout();
                     }
@@ -381,7 +439,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         }
         else {
-            if(back_pressed + TIME_DELAY > System.currentTimeMillis()) {
+            if(back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                 super.onBackPressed();
                 logout();
             }
@@ -412,8 +470,8 @@ public class EmployeeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("PROBA123", "onDestroy: ");
         removeCafeListener();
+        removeCafeOrdersListener();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null) {
             FirebaseAuth.getInstance().signOut();
