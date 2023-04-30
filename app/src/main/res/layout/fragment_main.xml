@@ -207,81 +207,107 @@
 
         </GridLayout>
 
-        <!--<ScrollView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/gridLayout">-->
 
-        <TableLayout
-            android:id="@+id/tlOwnerMainEmployees"
+        <HorizontalScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="90dp"
+            android:background="@color/tablelayout_grey_overlay"
             android:scrollbars="horizontal|vertical"
-            android:shrinkColumns="0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/gridLayout">
 
-            <TableRow
-                android:id="@+id/trOwnerMainEmployeeNameTitle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:weightSum="5">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
 
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/main_employee_name_title"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                <TableLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:scrollbars="horizontal|vertical">
 
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/main_employee_lastname_title"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    <TableRow
+                        android:id="@+id/trOwnerMainEmployeeNameTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@color/cv_cafe_update_blue_overlay"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
+                        android:weightSum="5">
 
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/main_employee_birth_date_title"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                        <TextView
+                            android:layout_weight="1"
+                            android:text="@string/main_employee_name_title"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/main_employee_gender_title"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                        <TextView
+                            android:layout_weight="1"
+                            android:text="@string/main_employee_lastname_title"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                <TextView
-                    android:layout_weight="1"
-                    android:text="@string/main_employee_gmail_title"
-                    android:textAlignment="center"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                        <TextView
+                            android:layout_weight="1"
+                            android:text="@string/main_employee_birth_date_title"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-            </TableRow>
+                        <TextView
+                            android:layout_weight="1"
+                            android:text="@string/main_employee_gender_title"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-        </TableLayout>
+                        <TextView
+                            android:layout_weight="1"
+                            android:text="@string/main_employee_gmail_title"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-        <!--</ScrollView>-->
+                    </TableRow>
+
+
+                    <ScrollView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="horizontal|vertical"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/gridLayout">
+
+                        <TableLayout
+                            android:id="@+id/tlOwnerMainEmployees"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:paddingBottom="64dp"
+                            android:scrollbars="horizontal|vertical">
+
+                        </TableLayout>
+
+                    </ScrollView>
+
+                </TableLayout>
+
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </HorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

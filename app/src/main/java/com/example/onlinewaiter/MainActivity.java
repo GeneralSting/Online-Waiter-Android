@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (!missingPermissions.isEmpty()) {
-            ActivityCompat.requestPermissions(this, missingPermissions.toArray(new String[0]), AppConstValue.constValue.MULTIPLE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, missingPermissions.toArray(new String[0]), AppConstValue.permissionConstValue.MULTIPLE_PERMISSIONS);
             return false;
         }
         return true;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         //global variables/objects
-        intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number().toString());
+        intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number().toString());
         startActivity(intent);
     }
 
@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 String[] pagerImages = {appInfo.getAppNewsImage(), appInfo.getAppPurposeImage(), appInfo.getAppUserPurposeImage()};
                 String[] pagerHeaders = {appInfo.getAppVersion(), getResources().getString(R.string.act_main_pager_app_purpose_header),
                         getResources().getString(R.string.act_main_pager_app_user_purpsoe_header)};
-                if(appInfo.getAppNews().equals("") || appInfo.getAppNews() == null) {
+                if(appInfo.getAppNews().equals(AppConstValue.variableConstValue.EMPTY_VALUE) || appInfo.getAppNews() == null) {
                     appInfo.setAppNews(getResources().getString(R.string.act_main_pager_no_news));
                 }
                 String[] pagerDecriptions = {appInfo.getAppNews(), appInfo.getAppPurpose(), appInfo.getAppUserPurpose()};
@@ -216,11 +216,11 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         //user did not manaully logged out,
         if(currentUser != null) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(
                     AppErrorMessages.Messages.CAFE_NOT_FOUND,
-                    currentUser.getPhoneNumber().toString(),
+                    currentUser.getPhoneNumber(),
                     AppErrorMessages.Messages.USER_NOT_LOGGED_OUT,
                     currentDateTime
             );

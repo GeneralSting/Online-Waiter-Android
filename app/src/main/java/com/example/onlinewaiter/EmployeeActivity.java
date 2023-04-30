@@ -76,7 +76,7 @@ public class EmployeeActivity extends AppCompatActivity {
     NotificationManagerCompat notificationManagerCompat;
     NotificationCompat.Builder builder;
     int notificationId = 0;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
 
 
@@ -103,12 +103,12 @@ public class EmployeeActivity extends AppCompatActivity {
         cafeUpdateViewModel = new ViewModelProvider(this).get(CafeUpdateViewModel.class);
 
         Bundle bundle = getIntent().getExtras();
-        employeeCafeId = bundle.getString(AppConstValue.constValue.BUNDLE_CAFE_ID);
-        phoneNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
+        employeeCafeId = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID);
+        phoneNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
 
         //when app is closed in background
-        if ((Objects.equals(AppConstValue.constValue.BUNDLE_CAFE_ID, AppConstValue.constValue.EMPTY_VALUE) ||
-                Objects.equals(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, AppConstValue.constValue.EMPTY_VALUE))) {
+        if ((Objects.equals(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, AppConstValue.variableConstValue.EMPTY_VALUE) ||
+                Objects.equals(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE))) {
             logout();
         } else {
             menuViewModel.setCafeId(employeeCafeId);
@@ -118,7 +118,7 @@ public class EmployeeActivity extends AppCompatActivity {
         PendingIntent notificationEmptyIntent =
                 PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
 
-        builder = new NotificationCompat.Builder(this, AppConstValue.constValue.NOTIFICATION_CHANNEL_ID)
+        builder = new NotificationCompat.Builder(this, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.nav_header_img)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
@@ -135,8 +135,8 @@ public class EmployeeActivity extends AppCompatActivity {
         // the NotificationChannel class is new and not in the support library
         int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel channel = new NotificationChannel(
-                AppConstValue.constValue.NOTIFICATION_CHANNEL_ID, AppConstValue.constValue.NOTIFICATION_CHANNEL_NAME, importance);
-        channel.setDescription(AppConstValue.constValue.NOTIFICATION_CHANNEL_DESCRIPTION);
+                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
+        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
         // Register the channel with the system; you can't change the importance
         // or other notification behaviors after this
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -168,7 +168,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         CafeBillDrink cafeBillDrink = orderDrinks.get(key);
                         cartDrinksNumber += cafeBillDrink.getDrinkAmount();
                     }
-                    Snackbar.make(view, getResources().getString(R.string.act_employee_order_fab_txt) + " " + cartDrinksNumber
+                    Snackbar.make(view, getResources().getString(R.string.act_employee_order_fab_txt) + AppConstValue.characterConstValue.CHARACTER_SPACING + cartDrinksNumber
                                     , Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
@@ -210,7 +210,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
                 tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNavHeader);
-                if (!cafe.getCafeName().equals(AppConstValue.constValue.EMPTY_VALUE)) {
+                if (!cafe.getCafeName().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                     tvCafeName.setText(cafe.getCafeName());
                 }
             }
@@ -297,7 +297,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
                 cafeCurrentOrder.getCurrentOrderStatus() == 1) {
                     if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-                        builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + AppConstValue.constValue.CHARACTER_SPACING +
+                        builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + AppConstValue.characterConstValue.CHARACTER_SPACING +
                                 String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
                         notificationManagerCompat.notify(notificationId++, builder.build());
                     }
@@ -354,7 +354,7 @@ public class EmployeeActivity extends AppCompatActivity {
                             if(drinkDeleted) {
                                 deletedDrinkFounded[0] = true;
                                 CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
-                                        getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.constValue.CHARACTER_SPACING +
+                                        getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
                                                 orderDrinks.get(key).getDrinkName(),
                                         getResources().getString(R.string.act_employee_drink_deleted_body),
                                         getResources().getDrawable(R.drawable.dialog_danger));
@@ -404,7 +404,7 @@ public class EmployeeActivity extends AppCompatActivity {
         //if category drinks is displayed then close RV category drinks and show RV categories
         if (navigationView.getMenu().findItem(R.id.nav_employee_menu).isChecked()) {
             if (isCategoriesDisplayed) {
-                if (back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
+                if (back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                     super.onBackPressed();
                     logout();
                 } else {
@@ -419,7 +419,7 @@ public class EmployeeActivity extends AppCompatActivity {
         else if(navigationView.getMenu().findItem(R.id.nav_employee_cafe_update).isChecked()) {
             switch (cafeUpdateViewModel.getCafeUpdateRvDispalyed().getValue()) {
                 case 0:
-                    if(back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
+                    if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                         super.onBackPressed();
                         logout();
                     }
@@ -439,7 +439,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         }
         else {
-            if(back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
+            if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                 super.onBackPressed();
                 logout();
             }

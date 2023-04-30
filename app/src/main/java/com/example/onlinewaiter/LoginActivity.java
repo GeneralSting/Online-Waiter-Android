@@ -51,11 +51,10 @@ public class LoginActivity extends AppCompatActivity {
     ProgressBar loginProgressBar;
 
     //global variables/objects
-    String phoneNumber = "";
+    String phoneNumber = AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER;
     String authNumber, verificationId, numberRole, numberCafeId;
     Boolean numberFounded, showProgressBar, backPressEnabled;
     ToastMessage toastMessage;
-    private static final int REQ_USER_CONSENT = 200;
     SmsBroadcastReceiver smsBroadcastReceiver;
 
     //firebase
@@ -70,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
         toastMessage = new ToastMessage(this);
         showProgressBar = backPressEnabled = true;
-        authNumber = numberRole = "";
+        authNumber = numberRole = AppConstValue.variableConstValue.EMPTY_VALUE;
         numberFounded = false;
         mAuth = FirebaseAuth.getInstance();
 
@@ -82,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         ivNumberQuestion = findViewById(R.id.ivLoginNumberQuestion);
 
         Bundle bundle = getIntent().getExtras();
-        if (Objects.equals(bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER), AppConstValue.constValue.EMPTY_VALUE)) {
+        if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
             ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_16);
             ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -102,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                     toastMessage.showToast(getResources().getString(R.string.act_login_successful_taken_number), 0);
                 }
             });
-            phoneNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
+            phoneNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
             etPhoneNumber.setText(phoneNumber);
         }
 
@@ -147,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQ_USER_CONSENT) {
+        if (requestCode == AppConstValue.permissionConstValue.REQ_USER_CONSENT) {
             if ((resultCode == RESULT_OK) && (data != null)) {
                 String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
                 getOtpFromMessage(message);
@@ -171,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
         smsBroadcastReceiver.initListener(new SmsBroadcastReceiverListener() {
             @Override
             public void onSuccess(Intent intent) {
-                startActivityForResult(intent, REQ_USER_CONSENT);
+                startActivityForResult(intent, AppConstValue.permissionConstValue.REQ_USER_CONSENT);
             }
 
             @Override
@@ -251,7 +250,7 @@ public class LoginActivity extends AppCompatActivity {
         PhoneAuthProvider.verifyPhoneNumber(options);
     }
 
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks
+    private final PhoneAuthProvider.OnVerificationStateChangedCallbacks
             mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         // never been called
         @Override
@@ -297,8 +296,8 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                             //flag -> If set, this activity will become the start of a new task on this history stack.
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(AppConstValue.constValue.BUNDLE_CAFE_ID, numberCafeId);
-                            intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
+                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
                             //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                             //afinitet, srodstvo
                             finishAffinity();
@@ -308,8 +307,8 @@ public class LoginActivity extends AppCompatActivity {
                             Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
                             //flag -> If set, this activity will become the start of a new task on this history stack.
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(AppConstValue.constValue.BUNDLE_CAFE_ID, numberCafeId);
-                            intent.putExtra(AppConstValue.constValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
+                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
                             //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                             //afinitet, srodstvo
                             finishAffinity();

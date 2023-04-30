@@ -43,9 +43,10 @@ public class OwnerActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     ToastMessage toastMessage;
     String ownerNumber, ownerCafeId;
+    int updateCafeInfo = 0;
     private static long back_pressed;
     MainViewModel mainViewModel;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
 
     //firebase
@@ -63,10 +64,10 @@ public class OwnerActivity extends AppCompatActivity {
         toastMessage = new ToastMessage(this);
         firebaseRefPaths = new FirebaseRefPaths(this);
         Bundle bundle = getIntent().getExtras();
-        ownerNumber = bundle.getString(AppConstValue.constValue.BUNDLE_PHONE_NUMBER);
-        ownerCafeId = bundle.getString(AppConstValue.constValue.BUNDLE_CAFE_ID);
-        if(Objects.equals(ownerNumber, AppConstValue.constValue.EMPTY_VALUE) ||
-                Objects.equals(ownerCafeId, AppConstValue.constValue.EMPTY_VALUE)) {
+        ownerNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
+        ownerCafeId = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID);
+        if(Objects.equals(ownerNumber, AppConstValue.variableConstValue.EMPTY_VALUE) ||
+                Objects.equals(ownerCafeId, AppConstValue.variableConstValue.EMPTY_VALUE)) {
             logout();
         }
 
@@ -102,7 +103,8 @@ public class OwnerActivity extends AppCompatActivity {
 
                 }
                 else {
-                    mainViewModel.setUpdateInfo(mainViewModel.getUpdateInfo().getValue() + 1);
+                    mainViewModel.setUpdateInfo(updateCafeInfo);
+                    updateCafeInfo++;
                 }
             }
 
@@ -122,7 +124,7 @@ public class OwnerActivity extends AppCompatActivity {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -146,7 +148,7 @@ public class OwnerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(back_pressed + AppConstValue.constValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
+        if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
             super.onBackPressed();
             logout();
         }

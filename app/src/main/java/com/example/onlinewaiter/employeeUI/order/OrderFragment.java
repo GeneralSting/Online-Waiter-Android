@@ -191,7 +191,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         else {
             Float orderTotalPrice = 0f;
             int orderProductsAmount = 0;
-            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+            DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
             for(String key : currentOrderDrinks.keySet()) {
                 CafeBillDrink cafeBillDrink = currentOrderDrinks.get(key);
                 orderTotalPrice += (Float) cafeBillDrink.getDrinkTotalPrice();
@@ -259,7 +259,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void saveOrder(int tableNumber, boolean myOrder) {
         newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
         String currentDateTime = simpleDateFormat.format(new Date());
 
         CafeCurrentOrder cafeCurrentOrder;
@@ -272,7 +272,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    AppConstValue.constValue.ORDER_STATUS_PENDING
+                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
             );
         }
         else {
@@ -283,7 +283,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    AppConstValue.constValue.ORDER_STATUS_PENDING
+                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
             );
         }
         String dbKey = newCafeBillRef.push().getKey();

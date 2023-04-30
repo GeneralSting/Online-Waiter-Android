@@ -61,11 +61,12 @@ public class PendingOrdersFragment extends Fragment {
 
     //global objects/variables
     private FragmentPendingOrdersBinding binding;
-    final int order_pending = AppConstValue.constValue.ORDER_STATUS_PENDING;
-    final int order_ready = AppConstValue.constValue.ORDER_STATUS_READY;
-    final int order_declined = AppConstValue.constValue.ORDER_STATUS_DECLINED;
-    final int order_removal_request = AppConstValue.constValue.ORDER_STATUS_REMOVAL_REQUEST;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault());
+    final int order_pending = AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING;
+    final int order_ready = AppConstValue.orderStatusConstValue.ORDER_STATUS_READY;
+    final int order_declined = AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED;
+    final int order_removal_request = AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    SimpleDateFormat simpleDateLocaleFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
     private AppError appError;
     MenuViewModel menuViewModel;
     RecyclerView.LayoutManager rvCurrentOrdersLayoutManager;
@@ -148,7 +149,7 @@ public class PendingOrdersFragment extends Fragment {
                                     @Override
                                     public void onClick(View view) {
                                         cafeCurrentOrderRef.child(firebaseRefPaths.getRefCurrentOrderStatusChild()).setValue(
-                                                AppConstValue.constValue.ORDER_STATUS_REMOVAL_REQUEST
+                                                AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST
                                         );
                                     }
                                 });
@@ -183,7 +184,7 @@ public class PendingOrdersFragment extends Fragment {
 
                                                 tvOrderPaymentPrice.setText(cafeCurrentOrder.getCurrentOrderTotalPrice().toString() + getResources().getString(R.string.country_currency));
 
-                                                DecimalFormat decimalFormat = new DecimalFormat("0.00");
+                                                DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
 
                                                 etOrderPaymentReceived.addTextChangedListener(new TextWatcher() {
                                                     @Override
@@ -221,7 +222,7 @@ public class PendingOrdersFragment extends Fragment {
                                                 btnOrderPaymentConfirm.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
-                                                        String paymentDateTime = simpleDateFormat.format(new Date());
+                                                        String paymentDateTime = simpleDateLocaleFormat.format(new Date());
                                                         CafeBill cafeBill = new CafeBill(
                                                                 cafeCurrentOrder.getCurrentOrderDatetime(),
                                                                 paymentDateTime,
@@ -269,7 +270,7 @@ public class PendingOrdersFragment extends Fragment {
                                             @Override
                                             public void onShow(DialogInterface dialogInterface) {
                                                 tvCurrentOrderMessageTitle.setText(getResources().getString(R.string.pending_orders_message_title) +
-                                                        AppConstValue.constValue.CHARACTER_SPACING + String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
+                                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
                                                 tvCurrentOrderMessage.setText(cafeCurrentOrder.getCurrentOrderMessage().toString());
                                                 btnCurrentOrderRemove.setOnClickListener(new View.OnClickListener() {
                                                     @Override
@@ -296,7 +297,7 @@ public class PendingOrdersFragment extends Fragment {
                                     @Override
                                     public void onClick(View view) {
                                         cafeCurrentOrderRef.child(firebaseRefPaths.getRefCurrentOrderStatusChild()).setValue(
-                                                AppConstValue.constValue.ORDER_STATUS_PENDING
+                                                AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
                                         );
                                     }
                                 });
@@ -375,7 +376,7 @@ public class PendingOrdersFragment extends Fragment {
             }
         }
 
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
 
         currentOrderDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCurrentOrderDrinks(currentOrderId));
         currentOrderDrinksRef.addListenerForSingleValueEvent(new ValueEventListener() {

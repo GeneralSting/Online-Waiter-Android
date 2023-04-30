@@ -21,7 +21,7 @@ public class MainViewModel extends ViewModel {
         ownerCafeId.setValue(value);
     }
 
-    private final MutableLiveData<Integer> updateInfo = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> updateInfo = new MutableLiveData<>();
     public LiveData<Integer> getUpdateInfo() {
         return updateInfo;
     }

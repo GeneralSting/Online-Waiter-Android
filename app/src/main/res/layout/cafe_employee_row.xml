@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+    android:weightSum="5"
+    android:layout_marginTop="12dp"
+    android:padding="4dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    android:background="@color/tablerow_black_overlay">
+    <TextView
+        android:id="@+id/tvCafeEmployeeName"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_weight="1"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tvCafeEmployeeLastname"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_weight="1"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tvCafeEmployeeBirthDate"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_weight="1"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tvCafeEmployeeGender"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_weight="1"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tvCafeEmployeeGmail"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:layout_weight="1"/>
+
+</TableRow>

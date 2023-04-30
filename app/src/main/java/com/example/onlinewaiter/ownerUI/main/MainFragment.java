@@ -12,21 +12,20 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
+import com.example.onlinewaiter.Models.CafeEmployee;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
-import com.example.onlinewaiter.databinding.FragmentCafeUpdateBinding;
 import com.example.onlinewaiter.databinding.FragmentMainBinding;
-import com.example.onlinewaiter.databinding.FragmentMenuBinding;
-import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,21 +36,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class MainFragment extends Fragment {
 
     //global variables/objects
     private FragmentMainBinding binding;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
+    private MainViewModel mainViewModel;
+    ToastMessage toastMessage;
 
 
     //fragment views
     private TextView tvMainCafeName, tvMainTables, tvMainEmployees, tvMainCategories, tvMainDrinks;
     private CardView cvMainTables, cvMainEmployees, cvMainCategories, cvMainDrinks;
-    private MainViewModel mainViewModel;
-    ToastMessage toastMessage;
+    TableLayout tlOwnerMainEmployees;
 
     //firebase
     private DatabaseReference cafeRef;
@@ -74,6 +73,7 @@ public class MainFragment extends Fragment {
         cvMainEmployees = binding.cvOwnerMainEmployees;
         cvMainCategories = binding.cvOwnerMainCategories;
         cvMainDrinks = binding.cvOwnerMainDrinks;
+        tlOwnerMainEmployees = binding.tlOwnerMainEmployees;
 
         cvMainTables.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,13 +113,6 @@ public class MainFragment extends Fragment {
         };
         mainViewModel.getOwnerCafeId().observe(requireActivity(), ObservingCafeId);
 
-
-
-        return root;
-    }
-
-    @Override
-    public void onResume() {
         super.onResume();
         final Observer<Integer> ObservingCafeInfo = new Observer<Integer>() {
             @Override
@@ -128,6 +121,8 @@ public class MainFragment extends Fragment {
             }
         };
         mainViewModel.getUpdateInfo().observe(requireActivity(), ObservingCafeInfo);
+
+        return root;
     }
 
     private void cafeDetails(String cafeId) {
@@ -151,6 +146,30 @@ public class MainFragment extends Fragment {
                     cafeTotalDrinks += cafeDrinksCategory.getCategoryDrinks().size();
                 }
                 tvMainDrinks.setText(String.valueOf(cafeTotalDrinks));
+
+                while(tlOwnerMainEmployees.getChildCount() > 0) {
+                    tlOwnerMainEmployees.removeView(tlOwnerMainEmployees.getChildAt(tlOwnerMainEmployees.getChildCount() - 1));
+                }
+                for(CafeEmployee cafeEmployee : cafe.getCafeEmployees().values()) {
+                    View trCafeEmployeeView = getLayoutInflater().inflate(R.layout.cafe_employee_row, tlOwnerMainEmployees, false);
+
+                    TextView tvCafeEmployeeName = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeName);
+                    tvCafeEmployeeName.setText(cafeEmployee.getEmployeeName());
+
+                    TextView tvCafeEmployeeLastname = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeLastname);
+                    tvCafeEmployeeLastname.setText(cafeEmployee.getEmployeeLastname());
+
+                    TextView tvCafeEmployeeBirthDate = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeBirthDate);
+                    tvCafeEmployeeBirthDate.setText(cafeEmployee.getEmployeeBirthDate());
+
+                    TextView tvCafeEmployeeGender = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeGender);
+                    tvCafeEmployeeGender.setText(cafeEmployee.getEmployeeGender());
+
+                    TextView tvCafeEmployeeGmail = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeGmail);
+                    tvCafeEmployeeGmail.setText(cafeEmployee.getEmployeeGmail());
+
+                    tlOwnerMainEmployees.addView(trCafeEmployeeView);
+                }
             }
 
             @Override

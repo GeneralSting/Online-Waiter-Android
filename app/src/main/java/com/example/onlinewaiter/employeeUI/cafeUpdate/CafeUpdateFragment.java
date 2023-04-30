@@ -95,7 +95,7 @@ public class CafeUpdateFragment extends Fragment {
     CafeUpdateViewModel cafeUpdateViewModel;
     ProgressDialog progressDialog;
     DecimalFormat decimalFormat;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss", Locale.CANADA);
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
 
     //fragment views
     LinearLayoutCompat linearLayoutContainer;
@@ -130,7 +130,7 @@ public class CafeUpdateFragment extends Fragment {
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         progressDialog = new ProgressDialog(getActivity());
-        decimalFormat = new DecimalFormat("0.00");
+        decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         addingNewDrink = false;
 
         linearLayoutContainer = binding.llCafeUpdateContainer;
@@ -309,7 +309,8 @@ public class CafeUpdateFragment extends Fragment {
                             holder.etUpdateDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
                             holder.etUpdateDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(
                                     6,2, 1000000)});
-                            holder.etUpdateDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()).replace(",", "."));
+                            holder.etUpdateDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()).replace(
+                                    AppConstValue.variableConstValue.COMMA, AppConstValue.variableConstValue.DOT));
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrink);
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrinkComparison);
 
@@ -318,9 +319,9 @@ public class CafeUpdateFragment extends Fragment {
                                 public void onClick(View view) {
                                     boolean imageSame = areImagesSame(holder.ivUpdateDrinkComparison, holder.ivUpdateDrink);
 
-                                    if(holder.etUpdateDrinkPrice.getText().toString().equals(".") ||
-                                            holder.etUpdateDrinkPrice.getText().toString().equals("")) {
-                                        holder.etUpdateDrinkPrice.setText("0");
+                                    if(holder.etUpdateDrinkPrice.getText().toString().equals(AppConstValue.variableConstValue.DOT) ||
+                                            holder.etUpdateDrinkPrice.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                        holder.etUpdateDrinkPrice.setText(AppConstValue.variableConstValue.ZERO_VALUE);
                                     }
 
                                     CategoryDrink updatedCategoryDrink = new CategoryDrink(
@@ -513,7 +514,7 @@ public class CafeUpdateFragment extends Fragment {
 
         final AlertDialog newDrinkDialog = new AlertDialog.Builder(getActivity())
                 .setView(newDrinkView)
-                .setTitle(getResources().getString(R.string.cafe_update_new_drink_dialog_title) + " " + categoryId)
+                .setTitle(getResources().getString(R.string.cafe_update_new_drink_dialog_title) + AppConstValue.characterConstValue.CHARACTER_SPACING + categoryId)
                 .create();
         newDrinkDialog.setCanceledOnTouchOutside(false);
         newDrinkDialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -579,10 +580,10 @@ public class CafeUpdateFragment extends Fragment {
                         newDrinkSecondConfirm = true;
                         btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         if(etNewDrinkPrice.getText().length() == 2 &&
-                                etNewDrinkPrice.getText().charAt(0) == '0' &&
-                                etNewDrinkPrice.getText().charAt(1) != '.' ||
+                                etNewDrinkPrice.getText().charAt(0) == AppConstValue.variableConstValue.CHAR_ZERO_VALUE &&
+                                etNewDrinkPrice.getText().charAt(1) != AppConstValue.variableConstValue.CHAR_DOT ||
                                 etNewDrinkPrice.getText().length() == 1 &&
-                                        etNewDrinkPrice.getText().charAt(0) == '.') {
+                                        etNewDrinkPrice.getText().charAt(0) == AppConstValue.variableConstValue.CHAR_DOT) {
                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_incorrect), 0);
                             etNewDrinkPrice.setText("");
                         }
@@ -613,9 +614,9 @@ public class CafeUpdateFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0) {
-                            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+                            DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_NO_ZERO);
                             double drinkPrice = Double.parseDouble(etNewDrinkPrice.getText().toString());
-                            if(decimalFormat.format(drinkPrice).toString().equals(",00")) {
+                            if(decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)) {
                                 if(!newDrinkSecondConfirm) {
                                     newDrinkSecondConfirm = true;
                                 }
@@ -667,7 +668,8 @@ public class CafeUpdateFragment extends Fragment {
     private void uploadNewDrinkImage(String categoryId, CategoryDrink newCategoryDrink) {
         setProgressDialog(getResources().getString(R.string.cafe_update_drink_image_uploading));
         Date currentDate = new Date();
-        String imageName = menuViewModel.getCafeId().getValue() + "_" + newCategoryDrink.getCategoryDrinkName() + "_" + simpleDateFormat.format(currentDate);
+        String imageName = menuViewModel.getCafeId().getValue() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE +
+                newCategoryDrink.getCategoryDrinkName() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE + simpleDateFormat.format(currentDate);
         Bitmap bitmap = ((BitmapDrawable) ivDrinkGlobalContainer.getDrawable()).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -805,7 +807,8 @@ public class CafeUpdateFragment extends Fragment {
     private void updateDrinkImage(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink, ImageView ivUpdatedDrink) {
         setProgressDialog(getResources().getString(R.string.cafe_update_drink_image_uploading));
         Date currentDate = new Date();
-        String imageName = menuViewModel.getCafeId().getValue() + "_" + updatedCategoryDrink.getCategoryDrinkName() + "_" + simpleDateFormat.format(currentDate);
+        String imageName = menuViewModel.getCafeId().getValue() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE +
+                updatedCategoryDrink.getCategoryDrinkName() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE + simpleDateFormat.format(currentDate);
         Bitmap bitmap = ((BitmapDrawable) ivUpdatedDrink.getDrawable()).getBitmap();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -885,12 +888,14 @@ public class CafeUpdateFragment extends Fragment {
             return false;
         }
         String updatedDrinkTextPrice = priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice());
-        if (updatedDrinkTextPrice.length() == 2 && updatedDrinkTextPrice.charAt(0) == '0' &&
-                (updatedDrinkTextPrice.charAt(1) == ',' || updatedDrinkTextPrice.charAt(1) == '.')) {
+        if (updatedDrinkTextPrice.length() == 2 && updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_ZERO_VALUE &&
+                (updatedDrinkTextPrice.charAt(1) == AppConstValue.variableConstValue.CHAR_COMMA ||
+                updatedDrinkTextPrice.charAt(1) == AppConstValue.variableConstValue.CHAR_DOT)) {
             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_input_failed), 0);
             return false;
         }
-        if(updatedDrinkTextPrice.length() == 1 && updatedDrinkTextPrice.charAt(0) == '.' || updatedDrinkTextPrice.charAt(0) == ',') {
+        if(updatedDrinkTextPrice.length() == 1 && updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_DOT
+                || updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_COMMA) {
             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_input_failed), 0);
         }
         return true;
@@ -1063,8 +1068,8 @@ public class CafeUpdateFragment extends Fragment {
 
                     @Override
                     public void afterTextChanged(Editable editable) {
-                        if(editable.length() == 1 && editable.toString().equals(AppConstValue.constValue.ZERO_VALUE)) {
-                            etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
+                        if(editable.length() == 1 && editable.toString().equals(AppConstValue.variableConstValue.ZERO_VALUE)) {
+                            etNewTablesState.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                             toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_zero), 0);
                         }
                     }
@@ -1083,13 +1088,13 @@ public class CafeUpdateFragment extends Fragment {
                                     cafeTablesRef.setValue(cafeTables);
 
                                     etCurrentTablesState.setText(String.valueOf(cafeTables));
-                                    etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
-                                    etNewTablesState.setHint(AppConstValue.constValue.EMPTY_VALUE);
+                                    etNewTablesState.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
+                                    etNewTablesState.setHint(AppConstValue.variableConstValue.EMPTY_VALUE);
                                     orderViewModel.setCafeTablesNumber(cafeTables);
                                     toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_updated), 0);
                                 }
                                 else {
-                                    etNewTablesState.setText(AppConstValue.constValue.EMPTY_VALUE);
+                                    etNewTablesState.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                                     toastMessage.showToast(getResources().getString(R.string.cafe_update_tables_state_zero), 0);
                                 }
                             }
@@ -1137,7 +1142,7 @@ public class CafeUpdateFragment extends Fragment {
 
     private void askCameraPermission() {
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, AppConstValue.constValue.CAMERA_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, AppConstValue.permissionConstValue.CAMERA_PERMISSION_CODE);
         }
         else {
             openDeviceCamera();
@@ -1146,17 +1151,17 @@ public class CafeUpdateFragment extends Fragment {
 
     private void openDeviceCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntent, AppConstValue.constValue.CAMERA_REQUEST_CODE);
+        startActivityForResult(cameraIntent, AppConstValue.permissionConstValue.CAMERA_REQUEST_CODE);
     }
 
     private void openDeviceGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, AppConstValue.constValue.GALLERY_REQUEST_CODE);
+        startActivityForResult(galleryIntent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == AppConstValue.constValue.CAMERA_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if(requestCode == AppConstValue.permissionConstValue.CAMERA_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             openDeviceCamera();
         }
     }
@@ -1170,14 +1175,14 @@ public class CafeUpdateFragment extends Fragment {
             btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 
         switch (requestCode) {
-            case AppConstValue.constValue.GALLERY_REQUEST_CODE:
+            case AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE:
                 if(data != null && data.getData() != null) {
                     ivDrinkGlobalContainer.setImageURI(data.getData());
                 }
                 break;
-            case AppConstValue.constValue.CAMERA_REQUEST_CODE:
+            case AppConstValue.permissionConstValue.CAMERA_REQUEST_CODE:
                 if(data != null) {
-                    ivDrinkGlobalContainer.setImageBitmap((Bitmap) data.getExtras().get("data"));
+                    ivDrinkGlobalContainer.setImageBitmap((Bitmap) data.getExtras().get(AppConstValue.permissionConstValue.CAMERA_EXTRAS_DATA));
                 }
                 break;
         }
