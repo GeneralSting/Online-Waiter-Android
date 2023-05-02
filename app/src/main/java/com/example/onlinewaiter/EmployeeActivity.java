@@ -198,6 +198,7 @@ public class EmployeeActivity extends AppCompatActivity {
             return true;
         });
         getCafeInfo(navigationView);
+        Log.d("PROBA123", "onResume: ");
         setListeners();
     }
 
@@ -247,6 +248,9 @@ public class EmployeeActivity extends AppCompatActivity {
                     removeCafeListener();
                 }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
+                    //potrebna je dodatna provjera
+                    //globalna variabla na false prije brisanja kategorije
+                    //globalna variabla na true kada se briše piće
                     checkDrinkDeletion();
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
@@ -333,7 +337,6 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void checkDrinkDeletion() {
-
         HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
         final boolean[] deletedDrinkFounded = {false};
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
@@ -353,16 +356,18 @@ public class EmployeeActivity extends AppCompatActivity {
                             }
                             if(drinkDeleted) {
                                 deletedDrinkFounded[0] = true;
-                                CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
-                                        getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
-                                                orderDrinks.get(key).getDrinkName(),
-                                        getResources().getString(R.string.act_employee_drink_deleted_body),
-                                        getResources().getDrawable(R.drawable.dialog_danger));
-                                customAlertDialog.makeAlertDialog();
+                                if(orderDrinks.get(key) != null) {
+                                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
+                                            getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                                                    orderDrinks.get(key).getDrinkName(),
+                                            getResources().getString(R.string.act_employee_drink_deleted_body),
+                                            getResources().getDrawable(R.drawable.dialog_danger));
+                                    customAlertDialog.makeAlertDialog();
 
-                                HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
-                                updatedDrinksInOrder.remove(key);
-                                orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                                    HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
+                                    updatedDrinksInOrder.remove(key);
+                                    orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                                }
                             }
                         }
 

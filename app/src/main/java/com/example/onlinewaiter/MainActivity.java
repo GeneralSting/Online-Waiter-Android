@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     //Activity views
     Button btnLogin;
     ViewPager2 vpMainPager;
+
+    //global variables/objects
     ArrayList<ViewPagerItem> viewPagerItems = new ArrayList<>();
     CustomAlertDialog customAlertDialog;
     ToastMessage toastMessage;
-
-    //premissions codes
 
     //firebase
     FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();

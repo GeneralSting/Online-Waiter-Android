@@ -281,7 +281,6 @@
 
                     </TableRow>
 
-
                     <ScrollView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -294,7 +293,7 @@
                         <TableLayout
                             android:id="@+id/tlOwnerMainEmployees"
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:paddingBottom="64dp"
                             android:scrollbars="horizontal|vertical">
 
@@ -303,7 +302,6 @@
                     </ScrollView>
 
                 </TableLayout>
-
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

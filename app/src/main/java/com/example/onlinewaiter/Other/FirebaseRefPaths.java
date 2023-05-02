@@ -71,7 +71,7 @@ public class FirebaseRefPaths {
 
     public FirebaseRefPaths(ViewModelStoreOwner viewModelStoreOwner) {
         this.viewModelStoreOwner = viewModelStoreOwner;
-        menuViewModel= new ViewModelProvider(viewModelStoreOwner).get(MenuViewModel.class);
+        menuViewModel = new ViewModelProvider(viewModelStoreOwner).get(MenuViewModel.class);
     }
 
     /*Methods*/
@@ -96,6 +96,9 @@ public class FirebaseRefPaths {
 
     public String getOwnerRefCafe(String cafeId) {
         return getRefCafes() + cafeId;
+    }
+    public String getOwnerRefCafeBills(String cafeId) {
+        return getOwnerRefCafe(cafeId) + refCafeBills;
     }
 
     public String getRefCafeNameChild() {

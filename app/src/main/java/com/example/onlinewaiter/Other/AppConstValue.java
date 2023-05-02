@@ -56,4 +56,8 @@ public class AppConstValue {
         public static final int ORDER_STATUS_DECLINED = 2;
         public static final int ORDER_STATUS_REMOVAL_REQUEST = 3;
     }
+
+    public static class statisticsConstValues {
+        public static final String PIE_CHART_LABEL = "Pie chart data set";
+    }
 }

@@ -64,4 +64,6 @@ dependencies {
     //google play services for SMS Retriver API
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
+    //owner's statistics, graphs by PhilJay
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
