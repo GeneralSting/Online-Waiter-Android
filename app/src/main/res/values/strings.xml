@@ -94,6 +94,7 @@
     <string name="cafe_update_table_state_empty">Enter new tables state</string>
     <string name="cafe_update_tables_state_updated">Tables state updated</string>
     <string name="cafe_update_tables_state_same">Entered current state, nothing to update</string>
+    <string name="cafe_update_drink_already_deleted">Drink is already deleted</string>
 
 
     <!--Employee activity PendingOrders fragment-->

@@ -128,28 +128,8 @@ public class EmployeeActivity extends AppCompatActivity {
         notificationManagerCompat = NotificationManagerCompat.from(this);
 
         startService(new Intent(getBaseContext(), OnAppKilledService.class));
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(
-                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
-        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         toastMessage = new ToastMessage(this);
         firebaseRefPaths = new FirebaseRefPaths(this);
-        setSupportActionBar(binding.appBarEmployee.toolbar);
-
         //liveData for onBackPressed
         final Observer<Boolean> displayingCategoriesObserver = new Observer<Boolean>() {
             @Override
@@ -158,6 +138,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         };
         menuViewModel.getDisplayingCategories().observe(this, displayingCategoriesObserver);
+
         binding.appBarEmployee.ordersNumberFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,6 +159,29 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        setListeners();
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(
+                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
+        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setSupportActionBar(binding.appBarEmployee.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
         navigationView = binding.navOwnerView;
         // Passing each menu ID as a set of Ids because each
@@ -198,8 +202,6 @@ public class EmployeeActivity extends AppCompatActivity {
             return true;
         });
         getCafeInfo(navigationView);
-        Log.d("PROBA123", "onResume: ");
-        setListeners();
     }
 
     private void getCafeInfo(NavigationView navigationView) {
@@ -235,6 +237,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
+        final int[] proba = {0};
         cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -248,6 +251,8 @@ public class EmployeeActivity extends AppCompatActivity {
                     removeCafeListener();
                 }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
+                    Log.e("PROBA123", String.valueOf(proba[0]));
+                    proba[0]++;
                     //potrebna je dodatna provjera
                     //globalna variabla na false prije brisanja kategorije
                     //globalna variabla na true kada se briše piće
@@ -255,6 +260,9 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
                     tvCafeName.setText(cafeSnapshot.getValue(String.class));
+                }
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeTablesChild()))) {
+                    orderViewModel.setCafeTablesNumber(cafeSnapshot.getValue(Integer.class));
                 }
             }
 

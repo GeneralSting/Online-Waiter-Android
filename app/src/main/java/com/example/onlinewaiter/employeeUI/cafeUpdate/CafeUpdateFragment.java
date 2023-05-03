@@ -994,14 +994,12 @@ public class CafeUpdateFragment extends Fragment {
                             orderDrinks.remove(categoryDrinkId);
                             orderViewModel.setDrinksInOrder(orderDrinks);
                         }
-                        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
-                        removeDrinkRef.removeValue();
 
                         if(!categoryDrink.getCategoryDrinkImage().equals(firebaseRefPaths.getStorageCategoryDrinksNoImage())) {
                             storageDeleteImageRef = firebaseStorage.getReferenceFromUrl(categoryDrink.getCategoryDrinkImage());
                             storageDeleteImageRef.delete();
                         }
-                        checkDeletedDrinkCategory(cafeCategoryId);
+                        checkDeletedDrinkCategory(cafeCategoryId, categoryDrinkId);
                         dialogRemoveDrink.dismiss();
                         closeProgressDialog();
                     }
@@ -1011,18 +1009,47 @@ public class CafeUpdateFragment extends Fragment {
         dialogRemoveDrink.show();
     }
 
-    private void checkDeletedDrinkCategory(String cafeCategoryId) {
-        deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(cafeCategoryId));
-        deleteCafeCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+    private void checkDeletedDrinkCategory(String cafeCategoryId, String categoryDrinkId) {
+        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
+        removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.exists()) {
-                    firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(cafeCategoryId)).removeValue();
+                if(snapshot.exists()) {
+                    deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(cafeCategoryId));
+                    deleteCafeCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(!snapshot.exists() || snapshot.getChildrenCount() == 1) {
+                                firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(cafeCategoryId)).removeValue();
+                            }
+                            else {
+                                removeDrinkRef.removeValue();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            closeProgressDialog();
+                            ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                            serverAlertDialog.makeAlertDialog();
+
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    menuViewModel.getCafeId().getValue(),
+                                    menuViewModel.getPhoneNumber().getValue(),
+                                    AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                    error.getMessage().toString(),
+                                    currentDateTime
+                            );
+                            appError.sendError(appError);
+                        }
+                    });
+                }
+                else {
+                    toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_already_deleted), 0);
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                closeProgressDialog();
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                 serverAlertDialog.makeAlertDialog();
 

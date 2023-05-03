@@ -95,6 +95,7 @@
     <string name="cafe_update_table_state_empty">Unesite novo stanje stolova</string>
     <string name="cafe_update_tables_state_updated">Stanje stolova ažurirano</string>
     <string name="cafe_update_tables_state_same">Uneseno isto stanje, ažuriranje odbijeno</string>
+    <string name="cafe_update_drink_already_deleted">Piće je već obrisano</string>
 
 
     <!--Employee activity PendingOrders fragment-->

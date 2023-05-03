@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     //Activity views
@@ -116,7 +118,12 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         //global variables/objects
-        intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number().toString());
+        if(telephonyManager.getLine1Number() == null) {
+            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, "+385976106153");
+        }
+        else {
+            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number());
+        }
         startActivity(intent);
     }
 
