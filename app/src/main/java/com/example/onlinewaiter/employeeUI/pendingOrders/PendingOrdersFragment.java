@@ -7,14 +7,12 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -140,7 +138,7 @@ public class PendingOrdersFragment extends Fragment {
 
                         switch(Objects.requireNonNull(cafeCurrentOrder).getCurrentOrderStatus()) {
                             case order_pending: {
-                                holder.cvCafeCurrentOrder.setCardBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
+                                holder.clCafeCurrentOrder.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
                                 holder.tvCafeCurrentOrder.setText(getResources().getString(R.string.pending_orders_order_pending));
                                 holder.btnCurrentOrderAction.setText(getResources().getString(R.string.pending_orders_btn_order_pending));
                                 holder.btnCurrentOrderAction.setBackgroundColor(getResources().getColor(R.color.red_negative));
@@ -157,7 +155,7 @@ public class PendingOrdersFragment extends Fragment {
                                 break;
                             }
                             case order_ready: {
-                                holder.cvCafeCurrentOrder.setCardBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
+                                holder.clCafeCurrentOrder.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
                                 holder.tvCafeCurrentOrder.setText(getResources().getString(R.string.pending_orders_order_ready));
                                 holder.btnCurrentOrderAction.setText(getResources().getString(R.string.pending_orders_btn_order_ready));
                                 holder.btnCurrentOrderAction.setBackgroundColor(getResources().getColor(R.color.green_positive));
@@ -249,7 +247,7 @@ public class PendingOrdersFragment extends Fragment {
                                 break;
                             }
                             case order_declined: {
-                                holder.cvCafeCurrentOrder.setCardBackgroundColor(getResources().getColor(R.color.cv_cafe_update_purple_overlay));
+                                holder.clCafeCurrentOrder.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_purple_overlay));
                                 holder.tvCafeCurrentOrder.setText(getResources().getString(R.string.pending_orders_order_declined));
                                 holder.btnCurrentOrderAction.setText(getResources().getString(R.string.pending_orders_btn_order_declined));
                                 holder.btnCurrentOrderAction.setBackgroundColor(getResources().getColor(R.color.red_negative));
@@ -288,7 +286,7 @@ public class PendingOrdersFragment extends Fragment {
                                 break;
                             }
                             case order_removal_request: {
-                                holder.cvCafeCurrentOrder.setCardBackgroundColor(getResources().getColor(R.color.pager_background_grey));
+                                holder.clCafeCurrentOrder.setBackgroundColor(getResources().getColor(R.color.pager_background_grey));
                                 holder.tvCafeCurrentOrder.setText(getResources().getString(R.string.pending_orders_order_removal_request));
                                 holder.btnCurrentOrderAction.setText(getResources().getString(R.string.pending_orders_btn_order_removal_request));
                                 holder.btnCurrentOrderAction.setBackgroundColor(getResources().getColor(R.color.pewter_blue));

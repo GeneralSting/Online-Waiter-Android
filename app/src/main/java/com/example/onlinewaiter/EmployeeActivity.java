@@ -478,6 +478,10 @@ public class EmployeeActivity extends AppCompatActivity {
             startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
             finish();
         }
+        if(currentUser == null) {
+            startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
+            finish();
+        }
     }
 
     @Override

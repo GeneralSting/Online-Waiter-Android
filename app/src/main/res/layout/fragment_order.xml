@@ -10,11 +10,8 @@
         android:id="@+id/cvOrderSummary"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:cardMaxElevation="12dp"
+        app:cardCornerRadius="8dp"
         android:layout_margin="8dp"
-        app:cardBackgroundColor="@color/drink_card_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" >
@@ -23,6 +20,7 @@
             android:id="@+id/clOrderSummaryDetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/drink_card_view"
             android:layout_gravity="center"
             android:orientation="horizontal">
 
