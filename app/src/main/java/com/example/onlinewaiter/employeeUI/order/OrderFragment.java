@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -61,6 +62,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     MenuViewModel menuViewModel;
     OrderViewModel orderViewModel;
     OrderDrinksAdapter orderDrinksAdapter;
+    AlertDialog dialog;
 
     //firebase
     DatabaseReference cafeDrinksCategoriesRef, categoryDrinksRef, newCafeBillRef;
@@ -92,6 +94,26 @@ public class OrderFragment extends Fragment implements CallBackOrder {
             modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
             insertOrderDrinks();
         }
+
+        final Observer<Integer> observeOrderDrinksChange = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer viewDisplayedDepth) {
+                orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+                if(dialog != null) {
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+                if(orderDrinks != null && !orderDrinks.isEmpty()) {
+                    modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
+                    insertOrderDrinks();
+                }
+                else {
+                    removeOrderDrinks();
+                }
+            }
+        };
+        orderViewModel.getCheckDrinksOrder().observe(requireActivity(), observeOrderDrinksChange);
 
         ibtnOrderCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,7 +253,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         Button btnOrderAccept = completeOrderView.findViewById(R.id.btnOrderDialogAccept);
         Button btnOrderCancel = completeOrderView.findViewById(R.id.btnOrderDialogCancel);
         CheckBox cbMyOrder = completeOrderView.findViewById(R.id.cbMyOrder);
-        final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+        dialog = new AlertDialog.Builder(getActivity())
                 .setView(completeOrderView)
                 .setTitle(getResources().getString(R.string.order_dialog_title))
                 .create();

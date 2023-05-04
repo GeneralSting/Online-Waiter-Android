@@ -30,4 +30,12 @@ public class OrderViewModel extends ViewModel {
         cafeTablesNumber.setValue(value);
     }
 
+    private final MutableLiveData<Integer> checkDrinksOrder = new MutableLiveData<>();
+    public LiveData<Integer> getCheckDrinksOrder() {
+        return checkDrinksOrder;
+    }
+    public void setCheckDrinksOrder(Integer value) {
+        checkDrinksOrder.setValue(value);
+    }
+
 }

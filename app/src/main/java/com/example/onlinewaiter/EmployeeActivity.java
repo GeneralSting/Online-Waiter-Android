@@ -375,6 +375,16 @@ public class EmployeeActivity extends AppCompatActivity {
                                     HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
                                     updatedDrinksInOrder.remove(key);
                                     orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                                    Log.d("PROBA123", "pavo");
+                                    if(orderViewModel.getCheckDrinksOrder().getValue() == null) {
+                                        Log.d("PROBA123", "cafeupdate: if ");
+                                        orderViewModel.setCheckDrinksOrder(1);
+
+                                    }
+                                    else {
+                                        Log.d("PROBA123", "cafeupdate: else ");
+                                        orderViewModel.setCheckDrinksOrder(orderViewModel.getCheckDrinksOrder().getValue() + 1);
+                                    }
                                 }
                             }
                         }

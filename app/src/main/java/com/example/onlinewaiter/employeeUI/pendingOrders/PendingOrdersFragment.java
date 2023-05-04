@@ -73,7 +73,7 @@ public class PendingOrdersFragment extends Fragment {
     //firebase
     FirebaseRefPaths firebaseRefPaths;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference cafeCurrentOrdersRef, cafeCurrentOrderRef, currentOrderDrinksRef, cafeBillsRef;
+    DatabaseReference cafeCurrentOrdersRef, currentOrderDrinksRef, cafeBillsRef;
     FirebaseRecyclerAdapter<CafeCurrentOrder, CurrentOrderViewHolder> adapterCurrentOrders;
 
 
@@ -103,12 +103,6 @@ public class PendingOrdersFragment extends Fragment {
         return root;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
     private void populateOrdersRv(Boolean allOrders) {
         cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
         Query query = null;
@@ -125,7 +119,7 @@ public class PendingOrdersFragment extends Fragment {
         adapterCurrentOrders = new FirebaseRecyclerAdapter<CafeCurrentOrder, CurrentOrderViewHolder>(currentOrdersOptions) {
             @Override
             protected void onBindViewHolder(@NonNull CurrentOrderViewHolder holder, int position, @NonNull CafeCurrentOrder model) {
-                cafeCurrentOrderRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrder(getRef(position).getKey()));
+                DatabaseReference cafeCurrentOrderRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrder(getRef(position).getKey()));
                 cafeCurrentOrderRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot currentOrderSnapshot) {
