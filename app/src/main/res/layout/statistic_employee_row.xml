@@ -8,25 +8,26 @@
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:background="@color/tablerow_black_overlay">
+
     <TextView
         android:id="@+id/tvStatisticEmployeePhoneNumber"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:layout_weight="1"
+        android:layout_width="140dp"
         />
 
     <TextView
         android:id="@+id/tvStatisticEmployeeValue"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:layout_weight="1"
+        android:layout_width="80dp"
         />
 
     <TextView
         android:id="@+id/tvStatisticEmployeePercent"
         android:textAlignment="center"
         android:textSize="16sp"
-        android:layout_weight="1"
+        android:layout_width="120dp"
         />
 
 </TableRow>

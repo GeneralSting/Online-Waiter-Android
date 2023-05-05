@@ -144,12 +144,15 @@ public class OwnerActivity extends AppCompatActivity {
             startActivity(new Intent(OwnerActivity.this, MainActivity.class));
             finish();
         }
+        if(currentUser == null) {
+            startActivity(new Intent(OwnerActivity.this, MainActivity.class));
+            finish();
+        }
     }
 
     @Override
     public void onBackPressed() {
         if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
-            super.onBackPressed();
             logout();
         }
         else {

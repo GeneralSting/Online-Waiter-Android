@@ -7,9 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.widget.ViewPager2;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +17,18 @@ import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.example.onlinewaiter.Formater.DecimalRemover;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBill;
+import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentStatisticsBinding;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -44,28 +42,41 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class StatisticsFragment extends Fragment {
 
     //global variables/objects
     private FragmentStatisticsBinding binding;
+    ToastMessage toastMessage;
     MainViewModel mainViewModel;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
     HashMap<String, Integer> pieChartStatistic;
-    int databaseQuerySize = 100;
+    final int databaseQuerySize = AppConstValue.variableConstValue.STATISTICS_DEFAULT_QUERY_SIZE;
+    DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+    boolean showChart;
+    private final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValues.QUERY_TYPE_EMPLOYEES;
+    private final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValues.QUERY_TYPE_DRINKS;
+    private final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValues.QUERY_TYPE_TABLES;
+
 
     //fragment views
     Button btnStatisticsEmployees, btnStatisticsDrinks, btnStatisticsTables;
     PieChart pieChart;
     PieData pieData;
     TableLayout tlStatisticEmployees, tlStatisticEmployeesTitle;
+    TextView tvStatisticsSize;
 
     //firebase
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -80,6 +91,8 @@ public class StatisticsFragment extends Fragment {
         firebaseRefPaths = new FirebaseRefPaths();
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         pieChartStatistic = new HashMap<>();
+        decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.getDefault()));
+        toastMessage = new ToastMessage(requireActivity());
 
         btnStatisticsEmployees = binding.btnStatisticsEmployees;
         btnEmploeesCLickEvent();
@@ -96,9 +109,11 @@ public class StatisticsFragment extends Fragment {
         btnStatisticsEmployees.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showChart = true;
                 View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
                 TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
-                tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_btn_employees));
+                tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
+                tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_employees));
                 tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
 
                 Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
@@ -113,6 +128,7 @@ public class StatisticsFragment extends Fragment {
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
 
                 pieChart = (PieChart) statisticsView.findViewById(R.id.pcDialogStatistics);
+                pieChart.getDescription().setText(getResources().getString(R.string.statistics_employees_chart_description));
                 List<PieEntry> pieEntryList = new ArrayList<>();
 
                 final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
@@ -122,11 +138,12 @@ public class StatisticsFragment extends Fragment {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
 
-                        databaseQuery(databaseQuerySize);
+                        databaseQuery(databaseQuerySize, 0);
 
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                showChart = true;
                                 btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
                                 btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
                                 btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
@@ -140,13 +157,14 @@ public class StatisticsFragment extends Fragment {
                                         return String.valueOf((int) Math.floor(value));
                                     }
                                 });
-                                pieChart.invalidate();
+                                makePieChart();
                             }
                         });
 
                         btnDialogStatisticsPercentages.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                showChart = true;
                                 btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
                                 btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
                                 btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
@@ -154,19 +172,21 @@ public class StatisticsFragment extends Fragment {
                                 tlStatisticEmployeesTitle.setVisibility(View.GONE);
                                 pieChart.setVisibility(View.VISIBLE);
                                 pieChart.setUsePercentValues(true);
+
+                                makePieChart();
                                 pieData.setValueFormatter(new ValueFormatter() {
                                     @Override
                                     public String getFormattedValue(float value) {
-                                        return String.valueOf((int) Math.floor(value)) + "%";
+                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
                                     }
                                 });
-                                pieChart.invalidate();
                             }
                         });
 
                         btnDialogStatisticsTable.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                showChart = false;
                                 btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
                                 btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
                                 btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
@@ -174,6 +194,39 @@ public class StatisticsFragment extends Fragment {
                                 pieChart.setVisibility(View.GONE);
                                 tlStatisticEmployeesTitle.setVisibility(View.VISIBLE);
                                 populateEmployeesTable();
+                            }
+                        });
+
+                        btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.GONE);
+                                    etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
+                                    ivStatisticQuerySize.setVisibility(View.GONE);
+                                }
+                                else {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.VISIBLE);
+                                    ivStatisticQuerySize.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+
+                        ivStatisticQuerySize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(etStatisticQuerySize.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else if(Integer.parseInt(etStatisticQuerySize.getText().toString()) <= 0) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else {
+                                    pieChartStatistic = new HashMap<>();
+                                    databaseQuery(Integer.parseInt(etStatisticQuerySize.getText().toString()), 0);
+                                }
                             }
                         });
                     }
@@ -193,12 +246,277 @@ public class StatisticsFragment extends Fragment {
         btnStatisticsDrinks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showChart = true;
+                View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
+                TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
+                tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
+                tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_drinks));
+                tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
 
+                Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
+                Button btnDialogStatisticsPercentages = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsPercentages);
+                Button btnDialogStatisticsTable = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsTable);
+                Button btnDialogStatisticsSize = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsSize);
+
+                EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
+                ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
+
+                tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
+                tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
+
+                pieChart = (PieChart) statisticsView.findViewById(R.id.pcDialogStatistics);
+                pieChart.getDescription().setText(getResources().getString(R.string.statistics_drinks_chart_description));
+                List<PieEntry> pieEntryList = new ArrayList<>();
+
+                final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
+                        .setView(statisticsView)
+                        .create();
+                statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+                        databaseQuery(databaseQuerySize, 1);
+
+                        btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = true;
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+
+                                tlStatisticEmployeesTitle.setVisibility(View.GONE);
+                                pieChart.setVisibility(View.VISIBLE);
+                                pieChart.setUsePercentValues(false);
+                                pieData.setValueFormatter(new ValueFormatter() {
+                                    @Override
+                                    public String getFormattedValue(float value) {
+                                        return String.valueOf((int) Math.floor(value));
+                                    }
+                                });
+                                makePieChart();
+                            }
+                        });
+
+                        btnDialogStatisticsPercentages.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = true;
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+
+                                tlStatisticEmployeesTitle.setVisibility(View.GONE);
+                                pieChart.setVisibility(View.VISIBLE);
+                                pieChart.setUsePercentValues(true);
+
+                                makePieChart();
+                                pieData.setValueFormatter(new ValueFormatter() {
+                                    @Override
+                                    public String getFormattedValue(float value) {
+                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
+                                    }
+                                });
+                            }
+                        });
+
+                        btnDialogStatisticsTable.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = false;
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+
+                                pieChart.setVisibility(View.GONE);
+                                tlStatisticEmployeesTitle.setVisibility(View.VISIBLE);
+                                populateEmployeesTable();
+                            }
+                        });
+
+                        btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.GONE);
+                                    etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
+                                    ivStatisticQuerySize.setVisibility(View.GONE);
+                                }
+                                else {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.VISIBLE);
+                                    ivStatisticQuerySize.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+
+                        ivStatisticQuerySize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(etStatisticQuerySize.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else if(Integer.parseInt(etStatisticQuerySize.getText().toString()) <= 0) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else {
+                                    pieChartStatistic = new HashMap<>();
+                                    databaseQuery(Integer.parseInt(etStatisticQuerySize.getText().toString()), 1);
+                                }
+                            }
+                        });
+                    }
+                });
+                statisticsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        pieChartStatistic = new HashMap<>();
+                    }
+                });
+                statisticsDialog.show();
             }
         });
     }
 
-    private void databaseQuery(int querySize) {
+    private void btnTablesClickEvent() {
+        btnStatisticsTables.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showChart = true;
+                View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
+                TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
+                tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
+                tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_tables));
+                tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
+
+                Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
+                Button btnDialogStatisticsPercentages = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsPercentages);
+                Button btnDialogStatisticsTable = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsTable);
+                Button btnDialogStatisticsSize = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsSize);
+
+                EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
+                ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
+
+                tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
+                tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
+
+                pieChart = (PieChart) statisticsView.findViewById(R.id.pcDialogStatistics);
+                pieChart.getDescription().setText(getResources().getString(R.string.statistics_tables_chart_description));
+                List<PieEntry> pieEntryList = new ArrayList<>();
+
+                final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
+                        .setView(statisticsView)
+                        .create();
+                statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+
+                        databaseQuery(databaseQuerySize, 2);
+
+                        btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = true;
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+
+                                tlStatisticEmployeesTitle.setVisibility(View.GONE);
+                                pieChart.setVisibility(View.VISIBLE);
+                                pieChart.setUsePercentValues(false);
+                                pieData.setValueFormatter(new ValueFormatter() {
+                                    @Override
+                                    public String getFormattedValue(float value) {
+                                        return String.valueOf((int) Math.floor(value));
+                                    }
+                                });
+                                makePieChart();
+                            }
+                        });
+
+                        btnDialogStatisticsPercentages.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = true;
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+
+                                tlStatisticEmployeesTitle.setVisibility(View.GONE);
+                                pieChart.setVisibility(View.VISIBLE);
+                                pieChart.setUsePercentValues(true);
+
+                                makePieChart();
+                                pieData.setValueFormatter(new ValueFormatter() {
+                                    @Override
+                                    public String getFormattedValue(float value) {
+                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
+                                    }
+                                });
+                            }
+                        });
+
+                        btnDialogStatisticsTable.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showChart = false;
+                                btnDialogStatisticsPercentages.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsNumbers.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                btnDialogStatisticsTable.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+
+                                pieChart.setVisibility(View.GONE);
+                                tlStatisticEmployeesTitle.setVisibility(View.VISIBLE);
+                                populateEmployeesTable();
+                            }
+                        });
+
+                        btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.GONE);
+                                    etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
+                                    ivStatisticQuerySize.setVisibility(View.GONE);
+                                }
+                                else {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    etStatisticQuerySize.setVisibility(View.VISIBLE);
+                                    ivStatisticQuerySize.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+
+                        ivStatisticQuerySize.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(etStatisticQuerySize.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else if(Integer.parseInt(etStatisticQuerySize.getText().toString()) <= 0) {
+                                    toastMessage.showToast(getResources().getString(R.string.statistics_query_size_failed), 0);
+                                }
+                                else {
+                                    pieChartStatistic = new HashMap<>();
+                                    databaseQuery(Integer.parseInt(etStatisticQuerySize.getText().toString()), 2);
+                                }
+                            }
+                        });
+                    }
+                });
+                statisticsDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        pieChartStatistic = new HashMap<>();
+                    }
+                });
+                statisticsDialog.show();
+            }
+        });
+    }
+
+    private void databaseQuery(int querySize, int queryType) {
         cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafeBills(mainViewModel.getOwnerCafeId().getValue()));
         Query queryCafeBills = cafeBillsRef.limitToLast(querySize);
         queryCafeBills.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -207,29 +525,76 @@ public class StatisticsFragment extends Fragment {
                 if(!cafeBillsSnapshot.exists()) {
                     return;
                 }
-                boolean pieChartEntriesFull = false;
+                tvStatisticsSize.setText(getResources().getString(R.string.statistics_tv_query_size_start) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                        String.valueOf(cafeBillsSnapshot.getChildrenCount()) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                        getResources().getString(R.string.statistics_tv_query_size_end));
                 for(DataSnapshot cafeBillSnapshot : cafeBillsSnapshot.getChildren()) {
                     if(!cafeBillSnapshot.exists()) {
                         return;
                     }
-                    if(pieChartStatistic.size() > 9) {
-                        pieChartEntriesFull = true;
-                    }
                     CafeBill cafeBill = cafeBillSnapshot.getValue(CafeBill.class);
-                    if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
-                        pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), 1);
-                    }
-                    else {
-                        if(pieChartStatistic.containsKey(cafeBill.getCafeBillDelivererEmployee())) {
-                            pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), pieChartStatistic.get(
-                                    cafeBill.getCafeBillDelivererEmployee()) + 1);
+                    switch (queryType) {
+                        case QUERY_TYPE_EMPLOYEES: {
+                            if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
+                                pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), 1);
+                            }
+                            else {
+                                if(pieChartStatistic.containsKey(cafeBill.getCafeBillDelivererEmployee())) {
+                                    pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), pieChartStatistic.get(
+                                            cafeBill.getCafeBillDelivererEmployee()) + 1);
+                                }
+                                else {
+                                    pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), 1);
+                                }
+                            }
+                            break;
                         }
-                        else if(!pieChartEntriesFull) {
-                            pieChartStatistic.put(cafeBill.getCafeBillDelivererEmployee(), 1);
+                        case QUERY_TYPE_DRINKS: {
+                            for(String cafeBillDrinkKey : cafeBill.getCafeBillDrinks().keySet()) {
+                                CafeBillDrink cafeBillDrink = cafeBill.getCafeBillDrinks().get(cafeBillDrinkKey);
+                                if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
+                                    pieChartStatistic.put(cafeBillDrink.getDrinkName(), 1);
+                                }
+                                else {
+                                    if(pieChartStatistic.containsKey(cafeBillDrink.getDrinkName())) {
+                                        pieChartStatistic.put(cafeBillDrink.getDrinkName(), pieChartStatistic.get(
+                                                cafeBillDrink.getDrinkName()) + 1);
+                                    }
+                                    else {
+                                        pieChartStatistic.put(cafeBillDrink.getDrinkName(), 1);
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case QUERY_TYPE_TABLES: {
+                            if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
+                                pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
+                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), 1);
+                            }
+                            else {
+                                if(pieChartStatistic.containsKey(getResources().getString(R.string.statistics_tables_table_number) +
+                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()))) {
+                                    pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
+                                            AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), pieChartStatistic.get(
+                                            getResources().getString(R.string.statistics_tables_table_number) +
+                                                    AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber())) + 1);
+                                }
+                                else {
+                                    pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
+                                            AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), 1);
+                                }
+                            }
+                            break;
                         }
                     }
                 }
-                makePieChart();
+                if(showChart) {
+                    makePieChart();
+                }
+                else {
+                    populateEmployeesTable();
+                }
             }
 
             @Override
@@ -249,14 +614,6 @@ public class StatisticsFragment extends Fragment {
         });
     }
 
-    private void btnTablesClickEvent() {
-        btnStatisticsTables.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-    }
 
     private void makePieChart() {
         if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
@@ -264,8 +621,8 @@ public class StatisticsFragment extends Fragment {
         }
 
         List<PieEntry> pieEntryList  = new ArrayList<>();
-        for(String key : pieChartStatistic.keySet()) {
-            pieEntryList.add(new PieEntry(pieChartStatistic.get(key), key));
+        for(String key : sortStatisticsEntry(pieChartStatistic, true).keySet()) {
+            pieEntryList.add(new PieEntry(sortStatisticsEntry(pieChartStatistic, true).get(key), key));
         }
 
         PieDataSet pieDataSet = new PieDataSet(pieEntryList, AppConstValue.statisticsConstValues.PIE_CHART_LABEL);
@@ -281,7 +638,6 @@ public class StatisticsFragment extends Fragment {
         pieData.setValueTextSize(12f);
         pieChart.setData(pieData);
         pieChart.getLegend().setEnabled(false);
-        pieChart.getDescription().setText(getResources().getString(R.string.statistics_pie_chart_description));
         pieChart.getDescription().setTextSize(12f);
         pieChart.getDescription().setTextColor(getResources().getColor(R.color.white));
         pieChart.setExtraBottomOffset(2f);
@@ -294,18 +650,51 @@ public class StatisticsFragment extends Fragment {
             tlStatisticEmployees.removeView(tlStatisticEmployees.getChildAt(tlStatisticEmployees.getChildCount() - 1));
         }
 
-        for(String key : pieChartStatistic.keySet()) {
+        float statisticsValuesSum = 0;
+        for(String key : sortStatisticsEntry(pieChartStatistic, false).keySet()) {
+            statisticsValuesSum += pieChartStatistic.get(key);
+        }
+        for(String key : sortStatisticsEntry(pieChartStatistic, false).keySet()) {
             View trEmployeeView = getLayoutInflater().inflate(R.layout.statistic_employee_row, tlStatisticEmployees, false);
 
             TextView tvStatisticEmployeePhoneNumber = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeePhoneNumber);
             TextView tvStatisticEmployeeValue = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeeValue);
             TextView tvStatisticEmployeePercent = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeePercent);
 
+            float emplyoeePercent = (float) pieChartStatistic.get(key) / statisticsValuesSum;
             tvStatisticEmployeePhoneNumber.setText(key);
             tvStatisticEmployeeValue.setText(String.valueOf(pieChartStatistic.get(key)));
-            tvStatisticEmployeePercent.setText("pavo");
+            tvStatisticEmployeePercent.setText(decimalFormat.format(emplyoeePercent * 100) + AppConstValue.characterConstValue.PERCENTAGE);
             tlStatisticEmployees.addView(trEmployeeView);
         }
-
     }
+
+    private LinkedHashMap<String, Integer> sortStatisticsEntry(HashMap<String, Integer> statEntries, boolean counterNeeded) {
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(statEntries.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> firstValue, Map.Entry<String, Integer> secondValue) {
+                return secondValue.getValue().compareTo(firstValue.getValue());
+            }
+        });
+
+        LinkedHashMap<String, Integer> sortedHashMap = new LinkedHashMap<>();
+        if(counterNeeded) {
+            int count = 0;
+            for (Map.Entry<String, Integer> entry : list) {
+                if (count >= 10) {
+                    break;
+                }
+                sortedHashMap.put(entry.getKey(), entry.getValue());
+                count++;
+            }
+        }
+        else {
+            for (Map.Entry<String, Integer> entry : list) {
+                sortedHashMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return sortedHashMap;
+    }
+
 }

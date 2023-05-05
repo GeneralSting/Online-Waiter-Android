@@ -27,6 +27,7 @@
 
     <!--Other colors-->
     <color name="overlay_background">#7f333639</color>
+    <color name="transparent_overlay_background">#66333639</color>
     <color name="menu_category_item_bg_overlay">#af0e0d0e</color>
     <color name="green_positive">#44EA63</color>
     <color name="red_negative">#ea4444</color>

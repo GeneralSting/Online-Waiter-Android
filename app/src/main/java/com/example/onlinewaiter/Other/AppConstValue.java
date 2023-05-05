@@ -9,6 +9,7 @@ public class AppConstValue {
     public static class characterConstValue {
         public static final String CHARACTER_SPACING = " ";
         public static final String IMAGE_NAME_UNDERLINE = "_";
+        public static final String PERCENTAGE = "%";
     }
 
     public static class decimalFormatConstValue {
@@ -33,6 +34,7 @@ public class AppConstValue {
         public static final String ZERO_VALUE = "0";
         public static final char CHAR_ZERO_VALUE = '0';
         public static final int EXIT_TIME_DELAY = 2000;
+        public static final int STATISTICS_DEFAULT_QUERY_SIZE = 100;
 
     }
 
@@ -59,5 +61,8 @@ public class AppConstValue {
 
     public static class statisticsConstValues {
         public static final String PIE_CHART_LABEL = "Pie chart data set";
+        public static final int QUERY_TYPE_EMPLOYEES = 0;
+        public static final int QUERY_TYPE_DRINKS = 1;
+        public static final int QUERY_TYPE_TABLES = 2;
     }
 }

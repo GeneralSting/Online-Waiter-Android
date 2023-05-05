@@ -26,8 +26,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="@string/statistics_tv_query_size_default"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDialogStatisticsTitle" />
 
@@ -79,7 +79,7 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:layout_margin="8dp"
-            android:text="@string/statistics_btn_numbers" />
+            android:text="@string/statistics_btn_show_table" />
 
         <Button
             android:id="@+id/btnDialogStatisticsSize"
@@ -137,10 +137,9 @@
     <TableLayout
         android:id="@+id/tlOwnerStatisticEmployeesTitle"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="64dp"
+        android:layout_height="378dp"
+        android:layout_marginTop="86dp"
         android:visibility="gone"
-        android:scrollbars="horizontal|vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statisticsGridLayout">
@@ -157,21 +156,21 @@
             android:weightSum="3">
 
             <TextView
-                android:layout_weight="1"
+                android:layout_width="140dp"
                 android:text="@string/statistics_table_number_title"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_weight="1"
+                android:layout_width="80dp"
                 android:text="@string/statistics_table_value_title"
                 android:textAlignment="center"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:layout_weight="1"
+                android:layout_width="120dp"
                 android:text="@string/statistics_table_percent_title"
                 android:textAlignment="center"
                 android:textSize="16sp"
@@ -181,7 +180,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:scrollbars="horizontal|vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -192,7 +191,6 @@
                 android:id="@+id/tlOwnerStatisticEmployees"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="64dp"
                 android:scrollbars="horizontal|vertical">
 
             </TableLayout>

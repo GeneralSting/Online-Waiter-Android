@@ -66,4 +66,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
     //owner's statistics, graphs by PhilJay
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    // Add the dependency for the Performance Monitoring library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-perf'
 }

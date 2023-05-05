@@ -155,18 +155,24 @@
     <string name="statistics_tv_title">Statistika</string>
     <string name="statistics_btn_numbers">Brojevi</string>
     <string name="statistics_btn_percentage">Postotak</string>
-    <string name="statistics_btn_employees">Najviše napravljenih računa</string>
-    <string name="statistics_btn_drinks">Najviše naručivana pića</string>
-    <string name="statistics_btn_tables">Najčešće korišteni stolovi</string>
-    <string name="statistics_pie_chart_description">Kružni graf će prikazati najviše 10 brojeva zbog preglednosti</string>
+    <string name="statistics_title_employees">Najviše napravljenih računa</string>
+    <string name="statistics_title_drinks">Najviše naručivana pića</string>
+    <string name="statistics_title_tables">Najčešće korišteni stolovi</string>
+    <string name="statistics_employees_chart_description">Kružni graf će prikazati najviše 10 brojeva zbog preglednosti</string>
+    <string name="statistics_drinks_chart_description">Kružni graf će prikazati najviše 10 pića zbog preglednosti</string>
+    <string name="statistics_tables_chart_description">Kružni graf će prikazati najviše 10 stolova zbog preglednosti</string>
     <string name="statistics_tv_query_size_start">Statistika provedena na</string>
     <string name="statistics_tv_query_size_end">zadnjih računa</string>
-    <string name="statistics_tv_query_size_default">Statistika provedena na 100 zadnjih računa</string>
     <string name="statistics_btn_query_size">Broj računa</string>
     <string name="statistics_table_number_title">Broj mobitela</string>
     <string name="statistics_table_value_title">Količina</string>
     <string name="statistics_table_percent_title">Postotak</string>
-
+    <string name="statistics_btn_show_table">Tablica</string>
+    <string name="statistics_query_size_failed">Statistika zahtjeva bar jedan račun</string>
+    <string name="statistics_btn_employees">Zaposlenici (mobiteli)</string>
+    <string name="statistics_btn_drinks">Pića</string>
+    <string name="statistics_btn_tables">Stolovi</string>
+    <string name="statistics_tables_table_number">Stol:</string>
 
     <!--Owner activity registered numbers fragment-->
 
