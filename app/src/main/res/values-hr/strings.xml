@@ -175,12 +175,29 @@
     <string name="statistics_tables_table_number">Stol:</string>
 
     <!--Owner activity registered numbers fragment-->
-
-
+    <string name="registered_numbers_title">Registrirani brojevi</string>
+    <string name="registered_numbers_btn_disable">Isključi</string>
+    <string name="registered_numbers_btn_enable">Uključi</string>
+    <string name="registered_numbers_btn_remove">Odjava</string>
+    <string name="registered_numbers_btn_owner">Promjeni broj</string>
+    <string name="registered_numbers_dialog_first_title">Unesite e-mail kod</string>
+    <string name="registered_numbers_dialog_second_title">Unesite novi broj</string>
+    <string name="registered_numbers_dialog_first_description">Na Vaš e-mail poslan je kod koji je potrebno unjeti kako bi se izvršila promjena broja</string>
+    <string name="registered_numbers_dialog_second_description">promjenom broj ostajete prijavljeni, ali ne možete ponovno mijenjati broj
+        dok se ne prijavite s novim brojem</string>
+    <string name="registered_numbers_dialog_owner_code">6-znamenkasti kod</string>
+    <string name="registered_numbers_dialog_owner_number">Novi broj (+385 12 345 6789)</string>
+    <string name="registered_numbers_dialog_owner_btn_resend">Ponovno pošalji</string>
+    <string name="registered_numbers_wrong_email_code">Netočan kod</string>
 
     <!--Owner activity logout fragment-->
 
     <!--Owner Activity-->
+
+    <!--Email parts-->
+    <string name="email_subject">Online Waiter: kod</string>
+    <string name="email_body">Za promjenu broja mobitela, unesite primljeni kod:</string>
+    <string name="email_body_info">Promjena je zatražena:</string>
 
     <!--universal-->
     <string name="database_on_cancel_dialog_header">Greška servera! Radimo na tome.</string>

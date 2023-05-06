@@ -69,4 +69,6 @@ dependencies {
     // Add the dependency for the Performance Monitoring library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-perf'
+    //email
+    implementation 'com.github.1902shubh:SendMail:1.0.0'
 }

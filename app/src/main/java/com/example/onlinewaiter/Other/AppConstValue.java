@@ -65,4 +65,13 @@ public class AppConstValue {
         public static final int QUERY_TYPE_DRINKS = 1;
         public static final int QUERY_TYPE_TABLES = 2;
     }
+
+    public static class registeredNumberConstValues {
+        public static final String NUMBER_ROLE = "waiter";
+    }
+
+    public static class emailConstValues {
+        public static final int RANDOM_ORIGIN = 100000;
+        public static final int RANDOM_BOUND = 999999;
+    }
 }

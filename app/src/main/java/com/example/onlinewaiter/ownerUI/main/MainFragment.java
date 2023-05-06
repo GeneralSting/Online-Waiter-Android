@@ -63,7 +63,7 @@ public class MainFragment extends Fragment {
         View root = binding.getRoot();
 
         toastMessage = new ToastMessage(getActivity());
-        firebaseRefPaths = new FirebaseRefPaths(getActivity());
+        firebaseRefPaths = new FirebaseRefPaths();
         tvMainCafeName = binding.tvOwnerMainCafeName;
         tvMainTables = binding.tvOwnerMainTables;
         tvMainEmployees = binding.tvOwnerMainEmployees;

@@ -66,7 +66,6 @@ public class MenuFragment extends Fragment {
     //firebase
     private FirebaseDatabase firebaseDatabase;
     DatabaseReference menuCategoriesRef, menuCategoryRef, menuCategoryDrinksRef, menuCategoryDrinkRef;
-    ValueEventListener menuCategoriesListener, menuCategoryDrinksListener;
     FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder> adapterDrinks;
     FirebaseRefPaths firebaseRefPaths;

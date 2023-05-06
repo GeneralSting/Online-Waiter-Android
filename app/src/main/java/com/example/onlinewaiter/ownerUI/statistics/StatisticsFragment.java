@@ -638,9 +638,6 @@ public class StatisticsFragment extends Fragment {
         pieChart.getDescription().setTextColor(getResources().getColor(R.color.white));
         pieChart.setExtraBottomOffset(2f);
         pieChart.setHoleColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
-
-
-
         pieChart.invalidate();
     }
 

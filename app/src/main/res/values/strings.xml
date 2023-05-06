@@ -174,7 +174,22 @@
     <string name="statistics_tables_table_number">Table:</string>
 
     <!--Owner activity registered numbers fragment-->
-
+    <string name="registered_numbers_title">Registered numbers</string>
+    <string name="registered_numbers_btn_disable">Disable</string>
+    <string name="registered_numbers_btn_enable">Enable</string>
+    <string name="registered_numbers_btn_remove">Remove</string>
+    <string name="registered_numbers_btn_owner">Change number</string>
+    <string name="registered_numbers_dialog_first_title">Enter e-mail code</string>
+    <string name="registered_numbers_dialog_second_title">Enter a new number</string>
+    <string name="registered_numbers_dialog_first_description">code is sent on your e-mail that needs to be entered to change phone number</string>
+    <string name="registered_numbers_dialog_second_description">by changing the number, you remain logged in, but you cannot change the number
+        again until you log in with a new number</string>
+    <string name="registered_numbers_dialog_owner_code">6-digits code</string>
+    <string name="registered_numbers_dialog_owner_number">New number (+1 650–555–1234)</string>
+    <string name="registered_numbers_dialog_owner_btn_resend">Resend</string>
+    <string name="registered_numbers_dialog_first_part" translatable="false">1/2</string>
+    <string name="registered_numbers_dialog_second_part" translatable="false">2/2</string>
+    <string name="registered_numbers_wrong_email_code">Incorrect code</string>
 
 
     <!--Owner activity logout fragment-->
@@ -182,6 +197,12 @@
 
 
     <!--Owner Activity-->
+
+
+    <!--Email parts-->
+    <string name="email_subject">Online Waiter: code</string>
+    <string name="email_body">For changing your phone number please enter this code in app:</string>
+    <string name="email_body_info">Changing was requested:</string>
 
     <!--Custom dialog ok button parameter-->
     <string name="btn_ok_action_request_number_permission" translatable="false">request_number_permission</string>

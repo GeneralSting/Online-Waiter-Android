@@ -51,6 +51,7 @@ public class FirebaseRefPaths {
     private final String refRegisteredNumbers = "registeredNumbers/";
     private final String refRegisteredNumberWaiter = "waiter";
     private final String refRegisteredNumberOwner = "owner";
+    private final String refRegisteredNumberCafeChild = "cafeId";
 
 
 
@@ -220,6 +221,14 @@ public class FirebaseRefPaths {
     /*registeredNumbers*/
     public String getRefRegisteredNumbers() {
         return refRegisteredNumbers;
+    }
+
+    public String getRefRegisteredNumber(String registeredNumberId) {
+        return getRefRegisteredNumbers() + registeredNumberId;
+    }
+
+    public String getRefRegisteredNumberCafeChild() {
+        return refRegisteredNumberCafeChild;
     }
 
     public String getRefRegisteredNumberWaiter() {
