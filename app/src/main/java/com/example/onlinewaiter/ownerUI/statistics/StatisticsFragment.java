@@ -157,7 +157,7 @@ public class StatisticsFragment extends Fragment {
                                         return String.valueOf((int) Math.floor(value));
                                     }
                                 });
-                                makePieChart();
+                                makePieChart(false);
                             }
                         });
 
@@ -171,15 +171,8 @@ public class StatisticsFragment extends Fragment {
 
                                 tlStatisticEmployeesTitle.setVisibility(View.GONE);
                                 pieChart.setVisibility(View.VISIBLE);
-                                pieChart.setUsePercentValues(true);
 
-                                makePieChart();
-                                pieData.setValueFormatter(new ValueFormatter() {
-                                    @Override
-                                    public String getFormattedValue(float value) {
-                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
-                                    }
-                                });
+                                makePieChart(true);
                             }
                         });
 
@@ -294,7 +287,7 @@ public class StatisticsFragment extends Fragment {
                                         return String.valueOf((int) Math.floor(value));
                                     }
                                 });
-                                makePieChart();
+                                makePieChart(false);
                             }
                         });
 
@@ -308,15 +301,8 @@ public class StatisticsFragment extends Fragment {
 
                                 tlStatisticEmployeesTitle.setVisibility(View.GONE);
                                 pieChart.setVisibility(View.VISIBLE);
-                                pieChart.setUsePercentValues(true);
 
-                                makePieChart();
-                                pieData.setValueFormatter(new ValueFormatter() {
-                                    @Override
-                                    public String getFormattedValue(float value) {
-                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
-                                    }
-                                });
+                                makePieChart(true);
                             }
                         });
 
@@ -431,7 +417,7 @@ public class StatisticsFragment extends Fragment {
                                         return String.valueOf((int) Math.floor(value));
                                     }
                                 });
-                                makePieChart();
+                                makePieChart(false);
                             }
                         });
 
@@ -445,15 +431,8 @@ public class StatisticsFragment extends Fragment {
 
                                 tlStatisticEmployeesTitle.setVisibility(View.GONE);
                                 pieChart.setVisibility(View.VISIBLE);
-                                pieChart.setUsePercentValues(true);
 
-                                makePieChart();
-                                pieData.setValueFormatter(new ValueFormatter() {
-                                    @Override
-                                    public String getFormattedValue(float value) {
-                                        return String.valueOf((int) Math.floor(value)) + AppConstValue.characterConstValue.PERCENTAGE;
-                                    }
-                                });
+                                makePieChart(true);
                             }
                         });
 
@@ -590,7 +569,7 @@ public class StatisticsFragment extends Fragment {
                     }
                 }
                 if(showChart) {
-                    makePieChart();
+                    makePieChart(false);
                 }
                 else {
                     populateEmployeesTable();
@@ -615,24 +594,41 @@ public class StatisticsFragment extends Fragment {
     }
 
 
-    private void makePieChart() {
+    private void makePieChart(boolean showPercentage) {
         if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
             return;
         }
-
         List<PieEntry> pieEntryList  = new ArrayList<>();
         for(String key : sortStatisticsEntry(pieChartStatistic, true).keySet()) {
-            pieEntryList.add(new PieEntry(sortStatisticsEntry(pieChartStatistic, true).get(key), key));
+            pieEntryList.add(new PieEntry(pieChartStatistic.get(key), key));
         }
-
         PieDataSet pieDataSet = new PieDataSet(pieEntryList, AppConstValue.statisticsConstValues.PIE_CHART_LABEL);
         pieData = new PieData(pieDataSet);
-        pieData.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return String.valueOf((int) Math.floor(value));
+
+        if(showPercentage) {
+            float statisticsValuesSum = 0;
+            for(String key : sortStatisticsEntry(pieChartStatistic, true).keySet()) {
+                statisticsValuesSum += pieChartStatistic.get(key);
             }
-        });
+            final float statisticsSum = statisticsValuesSum;
+            pieData.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    DecimalFormat percentageDecimalFormat = new DecimalFormat("##.##%");
+                    double percent = (value / statisticsSum);
+                    return percentageDecimalFormat.format(percent);
+                }
+            });
+        }
+        else {
+            pieData.setValueFormatter(new ValueFormatter() {
+                @Override
+                public String getFormattedValue(float value) {
+                    return String.valueOf((int) Math.floor(value));
+                }
+            });
+        }
+
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(getResources().getColor(R.color.white));
         pieData.setValueTextSize(12f);
@@ -642,6 +638,9 @@ public class StatisticsFragment extends Fragment {
         pieChart.getDescription().setTextColor(getResources().getColor(R.color.white));
         pieChart.setExtraBottomOffset(2f);
         pieChart.setHoleColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
+
+
+
         pieChart.invalidate();
     }
 
