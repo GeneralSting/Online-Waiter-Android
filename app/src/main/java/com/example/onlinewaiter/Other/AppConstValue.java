@@ -67,7 +67,8 @@ public class AppConstValue {
     }
 
     public static class registeredNumberConstValues {
-        public static final String NUMBER_ROLE = "waiter";
+        public static final String NUMBER_ROLE_WAITER = "waiter";
+        public static final boolean NUMBER_ALLOWED = true;
     }
 
     public static class emailConstValues {

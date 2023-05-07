@@ -1,4 +1,4 @@
-package com.example.onlinewaiter.Other;
+package com.example.onlinewaiter.Services;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,6 +9,10 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
+import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.FirebaseRefPaths;
+import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.ViewHolder.RegisteredNumberViewHolder;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
@@ -23,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import papaya.in.sendmail.SendMail;
@@ -50,8 +55,8 @@ public class MailService {
                 mReceiverMail = Objects.requireNonNull(cafeSnapshot.getValue(Cafe.class)).getCafeOwnerGmail();
                 mReceiverSubject = receiverSubject;
                 mReceiverBodyInfo = receiverBodyInfo;
-                int randomCode = ThreadLocalRandom.current().nextInt(AppConstValue.emailConstValues.RANDOM_ORIGIN,
-                        AppConstValue.emailConstValues.RANDOM_BOUND);
+                final int randomCode = new Random().nextInt((AppConstValue.emailConstValues.RANDOM_BOUND - AppConstValue.emailConstValues.RANDOM_ORIGIN) +
+                        1) + AppConstValue.emailConstValues.RANDOM_ORIGIN;
                 RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(mViewModelStoreOwner).get(RegisteredNumbersViewModel.class);
                 registeredNumbersViewModel.setEmailRandomCode(randomCode);
                 Date currentDate = Calendar.getInstance().getTime();

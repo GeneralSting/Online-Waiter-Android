@@ -24,14 +24,14 @@
 
             <TextView
                 android:id="@+id/tvDialogOwnerNumberTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:text="@string/registered_numbers_dialog_first_title"
                 android:textAlignment="center"
                 android:textSize="30sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tvDialogOwnerPart"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -66,22 +66,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="32dp"
-        android:maxLength="6"
         android:hint="@string/registered_numbers_dialog_owner_code"
         android:inputType="number"
+        android:maxLength="6"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDialogOwnerNumberDescription" />
 
+    <TextView
+        android:id="@+id/tvDialogOwnerMainIncorrect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/red_negative"
+        app:layout_constraintEnd_toEndOf="@+id/etDialogOwnerNumberMain"
+        app:layout_constraintStart_toStartOf="@+id/etDialogOwnerNumberMain"
+        app:layout_constraintTop_toBottomOf="@+id/etDialogOwnerNumberMain" />
 
     <Button
         android:id="@+id/btnDialogOwnerNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="32dp"
         android:text="@string/accept"
         app:layout_constraintEnd_toEndOf="parent"

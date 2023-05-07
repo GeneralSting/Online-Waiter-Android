@@ -31,6 +31,7 @@
     <string name="act_login_dialog_no_user_header">Broj nije pronađen!</string>
     <string name="act_login_dialog_no_user_body">Broj koji ste unijeli nije sadržan u sustavu te nije moguća prijava s unesenim brojem.</string>
     <string name="act_login_verification_failed">Dogodila se pogreška, pokušajte ponovno</string>
+    <string name="act_login_number_not_allowed">Vlasnik kafića je onemogućio prijavu s tim brojem</string>
 
 
     <!--Employee activity-->
@@ -189,6 +190,8 @@
     <string name="registered_numbers_dialog_owner_number">Novi broj (+385 12 345 6789)</string>
     <string name="registered_numbers_dialog_owner_btn_resend">Ponovno pošalji</string>
     <string name="registered_numbers_wrong_email_code">Netočan kod</string>
+    <string name="registered_numbers_register_title">Registracija novog broja</string>
+
 
     <!--Owner activity logout fragment-->
 

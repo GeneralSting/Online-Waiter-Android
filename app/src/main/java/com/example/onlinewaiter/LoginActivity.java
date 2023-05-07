@@ -216,7 +216,14 @@ public class LoginActivity extends AppCompatActivity {
                         numberRole = registeredNumber.getRole();
                         numberCafeId = registeredNumber.getCafeId();
                         phoneNumber = authNumber;
-                        sendverificationcode(authNumber);
+                        if(registeredNumber.getRole().equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && !registeredNumber.isAllowed()) {
+                            toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
+                            loginProgressBar.setVisibility(View.INVISIBLE);
+                            showProgressBar = true;
+                        }
+                        else {
+                            sendverificationcode(authNumber);
+                        }
                     }
                 }
                 if (!numberFounded) {

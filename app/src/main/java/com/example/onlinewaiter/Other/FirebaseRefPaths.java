@@ -52,6 +52,8 @@ public class FirebaseRefPaths {
     private final String refRegisteredNumberWaiter = "waiter";
     private final String refRegisteredNumberOwner = "owner";
     private final String refRegisteredNumberCafeChild = "cafeId";
+    private final String refRegisteredNumberAllowedChild = "allowed";
+    private final String refRegisteredNumberAllowed = "/allowed/";
 
 
 
@@ -218,6 +220,7 @@ public class FirebaseRefPaths {
         return drinksCategoryId;
     }
 
+
     /*registeredNumbers*/
     public String getRefRegisteredNumbers() {
         return refRegisteredNumbers;
@@ -238,8 +241,13 @@ public class FirebaseRefPaths {
     public String getRefRegisteredNumberOwner() {
         return refRegisteredNumberOwner;
     }
-    /*firebase storage*/
 
+    public String getRefRegisteredNumberAllowed(String registeredNumberId) {
+        return getRefRegisteredNumber(registeredNumberId) + refRegisteredNumberAllowed;
+    }
+
+
+    /*firebase storage*/
     public String getStorageCategoryDrinks() {
         return storageCategoryDrinks;
     }
