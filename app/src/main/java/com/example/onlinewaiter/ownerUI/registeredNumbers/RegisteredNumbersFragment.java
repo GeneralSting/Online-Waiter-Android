@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,10 +14,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -57,13 +60,12 @@ public class RegisteredNumbersFragment extends Fragment {
     FirebaseRefPaths firebaseRefPaths;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
-    private boolean ownerDisplayed = false;
-    private String notDisplayedNumber = "";
 
     //fragment views
     RecyclerView rvRegisteredNumbers;
     RecyclerView.LayoutManager rvRegisteredNumbersManager;
     FloatingActionButton fabRegisterNumber;
+    SwitchCompat scRegisteredNumber;
 
     //firebase
     FirebaseRecyclerAdapter<RegisteredNumber, RegisteredNumberViewHolder> adapterRegisteredNumbers;
@@ -75,6 +77,7 @@ public class RegisteredNumbersFragment extends Fragment {
         View root = binding.getRoot();
         fabRegisterNumber = binding.fabRegisterNumbers;
         rvRegisteredNumbers = binding.rvRegisteredNumbers;
+        scRegisteredNumber = binding.scRegisteredNumber;
         rvRegisteredNumbersManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvRegisteredNumbers.setLayoutManager(rvRegisteredNumbersManager);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
@@ -82,9 +85,20 @@ public class RegisteredNumbersFragment extends Fragment {
         registeredNumbersViewModel = new ViewModelProvider(requireActivity()).get(RegisteredNumbersViewModel.class);
         firebaseRefPaths = new FirebaseRefPaths();
 
+        switchPressed();
         fabAddAction();
-        populateRvRegisteredNumbers();
+        populateRvRegisteredNumbers(false);
         return root;
+    }
+
+    private void switchPressed() {
+        scRegisteredNumber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                stopAdapterListening();
+                populateRvRegisteredNumbers(b);
+            }
+        });
     }
 
     private void fabAddAction() {
@@ -109,7 +123,6 @@ public class RegisteredNumbersFragment extends Fragment {
                                 String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
                                 if ((etRegisterNumber.getText().toString().matches(phoneNumberValidator))) {
                                     RegisteredNumber registeredNumber = new RegisteredNumber(
-                                            mainViewModel.getOwnerCafeId().getValue(),
                                             firebaseRefPaths.getRefRegisteredNumberWaiter(),
                                             AppConstValue.registeredNumberConstValues.NUMBER_ALLOWED
                                     );
@@ -129,9 +142,17 @@ public class RegisteredNumbersFragment extends Fragment {
         });
     }
 
-    private void populateRvRegisteredNumbers() {
-        DatabaseReference cafeRegisteredNumbersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumbers());
-        Query query = cafeRegisteredNumbersRef.orderByChild(firebaseRefPaths.getRefRegisteredNumberCafeChild()).equalTo(mainViewModel.getOwnerCafeId().getValue());
+    private void populateRvRegisteredNumbers(boolean showOwner) {
+        DatabaseReference cafeRegisteredNumbersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCafe(mainViewModel.getOwnerCafeId().getValue()));
+        Query query = null;
+        if(showOwner) {
+            query = cafeRegisteredNumbersRef.orderByKey().equalTo(firebaseRefPaths.getRefRegisteredNumberChild(mainViewModel.getOwnerPhoneNumber().getValue()));
+        }
+        else {
+            query = cafeRegisteredNumbersRef.orderByChild(firebaseRefPaths.getRefRegisteredNumberRoleChild()).equalTo(
+                    firebaseRefPaths.getRefRegisteredNumberWaiter()
+            );
+        }
         FirebaseRecyclerOptions<RegisteredNumber> options = new FirebaseRecyclerOptions
                 .Builder<RegisteredNumber>()
                 .setQuery(query, RegisteredNumber.class)
@@ -139,19 +160,8 @@ public class RegisteredNumbersFragment extends Fragment {
         adapterRegisteredNumbers = new FirebaseRecyclerAdapter<RegisteredNumber, RegisteredNumberViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull RegisteredNumberViewHolder holder, int position, @NonNull RegisteredNumber model) {
-                DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(getRef(position).getKey()));
-                if(!mainViewModel.getOwnerPhoneNumber().getValue().equals(getRef(position).getKey()) && !ownerDisplayed) {
-                    ownerDisplayed = true;
-                    registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(
-                            mainViewModel.getOwnerPhoneNumber().getValue()
-                    ));
-                    notDisplayedNumber = getRef(position).getKey();
-                }
-                else {
-                    if(Objects.equals(getRef(position).getKey(), mainViewModel.getOwnerPhoneNumber().getValue())) {
-                        registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(notDisplayedNumber));
-                    }
-                }
+                DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(
+                        mainViewModel.getOwnerCafeId().getValue(), getRef(position).getKey()));
                 registeredNumberRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot registeredNumberSnapshot) {
@@ -177,6 +187,7 @@ public class RegisteredNumbersFragment extends Fragment {
                             });
 
                             final boolean[] acceptRemoval = {false};
+                            holder.btnRegisteredNumberRemove.setText(getResources().getString(R.string.registered_numbers_btn_remove));
                             holder.btnRegisteredNumberRemove.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -190,7 +201,7 @@ public class RegisteredNumbersFragment extends Fragment {
                                 }
                             });
                         }
-                        else if(Objects.equals(registeredNumberSnapshot.getKey(), mainViewModel.getOwnerPhoneNumber().getValue())) {
+                        else if(Objects.equals(registeredNumberSnapshot.getKey(), mainViewModel.getOwnerPhoneNumber().getValue()) && showOwner) {
                             holder.btnRegisteredNumberDisable.setVisibility(View.GONE);
                             holder.btnRegisteredNumberRemove.setVisibility(View.GONE);
                             holder.clRegisteredNumber.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
@@ -208,19 +219,13 @@ public class RegisteredNumbersFragment extends Fragment {
                                 }
                             });
                         }
-                        else {
-                            holder.cvRegisteredNumber.getLayoutParams().height = 0;
-                            holder.cvRegisteredNumber.getLayoutParams().width = 0;
-                            holder.cvRegisteredNumber.setVisibility(View.GONE);
-                        }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-                            AppError appError;
+                        simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
                         String currentDateTime = simpleDateFormat.format(new Date());
                         appError = new AppError(
                                 mainViewModel.getOwnerCafeId().getValue(),
@@ -247,12 +252,14 @@ public class RegisteredNumbersFragment extends Fragment {
     }
 
     private void disableEnableAction(RegisteredNumber registeredNumber, String registeredNumberId) {
-        DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumberAllowed(registeredNumberId));
+        DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumberAllowed(
+                mainViewModel.getOwnerCafeId().getValue(), registeredNumberId));
         registeredNumberRef.setValue(!registeredNumber.isAllowed());
     }
 
     private void removePhoneNumber(String registeredNumberId) {
-        DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(registeredNumberId));
+        DatabaseReference registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(
+                mainViewModel.getOwnerCafeId().getValue(), registeredNumberId));
         registeredNumberRef.removeValue();
     }
 
@@ -317,7 +324,9 @@ public class RegisteredNumbersFragment extends Fragment {
     }
 
     private void changeOwnerNumber(RegisteredNumber registeredNumber, String newPhoneNumber) {
-        DatabaseReference ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(mainViewModel.getOwnerPhoneNumber().getValue()));
+        mainViewModel.setOwnerPhoneNumber(newPhoneNumber);
+        DatabaseReference ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(
+                mainViewModel.getOwnerCafeId().getValue(), mainViewModel.getOwnerPhoneNumber().getValue()));
         ownerRegisteredNumberRef.removeValue();
         ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumbers());
         registeredNumber.setAllowed(true);

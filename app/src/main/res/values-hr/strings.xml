@@ -191,9 +191,12 @@
     <string name="registered_numbers_dialog_owner_btn_resend">Ponovno pošalji</string>
     <string name="registered_numbers_wrong_email_code">Netočan kod</string>
     <string name="registered_numbers_register_title">Registracija novog broja</string>
+    <string name="registered_numbers_sc_text">Moj broj mobitela</string>
 
 
     <!--Owner activity logout fragment-->
+    <string name="logout_phone_number_changed">Broj mobitela je promjenjen!</string>
+
 
     <!--Owner Activity-->
 

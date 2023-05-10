@@ -208,21 +208,23 @@ public class LoginActivity extends AppCompatActivity {
         //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
         registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot numberSnapshot : snapshot.getChildren()) {
-                    if (authNumber.equals(numberSnapshot.getKey())) {
-                        numberFounded = true;
-                        RegisteredNumber registeredNumber = numberSnapshot.getValue(RegisteredNumber.class);
-                        numberRole = registeredNumber.getRole();
-                        numberCafeId = registeredNumber.getCafeId();
-                        phoneNumber = authNumber;
-                        if(registeredNumber.getRole().equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && !registeredNumber.isAllowed()) {
-                            toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
-                            loginProgressBar.setVisibility(View.INVISIBLE);
-                            showProgressBar = true;
-                        }
-                        else {
-                            sendverificationcode(authNumber);
+            public void onDataChange(@NonNull DataSnapshot cafeRegisteredNumbersSnapshot) {
+                for (DataSnapshot cafeRegisteredNumberSnapshot : cafeRegisteredNumbersSnapshot.getChildren()) {
+                    for(DataSnapshot registeredNumberSnapshot : cafeRegisteredNumberSnapshot.getChildren()) {
+                        if (authNumber.equals(registeredNumberSnapshot.getKey())) {
+                            numberFounded = true;
+                            RegisteredNumber registeredNumber = registeredNumberSnapshot.getValue(RegisteredNumber.class);
+                            numberRole = registeredNumber.getRole();
+                            numberCafeId = cafeRegisteredNumberSnapshot.getKey();
+                            phoneNumber = authNumber;
+                            if(registeredNumber.getRole().equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && !registeredNumber.isAllowed()) {
+                                toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
+                                loginProgressBar.setVisibility(View.INVISIBLE);
+                                showProgressBar = true;
+                            }
+                            else {
+                                sendverificationcode(authNumber);
+                            }
                         }
                     }
                 }

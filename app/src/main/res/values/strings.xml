@@ -192,10 +192,11 @@
     <string name="registered_numbers_dialog_second_part" translatable="false">2/2</string>
     <string name="registered_numbers_wrong_email_code">Incorrect code</string>
     <string name="registered_numbers_register_title">Register new number</string>
+    <string name="registered_numbers_sc_text">My phone number</string>
 
 
     <!--Owner activity logout fragment-->
-
+    <string name="logout_phone_number_changed">Phone number changed!</string>
 
 
     <!--Owner Activity-->

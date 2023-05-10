@@ -1,24 +1,21 @@
 package com.example.onlinewaiter.Models;
 
 public class RegisteredNumber {
-    String number, cafeId, role;
+    String number, role;
     boolean allowed;
 
     public RegisteredNumber() {}
 
-    public RegisteredNumber(String cafeId, String role) {
-        this.cafeId = cafeId;
+    public RegisteredNumber(String role) {
         this.role = role;
     }
 
-    public RegisteredNumber(String number, String cafeId, String role) {
+    public RegisteredNumber(String number, String role) {
         this.number = number;
-        this.cafeId = cafeId;
         this.role = role;
     }
 
-    public RegisteredNumber(String cafeId, String role, boolean allowed) {
-        this.cafeId = cafeId;
+    public RegisteredNumber(String role, boolean allowed) {
         this.role = role;
         this.allowed = allowed;
     }
@@ -29,14 +26,6 @@ public class RegisteredNumber {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public String getCafeId() {
-        return cafeId;
-    }
-
-    public void setCafeId(String cafeId) {
-        this.cafeId = cafeId;
     }
 
     public String getRole() {

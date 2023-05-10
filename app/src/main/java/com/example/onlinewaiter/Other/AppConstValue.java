@@ -10,6 +10,7 @@ public class AppConstValue {
         public static final String CHARACTER_SPACING = " ";
         public static final String IMAGE_NAME_UNDERLINE = "_";
         public static final String PERCENTAGE = "%";
+        public static final String FIREBASE_SLASH = "/";
     }
 
     public static class decimalFormatConstValue {

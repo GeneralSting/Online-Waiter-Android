@@ -24,16 +24,26 @@
             android:textSize="30sp"
             android:textStyle="bold|italic"/>
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/scRegisteredNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/registered_numbers_sc_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvRegisteredNumbersTitle" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRegisteredNumbers"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvRegisteredNumbersTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/scRegisteredNumber" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabRegisterNumbers"

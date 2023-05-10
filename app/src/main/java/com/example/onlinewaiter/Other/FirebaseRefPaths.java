@@ -51,9 +51,9 @@ public class FirebaseRefPaths {
     private final String refRegisteredNumbers = "registeredNumbers/";
     private final String refRegisteredNumberWaiter = "waiter";
     private final String refRegisteredNumberOwner = "owner";
-    private final String refRegisteredNumberCafeChild = "cafeId";
     private final String refRegisteredNumberAllowedChild = "allowed";
     private final String refRegisteredNumberAllowed = "/allowed/";
+    private final String refRegisteredNumberRoleChild = "role";
 
 
 
@@ -226,13 +226,14 @@ public class FirebaseRefPaths {
         return refRegisteredNumbers;
     }
 
-    public String getRefRegisteredNumber(String registeredNumberId) {
-        return getRefRegisteredNumbers() + registeredNumberId;
+    public String getRefRegisteredCafe(String registeredCafeId) {
+        return getRefRegisteredNumbers() + registeredCafeId;
     }
 
-    public String getRefRegisteredNumberCafeChild() {
-        return refRegisteredNumberCafeChild;
+    public String getRefRegisteredNumber(String registeredCafeId, String registeredNumberId) {
+        return getRefRegisteredCafe(registeredCafeId) + AppConstValue.characterConstValue.FIREBASE_SLASH + registeredNumberId;
     }
+
 
     public String getRefRegisteredNumberWaiter() {
         return refRegisteredNumberWaiter;
@@ -242,8 +243,16 @@ public class FirebaseRefPaths {
         return refRegisteredNumberOwner;
     }
 
-    public String getRefRegisteredNumberAllowed(String registeredNumberId) {
-        return getRefRegisteredNumber(registeredNumberId) + refRegisteredNumberAllowed;
+    public String getRefRegisteredNumberAllowed(String registeredCafeId, String registeredNumberId) {
+        return getRefRegisteredNumber(registeredCafeId, registeredNumberId) + refRegisteredNumberAllowed;
+    }
+
+    public String getRefRegisteredNumberChild(String registeredNumberChild) {
+        return registeredNumberChild;
+    }
+
+    public String getRefRegisteredNumberRoleChild() {
+        return refRegisteredNumberRoleChild;
     }
 
 
