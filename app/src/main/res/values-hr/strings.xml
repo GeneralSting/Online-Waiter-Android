@@ -195,8 +195,9 @@
 
 
     <!--Owner activity logout fragment-->
-    <string name="logout_phone_number_changed">Broj mobitela je promjenjen!</string>
-
+    <string name="logout_owner_title">Odjava</string>
+    <string name="logout_owner_description">Želite se odjavite?</string>
+    <string name="logout_owner_number_changed">Broj promjenjen, sljedeća prijava je s novim brojem!</string>
 
     <!--Owner Activity-->
 

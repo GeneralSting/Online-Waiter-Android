@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/owner_main_bg"
+    android:background="@drawable/owner_registered_numbers_bg"
     tools:context=".ownerUI.registeredNumbers.RegisteredNumbersFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

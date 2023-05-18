@@ -23,9 +23,4 @@
         android:label="@string/owner_nav_registered_numbers_title"
         tools:layout="@layout/fragment_registered_numbers" />
 
-    <fragment
-        android:id="@+id/nav_owner_logout"
-        android:name="com.example.onlinewaiter.ownerUI.logout.LogoutFragment"
-        android:label="@string/owner_nav_logout_title"
-        tools:layout="@layout/fragment_logout" />
 </navigation>

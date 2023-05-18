@@ -1,17 +1,22 @@
 package com.example.onlinewaiter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
-import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
-import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
+import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +25,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -31,7 +37,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,6 +81,43 @@ public class OwnerActivity extends AppCompatActivity {
         mainViewModel.setOwnerCafeId(ownerCafeId);
 
         BottomNavigationView navView = findViewById(R.id.nav_owner_view);
+        navView.getMenu().findItem(R.id.nav_owner_logout).setOnMenuItemClickListener(menuItem -> {
+            View ownerLogoutView = getLayoutInflater().inflate(R.layout.dialog_owner_logout, null);
+            TextView tvOwnerLogoutNumberChanged = ownerLogoutView.findViewById(R.id.tvOwnerLogoutNumberChanged);
+            Button btnOwnerLogoutCancel = ownerLogoutView.findViewById(R.id.btnOwnerLogoutCancel);
+            Button btnOwnerLogoutAccept = ownerLogoutView.findViewById(R.id.btnOwnerLogoutAccept);
+            RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(this).get(RegisteredNumbersViewModel.class);
+            if(registeredNumbersViewModel.getPhoneNumberChanged().getValue()) {
+                tvOwnerLogoutNumberChanged.setText(getResources().getString(R.string.logout_owner_number_changed));
+            }
+
+            final AlertDialog ownerLogoutDialog = new AlertDialog.Builder(this)
+                    .setView(ownerLogoutView)
+                    .create();
+            ownerLogoutDialog.setCanceledOnTouchOutside(false);
+            ownerLogoutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialogInterface) {
+                    btnOwnerLogoutCancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ownerLogoutDialog.dismiss();
+                        }
+                    });
+
+                    btnOwnerLogoutAccept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            logout();
+                            ownerLogoutDialog.dismiss();
+                        }
+                    });
+                }
+            });
+            ownerLogoutDialog.show();
+
+            return true;
+        });
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
 

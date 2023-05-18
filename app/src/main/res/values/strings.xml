@@ -196,8 +196,9 @@
 
 
     <!--Owner activity logout fragment-->
-    <string name="logout_phone_number_changed">Phone number changed!</string>
-
+    <string name="logout_owner_title">Logout</string>
+    <string name="logout_owner_description">Confirm to log out</string>
+    <string name="logout_owner_number_changed">Phone number changed, next login is with new number!</string>
 
     <!--Owner Activity-->
 

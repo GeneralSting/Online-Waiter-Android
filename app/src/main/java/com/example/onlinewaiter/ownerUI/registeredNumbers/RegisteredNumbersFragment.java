@@ -126,7 +126,9 @@ public class RegisteredNumbersFragment extends Fragment {
                                             firebaseRefPaths.getRefRegisteredNumberWaiter(),
                                             AppConstValue.registeredNumberConstValues.NUMBER_ALLOWED
                                     );
-                                    DatabaseReference newRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumbers());
+                                    DatabaseReference newRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCafe(
+                                            mainViewModel.getOwnerCafeId().getValue()
+                                    ));
                                     newRegisteredNumberRef.child(etRegisterNumber.getText().toString()).setValue(registeredNumber);
                                     registerNumberDialog.dismiss();
                                 }
@@ -271,6 +273,7 @@ public class RegisteredNumbersFragment extends Fragment {
         TextView tvDialogOwnerNumberDescription = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerNumberDescription);
         TextView tvDialogOwnerNumberTitle = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerNumberTitle);
         TextView tvDialogOwnerMainIncorrect = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerMainIncorrect);
+        TextView tvDialogOwnerPart = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerPart);
         ConstraintLayout clDialogOwnerNumberTitle = (ConstraintLayout) newOwnerNumberView.findViewById(R.id.clDialogOwnerNumberTitle);
         EditText etDialogOwnerNumberMain = (EditText) newOwnerNumberView.findViewById(R.id.etDialogOwnerNumberMain);
         Button btnDialogOwnerNumber = (Button) newOwnerNumberView.findViewById(R.id.btnDialogOwnerNumber);
@@ -309,6 +312,7 @@ public class RegisteredNumbersFragment extends Fragment {
                                 etDialogOwnerNumberMain.setHint(getResources().getString(R.string.registered_numbers_dialog_owner_number));
                                 clDialogOwnerNumberTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
                                 tvDialogOwnerNumberTitle.setText(getResources().getString(R.string.registered_numbers_dialog_second_title));
+                                tvDialogOwnerPart.setText(getResources().getString(R.string.registered_numbers_dialog_second_part));
                                 tvDialogOwnerNumberDescription.setText(getResources().getString(R.string.registered_numbers_dialog_second_description));
                                 tvDialogOwnerMainIncorrect.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                             }
@@ -324,13 +328,14 @@ public class RegisteredNumbersFragment extends Fragment {
     }
 
     private void changeOwnerNumber(RegisteredNumber registeredNumber, String newPhoneNumber) {
-        mainViewModel.setOwnerPhoneNumber(newPhoneNumber);
         DatabaseReference ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumber(
                 mainViewModel.getOwnerCafeId().getValue(), mainViewModel.getOwnerPhoneNumber().getValue()));
         ownerRegisteredNumberRef.removeValue();
-        ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredNumbers());
-        registeredNumber.setAllowed(true);
+        ownerRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCafe(mainViewModel.getOwnerCafeId().getValue()));
+        mainViewModel.setOwnerPhoneNumber(newPhoneNumber);
         ownerRegisteredNumberRef.child(newPhoneNumber).setValue(registeredNumber);
+        stopAdapterListening();
+        populateRvRegisteredNumbers(true);
     }
 
     private void stopAdapterListening() {

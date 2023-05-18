@@ -183,7 +183,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarEmployee.toolbar);
         DrawerLayout drawer = binding.drawerLayout;
-        navigationView = binding.navOwnerView;
+        navigationView = binding.navEmployeeView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
