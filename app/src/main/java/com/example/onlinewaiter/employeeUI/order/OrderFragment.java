@@ -3,6 +3,7 @@ package com.example.onlinewaiter.employeeUI.order;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,6 +86,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                 + getResources().getString(R.string.country_currency));
         btnOrderAccept = (Button) binding.btnOrderAccept;
         ibtnOrderCancel = (ImageButton) binding.ibtnOrderCancel;
+
+        rvOrderDrinks = (RecyclerView)binding.rvOrderDrinks;
+        rvOrderDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
+
         disableOrderConfirm();
 
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
@@ -191,39 +196,41 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void displayOrderDrinks() {
-        updateOrderSummary(modifiedOrderDrinks);
-        rvOrderDrinks = (RecyclerView)binding.rvOrderDrinks;
-        rvOrderDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
-        orderDrinksAdapter = new OrderDrinksAdapter(getContext(), modifiedOrderDrinks, this);
-        rvOrderDrinks.setAdapter(orderDrinksAdapter);
-        orderDrinksAdapter.notifyDataSetChanged();
-        btnOrderAccept.setEnabled(true);
-        btnOrderAccept.setBackgroundColor(getResources().getColor(R.color.green_positive));
-        btnOrderAccept.setTextColor(getResources().getColor(R.color.white));
-        ibtnOrderCancel.setEnabled(true);
+        if(isAdded()) {
+            updateOrderSummary(modifiedOrderDrinks);
+            orderDrinksAdapter = new OrderDrinksAdapter(getContext(), modifiedOrderDrinks, this);
+            rvOrderDrinks.setAdapter(orderDrinksAdapter);
+            orderDrinksAdapter.notifyDataSetChanged();
+            btnOrderAccept.setEnabled(true);
+            btnOrderAccept.setBackgroundColor(getResources().getColor(R.color.green_positive));
+            btnOrderAccept.setTextColor(getResources().getColor(R.color.white));
+            ibtnOrderCancel.setEnabled(true);
+        }
     }
 
     private void updateOrderSummary(HashMap<String, CafeBillDrink> currentOrderDrinks) {
-        if(currentOrderDrinks == null || currentOrderDrinks.isEmpty()) {
-            tvOrderBillAmount.setText(getResources().getString(R.string.order_summary_amount_empty));
-            tvOrderBillTotalPrice.setText(getResources().getString(R.string.order_summary_total_price_zero)
-                    + getResources().getString(R.string.country_currency));
-            disableOrderConfirm();
-        }
-        else {
-            Float orderTotalPrice = 0f;
-            int orderProductsAmount = 0;
-            DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
-            for(String key : currentOrderDrinks.keySet()) {
-                CafeBillDrink cafeBillDrink = currentOrderDrinks.get(key);
-                orderTotalPrice += (Float) cafeBillDrink.getDrinkTotalPrice();
-                orderProductsAmount += (int) cafeBillDrink.getDrinkAmount();
+        if(isAdded()) {
+            if(currentOrderDrinks == null || currentOrderDrinks.isEmpty()) {
+                tvOrderBillAmount.setText(getResources().getString(R.string.order_summary_amount_empty));
+                tvOrderBillTotalPrice.setText(getResources().getString(R.string.order_summary_total_price_zero)
+                        + getResources().getString(R.string.country_currency));
+                disableOrderConfirm();
             }
-            cafeBillDrinkTotalPrice = String.format(Locale.US, "%.2f", orderTotalPrice);
-            cafeBillDrinkAmount = (int) orderProductsAmount;
-            cafeBillDrinks = (HashMap<String, CafeBillDrink>) currentOrderDrinks;
-            tvOrderBillAmount.setText(orderProductsAmount + " " + getResources().getString(R.string.order_summary_amount));
-            tvOrderBillTotalPrice.setText(decimalFormat.format(orderTotalPrice) + getResources().getString(R.string.country_currency));
+            else {
+                Float orderTotalPrice = 0f;
+                int orderProductsAmount = 0;
+                DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+                for(String key : currentOrderDrinks.keySet()) {
+                    CafeBillDrink cafeBillDrink = currentOrderDrinks.get(key);
+                    orderTotalPrice += (Float) cafeBillDrink.getDrinkTotalPrice();
+                    orderProductsAmount += (int) cafeBillDrink.getDrinkAmount();
+                }
+                cafeBillDrinkTotalPrice = String.format(Locale.US, "%.2f", orderTotalPrice);
+                cafeBillDrinkAmount = (int) orderProductsAmount;
+                cafeBillDrinks = (HashMap<String, CafeBillDrink>) currentOrderDrinks;
+                tvOrderBillAmount.setText(orderProductsAmount + " " + getResources().getString(R.string.order_summary_amount));
+                tvOrderBillTotalPrice.setText(decimalFormat.format(orderTotalPrice) + getResources().getString(R.string.country_currency));
+            }
         }
     }
 
@@ -241,8 +248,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void removeOrderDrinks() {
-        rvOrderDrinks.setAdapter(null);
-        updateOrderDrinks(new HashMap<>());
+        if(isAdded()) {
+            rvOrderDrinks.setAdapter(null);
+            updateOrderDrinks(new HashMap<>());
+        }
     }
 
     private void finishOrder() {

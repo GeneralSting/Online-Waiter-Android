@@ -281,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onCodeSent(@NonNull String s,
                                @NonNull PhoneAuthProvider.ForceResendingToken token) {
-            backPressEnabled = false;
+            backPressEnabled = true;
             super.onCodeSent(s, token);
             verificationId = s;
             toastMessage.showToast(getResources().getString(R.string.act_login_otp_sent), 0);

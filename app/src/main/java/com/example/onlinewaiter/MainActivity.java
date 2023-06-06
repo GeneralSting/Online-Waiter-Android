@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //global variables/objects
         if(telephonyManager.getLine1Number() == null) {
-            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, "+385976106153");
+            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE);
         }
         else {
             intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number());

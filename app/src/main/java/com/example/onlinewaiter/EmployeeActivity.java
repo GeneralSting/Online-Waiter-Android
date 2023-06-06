@@ -159,9 +159,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
             }
         });
-
         setListeners();
-
     }
 
     private void createNotificationChannel() {
@@ -237,7 +235,6 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        final int[] proba = {0};
         cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -251,11 +248,6 @@ public class EmployeeActivity extends AppCompatActivity {
                     removeCafeListener();
                 }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
-                    Log.e("PROBA123", String.valueOf(proba[0]));
-                    proba[0]++;
-                    //potrebna je dodatna provjera
-                    //globalna variabla na false prije brisanja kategorije
-                    //globalna variabla na true kada se briše piće
                     checkDrinkDeletion();
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
@@ -307,12 +299,20 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
                 if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
-                cafeCurrentOrder.getCurrentOrderStatus() == 1) {
+                cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_READY) {
                     if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                         builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + AppConstValue.characterConstValue.CHARACTER_SPACING +
                                 String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
                         notificationManagerCompat.notify(notificationId++, builder.build());
                     }
+                }
+                if (cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
+                        cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED &&
+                        ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED &&
+                        cafeCurrentOrder.getCurrentOrderMessage() == null) {
+                    builder.setContentTitle(getResources().getString(R.string.act_employee_deleted_notification_header) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                            String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
+                    notificationManagerCompat.notify(notificationId++, builder.build());
                 }
             }
 
@@ -375,14 +375,10 @@ public class EmployeeActivity extends AppCompatActivity {
                                     HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
                                     updatedDrinksInOrder.remove(key);
                                     orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
-                                    Log.d("PROBA123", "pavo");
                                     if(orderViewModel.getCheckDrinksOrder().getValue() == null) {
-                                        Log.d("PROBA123", "cafeupdate: if ");
                                         orderViewModel.setCheckDrinksOrder(1);
-
                                     }
                                     else {
-                                        Log.d("PROBA123", "cafeupdate: else ");
                                         orderViewModel.setCheckDrinksOrder(orderViewModel.getCheckDrinksOrder().getValue() + 1);
                                     }
                                 }

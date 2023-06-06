@@ -337,7 +337,6 @@ public class CafeUpdateFragment extends Fragment {
                                     priceToTextConverter(categoryDrink.getCategoryDrinkPrice()).equals(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()))) {
                                         if(!imageSame) {
                                             updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
-                                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
                                         }
                                         else {
                                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_no_change), 0);
@@ -831,6 +830,7 @@ public class CafeUpdateFragment extends Fragment {
                         }
                         insertCategoryDrinks(cafeCategoryId);
                         closeProgressDialog();
+                        toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
                     }
                 });
                 downloadImageUri.addOnFailureListener(new OnFailureListener() {

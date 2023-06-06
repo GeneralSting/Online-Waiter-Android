@@ -438,8 +438,9 @@ public class PendingOrdersFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
         stopAdapterListening();
     }
 }

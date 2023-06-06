@@ -38,6 +38,8 @@
     <string name="act_employee_back_button_pressed">Još jednom za odjavu</string>
     <string name="act_employee_notification_header">Narudžba spremna za stol:</string>
     <string name="act_employee_notification_body">Vaša narudžba je spremna za isporuku za stol:</string>
+    <string name="act_employee_deleted_notification_header">Narudžba je obrisana za stol:</string>
+    <string name="act_employee_deleted_notification_body">Konobar je poslao razlog brisanja narudžbe</string>
     <string name="act_employee_order_fab_txt">Broj pića u trenutnoj narudžbi:</string>
     <string name="act_employee_empty_order_fab_txt">Narudžba je prazna</string>
     <string name="act_employee_drink_deleted_title">Obrisano piće:</string>
@@ -59,6 +61,7 @@
     <string name="order_summary_total_price_zero">0,00</string>
     <string name="order_dialog_complete_btn">Potvrdi narudžbu</string>
     <string name="order_dialog_title">Narudžba za stol: </string>
+    <string name="order_dialog_cb_order">Narudžba za moj broj</string>
 
 
     <!--Employee activity cafe update fragment-->
@@ -73,6 +76,7 @@
     <string name="cafe_update_drink_remove_dialog_order_title">Obrisati piće (trenutno u narudžbi):</string>
     <string name="cafe_update_drink_image_picker_camera">Kamera</string>
     <string name="cafe_update_drink_image_picker_gallery">Galerija</string>
+    <string name="cafe_update_drink_new_image_uploading">Dodavanje slike pića…</string>
     <string name="cafe_update_drink_image_uploading">Ažuriranje slike pića…</string>
     <string name="cafe_update_drink_name_condition_failed">Ime pića 1–25 znakova</string>
     <string name="cafe_update_drink_description_condition_failed">Opis pića 1–60 znakova</string>

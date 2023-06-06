@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:button="@null"
         android:drawableTop="?android:attr/listChoiceIndicatorMultiple"
-        android:text="Pravim narudžbu"
+        android:text="@string/order_dialog_cb_order"
         app:layout_constraintBottom_toBottomOf="@+id/npOrderDialogTableNumber"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/vglOrderCompletionHalfDivider"

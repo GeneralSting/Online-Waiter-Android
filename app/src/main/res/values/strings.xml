@@ -36,6 +36,8 @@
     <string name="act_employee_back_button_pressed">One more time to logout.</string>
     <string name="act_employee_notification_header">Order ready for table:</string>
     <string name="act_employee_notification_body">Your order is ready to be delivered to table number:</string>
+    <string name="act_employee_deleted_notification_header">Order is deleted for table:</string>
+    <string name="act_employee_deleted_notification_body">Your received message from waiter</string>
     <string name="act_employee_order_fab_txt">Number of drinks in current order:</string>
     <string name="act_employee_empty_order_fab_txt">Order is empty</string>
     <string name="act_employee_drink_deleted_title">Deleted drink:</string>
@@ -58,6 +60,7 @@
     <string name="order_summary_total_price_zero">0.00</string>
     <string name="order_dialog_complete_btn">Make Order</string>
     <string name="order_dialog_title">Order for table: </string>
+    <string name="order_dialog_cb_order">Order for my number</string>
 
 
     <!--Employee activity cafe update fragment-->
@@ -72,6 +75,7 @@
     <string name="cafe_update_drink_remove_dialog_order_title">Delete drink (Drink in order):</string>
     <string name="cafe_update_drink_image_picker_camera">Camera</string>
     <string name="cafe_update_drink_image_picker_gallery">Gallery</string>
+    <string name="cafe_update_drink_new_image_uploading">Saving drink image…</string>
     <string name="cafe_update_drink_image_uploading">Updating drink image…</string>
     <string name="cafe_update_drink_name_condition_failed">Drink name 1–25 characters</string>
     <string name="cafe_update_drink_description_condition_failed">Drink description 1–60 characters</string>
@@ -113,7 +117,7 @@
     <string name="pending_orders_drink_name_total">TOTAL</string>
     <string name="pending_orders_switch_txt">All orders</string>
     <string name="pending_orders_order_removal_request">Waiting for order rejection acceptance, table:</string>
-    <string name="pending_orders_btn_order_removal_request">Cancel removal</string>
+    <string name="pending_orders_btn_order_removal_request">Cancel</string>
     <string name="pending_orders_payment_received">Received:</string>
     <string name="pending_orders_payment_return">Return:</string>
     <string name="pending_orders_btn_remove">Remove order</string>
