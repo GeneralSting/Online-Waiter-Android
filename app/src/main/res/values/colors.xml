@@ -29,6 +29,7 @@
     <color name="dialog_warning">#ffa500</color>
     <color name="dialog_danger">#ff2f2f</color>
     <color name="dialog_info">#adc0c4</color>
+    <color name="dialog_action">#CFAF96</color>
 
     <!--Other colors-->
     <color name="overlay_background">#7f333639</color>

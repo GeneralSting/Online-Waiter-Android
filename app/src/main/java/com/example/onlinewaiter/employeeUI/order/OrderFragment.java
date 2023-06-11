@@ -2,6 +2,8 @@ package com.example.onlinewaiter.employeeUI.order;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -256,16 +258,16 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void finishOrder() {
         View completeOrderView = getLayoutInflater().inflate(R.layout.order_completion_dialog, null);
+        ImageButton ibCloseDialog = completeOrderView.findViewById(R.id.ibCloseOrderCompletion);
         NumberPicker npTableNumber = completeOrderView.findViewById(R.id.npOrderDialogTableNumber);
         npTableNumber.setMinValue(1);
         npTableNumber.setMaxValue(orderViewModel.getCafeTablesNumber().getValue());
         Button btnOrderAccept = completeOrderView.findViewById(R.id.btnOrderDialogAccept);
-        Button btnOrderCancel = completeOrderView.findViewById(R.id.btnOrderDialogCancel);
         CheckBox cbMyOrder = completeOrderView.findViewById(R.id.cbMyOrder);
         dialog = new AlertDialog.Builder(getActivity())
                 .setView(completeOrderView)
-                .setTitle(getResources().getString(R.string.order_dialog_title))
                 .create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -277,7 +279,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                         dialog.dismiss();
                     }
                 });
-                btnOrderCancel.setOnClickListener(new View.OnClickListener() {
+
+                ibCloseDialog.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();

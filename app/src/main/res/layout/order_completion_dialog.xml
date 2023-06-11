@@ -4,66 +4,118 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="32dp">
+    android:layout_margin="0dp">
 
-    <NumberPicker
-        android:id="@+id/npOrderDialogTableNumber"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:scaleX="1.25"
-        android:scaleY="1.25"
-        app:layout_constraintEnd_toStartOf="@+id/vglOrderCompletionHalfDivider"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        android:paddingBottom="32dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/ibCloseOrderCompletion"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:elevation="2dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:src="@drawable/icon_baseline_close_24" />
+
+        <TextView
+            android:id="@+id/tvInfoDialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/order_dialog_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <View
+            android:layout_width="200dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <NumberPicker
+                android:id="@+id/npOrderDialogTableNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="32dp"
+                android:scaleX="1.25"
+                android:scaleY="1.25"
+                android:theme="@style/AppTheme.Picker"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <CheckBox
+                android:id="@+id/cbMyOrder"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:button="@null"
+                android:drawableTop="?android:attr/listChoiceIndicatorMultiple"
+                android:text="@string/order_dialog_cb_order"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:theme="@style/orderCheckbox"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnOrderDialogAccept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:text="@string/order_dialog_complete_btn" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="10dp"
+        android:padding="15dp"
+        android:src="@drawable/dialog_payment"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnOrderDialogAccept"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/green_positive"
-        android:text="@string/order_dialog_complete_btn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/vglOrderCompletionHalfDivider"
-        app:layout_constraintTop_toBottomOf="@+id/npOrderDialogTableNumber" />
-
-    <Button
-        android:id="@+id/btnOrderDialogCancel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/red_negative"
-        android:text="@string/cancel"
-        app:layout_constraintBottom_toBottomOf="@+id/btnOrderDialogAccept"
-        app:layout_constraintEnd_toStartOf="@+id/vglOrderCompletionHalfDivider"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/npOrderDialogTableNumber" />
-
-    <CheckBox
-        android:id="@+id/cbMyOrder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:button="@null"
-        android:drawableTop="?android:attr/listChoiceIndicatorMultiple"
-        android:text="@string/order_dialog_cb_order"
-        app:layout_constraintBottom_toBottomOf="@+id/npOrderDialogTableNumber"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/vglOrderCompletionHalfDivider"
-        app:layout_constraintTop_toTopOf="@+id/npOrderDialogTableNumber" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vglOrderCompletionHalfDivider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

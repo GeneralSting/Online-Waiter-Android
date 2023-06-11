@@ -21,6 +21,15 @@
 
     </style>
 
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@android:color/black</item>
+    </style>
+
+    <style name="orderCheckbox" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@color/tumbleweed</item>
+        <item name="android:textColorSecondary">@color/tumbleweed</item>  // for unchecked
+    </style>
+
     <style name="DialogAlertAnimation">
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
