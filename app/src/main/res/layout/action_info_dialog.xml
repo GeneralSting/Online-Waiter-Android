@@ -29,6 +29,7 @@
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:padding="10dp"
+            android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@drawable/rounded_ripple_bg"
             android:src="@drawable/icon_baseline_close_24" />

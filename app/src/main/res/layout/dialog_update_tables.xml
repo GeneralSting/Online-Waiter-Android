@@ -57,7 +57,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/etTablesNewState"
-            app:drawableStartCompat="@drawable/icon_baseline_double_arrow_right_32" />
+            app:drawableStartCompat="@drawable/icon_double_arrow_right_32" />
 
         <EditText
             android:id="@+id/etTablesNewState"

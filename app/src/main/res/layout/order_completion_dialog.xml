@@ -29,12 +29,12 @@
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:padding="10dp"
+            android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@drawable/rounded_ripple_bg"
             android:src="@drawable/icon_baseline_close_24" />
 
         <TextView
-            android:id="@+id/tvInfoDialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -113,7 +113,7 @@
         android:background="@drawable/action_dialog"
         android:elevation="10dp"
         android:padding="15dp"
-        android:src="@drawable/dialog_payment"
+        android:src="@drawable/dialog_order_completion"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -122,6 +122,7 @@
     <string name="pending_orders_payment_return">Return:</string>
     <string name="pending_orders_btn_remove">Remove order</string>
     <string name="pending_orders_message_title">Message for order, table:</string>
+    <string name="pending_orders_payment_title">Order price:</string>
 
 
     <!--Employee nav header-->
@@ -226,6 +227,7 @@
     <string name="drink_btn_add_placeholder" translatable="false">+</string>
     <string name="drink_btn_remove_placeholder" translatable="false">-</string>
     <string name="drink_amount_placeholder" translatable="false">0</string>
+    <string name="description_close_dialog">Close Dialog</string>
 
     <string name="title_activity_employee">EmployeeActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

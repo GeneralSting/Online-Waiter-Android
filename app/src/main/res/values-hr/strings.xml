@@ -123,7 +123,7 @@
     <string name="pending_orders_payment_return">Vratiti:</string>
     <string name="pending_orders_btn_remove">Obriši narudžbu</string>
     <string name="pending_orders_message_title">Poruka za narudžbu stola:</string>
-
+    <string name="pending_orders_payment_title">Iznos narudžbe:</string>
 
 
     <!--Employee nav header-->
@@ -217,4 +217,6 @@
     <string name="accept">Prihvati</string>
     <string name="cancel">Odustani</string>
     <string name="country_currency">€</string>
+    <string name="description_close_dialog">Zatvorite dialog</string>
+
 </resources>

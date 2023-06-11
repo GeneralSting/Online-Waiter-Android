@@ -166,21 +166,26 @@ public class PendingOrdersFragment extends Fragment {
 
                                         View orderPaymentView = getLayoutInflater().inflate(R.layout.dialog_order_payment, null);
                                         TextView tvOrderPaymentPrice = (TextView) orderPaymentView.findViewById(R.id.tvOrderPaymentPrice);
+                                        TextView tvPaymentIcon = (TextView) orderPaymentView.findViewById(R.id.tvPaymentIcon);
                                         EditText etOrderPaymentReceived = (EditText) orderPaymentView.findViewById(R.id.etOrderPaymentReceived);
                                         etOrderPaymentReceived.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
                                         EditText etOrderPaymentReturn = (EditText) orderPaymentView.findViewById(R.id.etOrderPaymentReturn);
                                         etOrderPaymentReturn.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
                                         Button btnOrderPaymentConfirm = (Button) orderPaymentView.findViewById(R.id.btnOrderPaymentConfirm);
+                                        ImageButton ibCloseOrderPayment = (ImageButton) orderPaymentView.findViewById(R.id.ibCloseOrderPayment);
 
                                         final AlertDialog orderPaymentDialog = new AlertDialog.Builder(getActivity())
                                                 .setView(orderPaymentView)
                                                 .create();
+                                        orderPaymentDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                         orderPaymentDialog.setCanceledOnTouchOutside(false);
                                         orderPaymentDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                             @Override
                                             public void onShow(DialogInterface dialogInterface) {
 
-                                                tvOrderPaymentPrice.setText(cafeCurrentOrder.getCurrentOrderTotalPrice().toString() + getResources().getString(R.string.country_currency));
+                                                tvOrderPaymentPrice.setText(getResources().getString(R.string.pending_orders_payment_title) +
+                                                        AppConstValue.characterConstValue.CHARACTER_SPACING +
+                                                        cafeCurrentOrder.getCurrentOrderTotalPrice().toString() + getResources().getString(R.string.country_currency));
 
                                                 DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
 
@@ -192,19 +197,22 @@ public class PendingOrdersFragment extends Fragment {
 
                                                     @Override
                                                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                                                        if(etOrderPaymentReceived.getText().toString().equals("")) {
+                                                        if(etOrderPaymentReceived.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                                                             etOrderPaymentReceived.setHint(getResources().getString(R.string.pending_orders_payment_received));
-                                                            etOrderPaymentReturn.setText("");
+                                                            etOrderPaymentReturn.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                                                             etOrderPaymentReturn.setHint(getResources().getString(R.string.pending_orders_payment_return));
+                                                            tvPaymentIcon.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_double_arrow_right_32, 0, 0, 0);
                                                         }
                                                         else {
                                                             float receivedPrice = Float.parseFloat(etOrderPaymentReceived.getText().toString());
                                                             float result = receivedPrice - Float.parseFloat(cafeCurrentOrder.getCurrentOrderTotalPrice());
                                                             if(result >= 0f) {
+                                                                tvPaymentIcon.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_green_baseline_double_arrow_32, 0, 0, 0);
                                                                 etOrderPaymentReturn.setText(decimalFormat.format(result));
                                                                 etOrderPaymentReturn.setTextColor(getResources().getColor(R.color.green_positive));
                                                             }
                                                             else {
+                                                                tvPaymentIcon.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_red_baseline_double_arrow_32, 0, 0, 0);
                                                                 etOrderPaymentReturn.setText(decimalFormat.format(result));
                                                                 etOrderPaymentReturn.setTextColor(getResources().getColor(R.color.red_negative));
                                                             }
@@ -238,6 +246,12 @@ public class PendingOrdersFragment extends Fragment {
                                                         orderPaymentDialog.dismiss();
                                                     }
                                                 });
+                                            }
+                                        });
+                                        ibCloseOrderPayment.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                orderPaymentDialog.dismiss();
                                             }
                                         });
                                         orderPaymentDialog.show();
