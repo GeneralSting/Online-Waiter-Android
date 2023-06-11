@@ -7,12 +7,12 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -39,7 +39,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     //Activity views
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
         customAlertDialog = new CustomAlertDialog(MainActivity.this,
                 getResources().getString(R.string.act_main_dialog_permissions_warning_header),
                 getResources().getString(R.string.act_main_dialog_permissions_warning_body),
-                getResources().getDrawable(R.drawable.dialog_danger));
+                getResources().getDrawable(R.drawable.modal_danger));
         customAlertDialog.makeAlertDialog();
     }
 
@@ -175,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         customAlertDialog = new CustomAlertDialog(MainActivity.this,
                 getResources().getString(R.string.act_main_dialog_permissions_denied_header),
                 getResources().getString(R.string.act_main_dialog_permissions_denied_body),
-                getResources().getDrawable(R.drawable.dialog_warning));
+                getResources().getDrawable(R.drawable.modal_warning));
         customAlertDialog.makeAlertDialog();
     }
 

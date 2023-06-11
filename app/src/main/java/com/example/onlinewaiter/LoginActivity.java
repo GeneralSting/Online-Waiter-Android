@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -89,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
                             getResources().getString(R.string.act_login_dialog_no_number_header),
                             getResources().getString(R.string.act_login_dialog_no_number_body),
-                            getResources().getDrawable(R.drawable.dialog_no_number));
+                            getResources().getDrawable(R.drawable.modal_no_number));
                     customAlertDialog.makeAlertDialog();
                 }
             });
@@ -232,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
                             getResources().getString(R.string.act_login_dialog_no_user_header),
                             getResources().getString(R.string.act_login_dialog_no_user_body),
-                            getResources().getDrawable(R.drawable.dialog_no_number));
+                            getResources().getDrawable(R.drawable.modal_no_number));
                     customAlertDialog.makeAlertDialog();
                     loginProgressBar.setVisibility(View.INVISIBLE);
                     showProgressBar = true;

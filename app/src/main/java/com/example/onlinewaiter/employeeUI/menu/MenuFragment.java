@@ -22,6 +22,7 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Other.ActionDialog;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
@@ -204,27 +205,16 @@ public class MenuFragment extends Fragment {
                         holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + getResources().getString(R.string.country_currency));
                         Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 
-                        if(categoryDrink.getCategoryDrinkDescription().length() > 45) {
-                            holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription().substring(0, 42) + getResources().getString(R.string.etc_dots));
+                        if(categoryDrink.getCategoryDrinkDescription().length() > AppConstValue.variableConstValue.MENU_DRINK_DESCRIPTION_LENGTH) {
+                            holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription().substring(
+                                    0, AppConstValue.variableConstValue.MENU_DRINK_DESCRIPTION_LENGTH_SUBSTRING) + getResources().getString(R.string.etc_dots));
                             holder.tvMenuDrinkDescription.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    TextView txtFullDrinkDescription = new TextView(getActivity());
-                                    txtFullDrinkDescription.setTextSize(24);
-                                    final AlertDialog fullDrinkDescriptionDialog = new AlertDialog.Builder(getActivity()).create();
-                                    fullDrinkDescriptionDialog.setView(
-                                            txtFullDrinkDescription, 90, 120, 130, 140
-                                    );
-                                    fullDrinkDescriptionDialog.setTitle(
-                                            getResources().getString(R.string.menu_drink_description_dialog_title) + " " + categoryDrink.getCategoryDrinkName()
-                                    );
-                                    fullDrinkDescriptionDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(DialogInterface dialogInterface) {
-                                            txtFullDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
-                                        }
-                                    });
-                                    fullDrinkDescriptionDialog.show();
+                                    ActionDialog.showInfoDialog(
+                                            requireActivity(),
+                                            getResources().getString(R.string.menu_drink_description_dialog_title),
+                                            categoryDrink.getCategoryDrinkDescription());
                                 }
                             });
                         }

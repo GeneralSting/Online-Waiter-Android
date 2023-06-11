@@ -25,6 +25,11 @@
     <color name="grey">#808080</color>
     <color name="dark_gray">#a9a9a9</color>
 
+    <!--Dialog bg colors-->
+    <color name="dialog_warning">#ffa500</color>
+    <color name="dialog_danger">#ff2f2f</color>
+    <color name="dialog_info">#adc0c4</color>
+
     <!--Other colors-->
     <color name="overlay_background">#7f333639</color>
     <color name="transparent_overlay_background">#66333639</color>

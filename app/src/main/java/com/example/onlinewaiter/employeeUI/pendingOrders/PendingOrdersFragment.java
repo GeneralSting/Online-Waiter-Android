@@ -2,7 +2,9 @@ package com.example.onlinewaiter.employeeUI.pendingOrders;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -33,6 +36,7 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.CurrentOrderViewHolder;
 import com.example.onlinewaiter.databinding.FragmentPendingOrdersBinding;
@@ -68,6 +72,7 @@ public class PendingOrdersFragment extends Fragment {
     private AppError appError;
     MenuViewModel menuViewModel;
     RecyclerView.LayoutManager rvCurrentOrdersLayoutManager;
+    ToastMessage toastMessage;
 
 
     //firebase
@@ -84,6 +89,7 @@ public class PendingOrdersFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        toastMessage = new ToastMessage(requireActivity());
 
         scCafeCurrentOrders = (SwitchCompat) binding.scCafeCurrentOrders;
         scCafeCurrentOrders.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -336,12 +342,13 @@ public class PendingOrdersFragment extends Fragment {
 
     private void populateOrderTable(String currentOrderId, CafeCurrentOrder cafeCurrentOrder) {
         View currentOrderTableView = getLayoutInflater().inflate(R.layout.dialog_current_order, null);
+        ImageButton ibCloseDialog = currentOrderTableView.findViewById(R.id.ibCloseCurrentOrder);
         TableLayout tlCurrentOrderDrinks = currentOrderTableView.findViewById(R.id.tlCurrentOrderDrinks);
         TableRow trCurrenOrderDrinksTitle = currentOrderTableView.findViewById(R.id.trCurrentOrderDrinkTitle);
 
         View trTotalView = getLayoutInflater().inflate(R.layout.current_order_row, tlCurrentOrderDrinks, false);
         TableLayout.LayoutParams trTotalViewParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
-        trTotalViewParams.setMargins(0, 64, 0, 0);
+        trTotalViewParams.setMargins(0, 32, 0, 0);
 
         trTotalView.setLayoutParams(trTotalViewParams);
 
@@ -379,7 +386,18 @@ public class PendingOrdersFragment extends Fragment {
                     View trDrinkView = getLayoutInflater().inflate(R.layout.current_order_row, tlCurrentOrderDrinks, false);
 
                     TextView tvCurrentOrderDrinkName = (TextView) trDrinkView.findViewById(R.id.tvCurrentOrderDrinkName);
-                    tvCurrentOrderDrinkName.setText(cafeBillDrink.getDrinkName());
+                    String shortDrinkName = cafeBillDrink.getDrinkName();
+
+                    if (shortDrinkName.length() > AppConstValue.variableConstValue.TABLE_DRINK_NAME_LENGTH) {
+                        shortDrinkName = shortDrinkName.substring(0, AppConstValue.variableConstValue.TABLE_DRINK_NAME_LENGTH) + getResources().getString(R.string.etc_dots);
+                        tvCurrentOrderDrinkName.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                toastMessage.showToast(cafeBillDrink.getDrinkName(), 0);
+                            }
+                        });
+                    }
+                    tvCurrentOrderDrinkName.setText(shortDrinkName);
 
                     TextView tvCurrentOrderDrinkAmount = (TextView) trDrinkView.findViewById(R.id.tvCurrentOrderDrinkAmount);
                     tvCurrentOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
@@ -426,9 +444,17 @@ public class PendingOrdersFragment extends Fragment {
 
         final AlertDialog currentOrderTable = new AlertDialog.Builder(getActivity())
                 .setView(currentOrderTableView)
-                .setTitle(getResources().getString(R.string.pending_orders_overview_dialog_title))
                 .create();
+
+        currentOrderTable.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         currentOrderTable.show();
+
+        ibCloseDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentOrderTable.cancel();
+            }
+        });
     }
 
     private void stopAdapterListening() {

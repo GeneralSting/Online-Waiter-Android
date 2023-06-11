@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_margin="0dp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintHeight_max="500dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="25dp"
         android:background="@drawable/action_dialog_info_bg"
+        android:elevation="5dp"
         android:orientation="vertical"
         android:paddingBottom="32dp"
         android:paddingLeft="16dp"
@@ -24,20 +24,19 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/ibCloseCurrentOrder"
+            android:id="@+id/ibCloseInfoDialog"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
             android:padding="10dp"
-            android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@drawable/rounded_ripple_bg"
             android:src="@drawable/icon_baseline_close_24" />
 
         <TextView
+            android:id="@+id/tvInfoDialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pending_orders_overview_dialog_title"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -51,55 +50,13 @@
             android:layout_marginBottom="16dp"
             android:layout_gravity="center"/>
 
-        <ScrollView
+        <TextView
+            android:id="@+id/tvInfoDialogContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <TableLayout
-                android:id="@+id/tlCurrentOrderDrinks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="horizontal|vertical"
-                android:background="@drawable/table_border"
-                android:shrinkColumns="0"
-                >
-
-                <TableRow
-                    android:id="@+id/trCurrentOrderDrinkTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="3"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="8dp"
-                    android:background="@drawable/table_border">
-
-                    <TextView
-                        android:text="@string/pending_orders_drink_name_col"
-                        android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:text="@string/pending_orders_drink_amount_col"
-                        android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_weight="1" />
-
-                    <TextView
-                        android:text="@string/pending_orders_drink_price_col"
-                        android:textAlignment="center"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_weight="1" />
-
-                </TableRow>
-
-            </TableLayout>
-
-        </ScrollView>
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:gravity="center"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -109,11 +66,9 @@
         android:background="@drawable/action_dialog_info_bg"
         android:elevation="10dp"
         android:padding="15dp"
-        android:src="@drawable/dialog_drinks"
+        android:src="@drawable/dialog_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

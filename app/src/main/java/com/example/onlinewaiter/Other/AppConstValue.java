@@ -36,6 +36,9 @@ public class AppConstValue {
         public static final char CHAR_ZERO_VALUE = '0';
         public static final int EXIT_TIME_DELAY = 2000;
         public static final int STATISTICS_DEFAULT_QUERY_SIZE = 100;
+        public static final int TABLE_DRINK_NAME_LENGTH = 15;
+        public static final int MENU_DRINK_DESCRIPTION_LENGTH = 45;
+        public static final int MENU_DRINK_DESCRIPTION_LENGTH_SUBSTRING = 42;
 
     }
 

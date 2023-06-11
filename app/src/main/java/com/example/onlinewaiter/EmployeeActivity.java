@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -369,7 +368,7 @@ public class EmployeeActivity extends AppCompatActivity {
                                             getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
                                                     orderDrinks.get(key).getDrinkName(),
                                             getResources().getString(R.string.act_employee_drink_deleted_body),
-                                            getResources().getDrawable(R.drawable.dialog_danger));
+                                            getResources().getDrawable(R.drawable.modal_danger));
                                     customAlertDialog.makeAlertDialog();
 
                                     HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
