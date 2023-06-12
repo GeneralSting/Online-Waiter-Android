@@ -10,6 +10,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -924,8 +926,29 @@ public class CafeUpdateFragment extends Fragment {
         TextView tvRemoveDrinkName = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkName);
         TextView tvRemoveDrinkCategory = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkCategory);
         ImageView ivRemoveDrink = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrink);
-        Button btnRemoveDrinkCancel = (Button) removeDrinkView.findViewById(R.id.btnRemoveDrinkCancel);
         Button btnRemoveDrinkAccept = (Button) removeDrinkView.findViewById(R.id.btnRemoveDrinkAccept);
+        ImageButton ibCloseRemoveDrink = (ImageButton) removeDrinkView.findViewById(R.id.ibCloseRemoveDrink);
+
+        if(drinkInCurrentOrder) {
+            TextView tvRemoveDrinkTitle = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkTitle);
+            LinearLayoutCompat llRemoveDrinkContainer = (LinearLayoutCompat) removeDrinkView.findViewById(R.id.llRemoveDrinkContainer);
+            int containerPL = llRemoveDrinkContainer.getPaddingLeft();
+            int containerPT = llRemoveDrinkContainer.getPaddingTop();
+            int containerPR = llRemoveDrinkContainer.getPaddingRight();
+            int containerPB = llRemoveDrinkContainer.getPaddingBottom();
+            llRemoveDrinkContainer.setBackgroundResource(R.drawable.action_dialog_danger_bg);
+            llRemoveDrinkContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+            ImageView ivRemoveDrinkIcon = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrinkIcon);
+            int iconPL = ivRemoveDrinkIcon.getPaddingLeft();
+            int iconPT = ivRemoveDrinkIcon.getPaddingTop();
+            int iconPR = ivRemoveDrinkIcon.getPaddingRight();
+            int iconPB = ivRemoveDrinkIcon.getPaddingBottom();
+            ivRemoveDrinkIcon.setBackgroundResource(R.drawable.action_dialog_danger_bg);
+            ivRemoveDrinkIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
+            tvRemoveDrinkTitle.setText(getResources().getString(R.string.cafe_update_drink_remove_dialog_order_title));
+        }
 
         removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategoryName(cafeCategoryId));
         removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -954,24 +977,11 @@ public class CafeUpdateFragment extends Fragment {
 
 
         AlertDialog dialogRemoveDrink;
-        if(drinkInCurrentOrder) {
-            TextView tvDialogTitleView = new TextView(getActivity());
-            tvDialogTitleView.setText(getResources().getString(R.string.cafe_update_drink_remove_dialog_order_title));
-            tvDialogTitleView.setTextSize(20F);
-            tvDialogTitleView.setPadding(20, 30, 20, 30);
-            tvDialogTitleView.setBackgroundColor(getResources().getColor(R.color.danger_overlay));
-            tvDialogTitleView.setTextColor(Color.WHITE);
-            dialogRemoveDrink = new AlertDialog.Builder(getActivity())
-                    .setView(removeDrinkView)
-                    .setCustomTitle(tvDialogTitleView)
-                    .create();
-        }
-        else {
-            dialogRemoveDrink = new AlertDialog.Builder(getActivity())
-                    .setView(removeDrinkView)
-                    .setTitle(getResources().getString(R.string.cafe_update_drink_remove_dialog_title))
-                    .create();
-        }
+        dialogRemoveDrink = new AlertDialog.Builder(getActivity())
+                .setView(removeDrinkView)
+                .create();
+        dialogRemoveDrink.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         tvRemoveDrinkName.setText(categoryDrink.getCategoryDrinkName());
         Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(ivRemoveDrink);
 
@@ -979,7 +989,8 @@ public class CafeUpdateFragment extends Fragment {
         dialogRemoveDrink.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
-                btnRemoveDrinkCancel.setOnClickListener(new View.OnClickListener() {
+
+                ibCloseRemoveDrink.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         dialogRemoveDrink.dismiss();

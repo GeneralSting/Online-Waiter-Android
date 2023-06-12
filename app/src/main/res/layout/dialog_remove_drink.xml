@@ -4,83 +4,116 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:layout_margin="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/clContainer"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llRemoveDrinkContainer"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/danger_overlay"
-        android:paddingBottom="16dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/action_dialog_warning_bg"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        android:paddingBottom="32dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tvRemoveDrinkName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/ivRemoveDrink"
-            android:layout_width="100dp"
-            android:layout_height="133dp"
-            android:layout_marginTop="24dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvRemoveDrinkName" />
+        <ImageButton
+            android:id="@+id/ibCloseRemoveDrink"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:src="@drawable/icon_baseline_close_24" />
 
         <TextView
-            android:id="@+id/tvRemoveDrinkCategory"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvRemoveDrinkTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivRemoveDrink" />
+            android:textColor="@color/black"
+            android:text="@string/cafe_update_drink_remove_dialog_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
+        <View
+            android:layout_width="200dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:paddingBottom="16dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clContainer">
-
-        <Button
-            android:id="@+id/btnRemoveDrinkCancel"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="86dp"
-            android:text="@string/cancel"
-            android:backgroundTint="@color/red_negative"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clContainer" />
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/tvRemoveDrinkName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivRemoveDrink"
+                android:layout_width="100dp"
+                android:layout_height="133dp"
+                android:layout_marginTop="24dp"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvRemoveDrinkName" />
+
+            <TextView
+                android:id="@+id/tvRemoveDrinkCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ivRemoveDrink" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <Button
             android:id="@+id/btnRemoveDrinkAccept"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/accept"
-            android:backgroundTint="@color/green_positive"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/clContainer" />
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:text="@string/accept" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
+    <ImageView
+        android:id="@+id/ivRemoveDrinkIcon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/action_dialog_warning_bg"
+        android:elevation="10dp"
+        android:padding="15dp"
+        android:src="@drawable/dialog_remove_order"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
