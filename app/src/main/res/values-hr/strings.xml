@@ -94,7 +94,7 @@
     <string name="cafe_update_new_drink_adding">Dodavanje novoh pića…</string>
     <string name="cafe_update_current_tables">Trenutno stanje:</string>
     <string name="cafe_update_new_tables_state">Novo stanje:</string>
-    <string name="cafe_update_new_tables_state_hint">15</string>
+    <string name="cafe_update_new_tables_state_hint">1234</string>
     <string name="cafe_update_update_tables_title">Ažurirajte stanje stolova</string>
     <string name="cafe_update_tables_state_zero">Broj stolova ne može biti 0</string>
     <string name="cafe_update_table_state_empty">Unesite novo stanje stolova</string>

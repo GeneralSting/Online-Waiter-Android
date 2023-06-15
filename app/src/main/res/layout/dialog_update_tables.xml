@@ -1,108 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="16dp">
+    android:layout_margin="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="5dp"
+        android:orientation="vertical"
         android:paddingBottom="32dp"
-        android:background="@color/grey">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/ibCloseUpdateTables"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:src="@drawable/icon_baseline_close_24" />
 
         <TextView
-            android:id="@+id/tvTablesCurrentState"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:text="@string/cafe_update_current_tables"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toStartOf="@+id/vglTablesDivider"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tvTablesNewState"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
-            android:text="@string/cafe_update_new_tables_state"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/vglTablesDivider"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/etTablesCurrentState"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:gravity="center"
+            android:textColor="@color/black"
+            android:text="@string/cafe_update_update_tables_title"
             android:textSize="24sp"
-            android:maxLength="4"
-            android:focusable="false"
-            android:enabled="false"
-            android:cursorVisible="false"
-            app:layout_constraintEnd_toStartOf="@+id/vglTablesDivider"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTablesCurrentState" />
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/etTablesNewState"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/etTablesNewState"
-            app:drawableStartCompat="@drawable/icon_double_arrow_right_32" />
+        <View
+            android:layout_width="200dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
 
-        <EditText
-            android:id="@+id/etTablesNewState"
-            android:layout_width="72dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:digits="0123456789"
-            android:maxLength="4"
-            android:inputType="number"
-            android:gravity="center"
-            android:hint="@string/cafe_update_new_tables_state_hint"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/vglTablesDivider"
-            app:layout_constraintTop_toBottomOf="@+id/tvTablesNewState" />
 
-        <Button
-            android:id="@+id/btnUpdateTablesCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/red_negative"
-            android:layout_marginTop="32dp"
-            android:text="@string/cancel"
-            app:layout_constraintEnd_toEndOf="@+id/etTablesCurrentState"
-            app:layout_constraintStart_toStartOf="@+id/etTablesCurrentState"
-            app:layout_constraintTop_toBottomOf="@+id/etTablesCurrentState" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvTablesCurrentState"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="@string/cafe_update_current_tables"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/vglTablesDivider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvTablesNewState"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:text="@string/cafe_update_new_tables_state"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/vglTablesDivider"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/etTablesCurrentState"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="24sp"
+                android:maxLength="4"
+                android:focusable="false"
+                android:enabled="false"
+                android:cursorVisible="false"
+                app:layout_constraintEnd_toStartOf="@+id/vglTablesDivider"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvTablesCurrentState" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="@+id/etTablesNewState"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/etTablesNewState"
+                app:drawableStartCompat="@drawable/icon_double_arrow_right_32" />
+
+            <EditText
+                android:id="@+id/etTablesNewState"
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/black"
+                android:digits="0123456789"
+                android:maxLength="4"
+                android:inputType="number"
+                android:gravity="center"
+                android:hint="@string/cafe_update_new_tables_state_hint"
+                android:textColorHint="@color/grey_transparent"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/vglTablesDivider"
+                app:layout_constraintTop_toBottomOf="@+id/tvTablesNewState" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/vglTablesDivider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
             android:id="@+id/btnUpdateTablessAccept"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/green_positive"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
-            android:text="@string/accept"
-            app:layout_constraintEnd_toEndOf="@+id/etTablesNewState"
-            app:layout_constraintStart_toStartOf="@+id/etTablesNewState"
-            app:layout_constraintTop_toBottomOf="@+id/etTablesNewState" />
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:text="@string/order_dialog_complete_btn" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/vglTablesDivider"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="10dp"
+        android:padding="15dp"
+        android:src="@drawable/dialog_tables_number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

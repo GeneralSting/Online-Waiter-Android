@@ -33,10 +33,11 @@
             android:src="@drawable/icon_baseline_close_24" />
 
         <TextView
+            android:id="@+id/tvNewDrinkTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/order_dialog_title"
+            android:text="@string/cafe_update_new_drink_dialog_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"/>
@@ -237,7 +238,7 @@
         android:background="@drawable/action_dialog"
         android:elevation="10dp"
         android:padding="15dp"
-        android:src="@drawable/dialog_order_completion"
+        android:src="@drawable/dialog_create_new"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -464,7 +464,7 @@ public class CafeUpdateFragment extends Fragment {
                         holder.setItemClickListener(new ItemClickListener() {
                             @Override
                             public void onClick(View view, int position, boolean isLongClick) {
-                                createNewDrink(getRef(position).getKey());
+                                createNewDrink(getRef(position).getKey(), drinksCategory.getCategoryName());
                             }
                         });
                     }
@@ -499,7 +499,7 @@ public class CafeUpdateFragment extends Fragment {
         adapterDrinksCategory.startListening();
     }
 
-    private void createNewDrink(String categoryId) {
+    private void createNewDrink(String categoryId, String categoryName) {
         checkNewDrinkName = checkNewDrinkDescription = checkNewDrinkPrice = false;
         newDrinkSecondConfirm = newDrinkImageSelected = true;
 
@@ -507,6 +507,7 @@ public class CafeUpdateFragment extends Fragment {
         EditText etNewDrinkName = newDrinkView.findViewById(R.id.etNewDrinkName);
         EditText etNewDrinkDescription = newDrinkView.findViewById(R.id.etNewDrinkDescription);
         EditText etNewDrinkPrice = newDrinkView.findViewById(R.id.etNewDrinkPrice);
+        TextView tvNewDrinkTitle = newDrinkView.findViewById(R.id.tvNewDrinkTitle);
         etNewDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
 
         ivDrinkGlobalContainer = newDrinkView.findViewById(R.id.ivNewDrink);
@@ -514,6 +515,8 @@ public class CafeUpdateFragment extends Fragment {
         btnNewDrinkDialogAccept = newDrinkView.findViewById(R.id.newDrinkDialogAccept);
         ImageButton ibCloseNewDrink = newDrinkView.findViewById(R.id.ibCloseNewDrink);
 
+        tvNewDrinkTitle.setText(getResources().getString(R.string.cafe_update_new_drink_dialog_title) +
+                AppConstValue.characterConstValue.CHARACTER_SPACING + categoryName);
         final AlertDialog newDrinkDialog = new AlertDialog.Builder(getActivity())
                 .setView(newDrinkView)
                 .create();
@@ -653,7 +656,7 @@ public class CafeUpdateFragment extends Fragment {
                                     uploadNewDrinkImage(categoryId, newCategoryDrink);
                                 }
                                 else {
-                                    checkNewCafeCategory(categoryId, newCategoryDrink, newDrinkImageSelected);
+                                    checkNewCafeCategory(categoryId, newCategoryDrink, false);
                                 }
                             }
                         }
@@ -1085,14 +1088,14 @@ public class CafeUpdateFragment extends Fragment {
         View tablesStateView = getLayoutInflater().inflate(R.layout.dialog_update_tables, null);
         EditText etCurrentTablesState = (EditText) tablesStateView.findViewById(R.id.etTablesCurrentState);
         EditText etNewTablesState = (EditText) tablesStateView.findViewById(R.id.etTablesNewState);
-        Button btnUpdateTablesCancel = (Button) tablesStateView.findViewById(R.id.btnUpdateTablesCancel);
+        ImageButton ibCloseUpdateTables = (ImageButton) tablesStateView.findViewById(R.id.ibCloseUpdateTables);
         Button btnUpdateTablesAccept = (Button) tablesStateView.findViewById(R.id.btnUpdateTablessAccept);
 
         etCurrentTablesState.setText(String.valueOf(orderViewModel.getCafeTablesNumber().getValue()));
         final AlertDialog tablesUpdateDialog = new AlertDialog.Builder(getActivity())
                 .setView(tablesStateView)
-                .setTitle(getResources().getString(R.string.cafe_update_update_tables_title))
                 .create();
+        tablesUpdateDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         tablesUpdateDialog.setCanceledOnTouchOutside(false);
         tablesUpdateDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -1146,7 +1149,7 @@ public class CafeUpdateFragment extends Fragment {
                         }
                     }
                 });
-                btnUpdateTablesCancel.setOnClickListener(new View.OnClickListener() {
+                ibCloseUpdateTables.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         tablesUpdateDialog.dismiss();

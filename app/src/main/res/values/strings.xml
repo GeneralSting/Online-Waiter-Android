@@ -93,7 +93,7 @@
     <string name="cafe_update_new_drink_adding">Adding new drink…</string>
     <string name="cafe_update_current_tables">Current tables:</string>
     <string name="cafe_update_new_tables_state">New state:</string>
-    <string name="cafe_update_new_tables_state_hint">15</string>
+    <string name="cafe_update_new_tables_state_hint">1234</string>
     <string name="cafe_update_update_tables_title">Update cafe tables state</string>
     <string name="cafe_update_tables_state_zero">Table number cannot be 0</string>
     <string name="cafe_update_table_state_empty">Enter new tables state</string>
