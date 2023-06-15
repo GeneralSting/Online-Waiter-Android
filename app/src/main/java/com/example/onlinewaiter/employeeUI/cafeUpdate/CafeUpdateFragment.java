@@ -508,15 +508,16 @@ public class CafeUpdateFragment extends Fragment {
         EditText etNewDrinkDescription = newDrinkView.findViewById(R.id.etNewDrinkDescription);
         EditText etNewDrinkPrice = newDrinkView.findViewById(R.id.etNewDrinkPrice);
         etNewDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
-        Button btnNewDrinkDialogCancel = newDrinkView.findViewById(R.id.newDrinkDialogCancel);
 
         ivDrinkGlobalContainer = newDrinkView.findViewById(R.id.ivNewDrink);
+        ImageView ivImageNotAdded = newDrinkView.findViewById(R.id.ivImageNotAdded);
         btnNewDrinkDialogAccept = newDrinkView.findViewById(R.id.newDrinkDialogAccept);
+        ImageButton ibCloseNewDrink = newDrinkView.findViewById(R.id.ibCloseNewDrink);
 
         final AlertDialog newDrinkDialog = new AlertDialog.Builder(getActivity())
                 .setView(newDrinkView)
-                .setTitle(getResources().getString(R.string.cafe_update_new_drink_dialog_title) + AppConstValue.characterConstValue.CHARACTER_SPACING + categoryId)
                 .create();
+        newDrinkDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         newDrinkDialog.setCanceledOnTouchOutside(false);
         newDrinkDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -529,7 +530,8 @@ public class CafeUpdateFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         newDrinkSecondConfirm = true;
-                        btnNewDrinkDialogAccept.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkName.getText().length() >= 25) {
                             checkNewDrinkName = true;
                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_name_condition_failed), 0);
@@ -554,7 +556,8 @@ public class CafeUpdateFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         newDrinkSecondConfirm = true;
-                        btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkDescription.getText().length() >= 60) {
                             checkNewDrinkDescription = true;
                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_description_condition_failed), 0);
@@ -579,7 +582,8 @@ public class CafeUpdateFragment extends Fragment {
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                         newDrinkSecondConfirm = true;
-                        btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                        etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkPrice.getText().length() == 2 &&
                                 etNewDrinkPrice.getText().charAt(0) == AppConstValue.variableConstValue.CHAR_ZERO_VALUE &&
                                 etNewDrinkPrice.getText().charAt(1) != AppConstValue.variableConstValue.CHAR_DOT ||
@@ -623,7 +627,7 @@ public class CafeUpdateFragment extends Fragment {
                                 }
                                 else {
                                     newDrinkSecondConfirm = false;
-                                    btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_danger_16, 0, 0, 0);
+                                    etNewDrinkPrice.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_danger_16, 0, 0, 0);
                                 }
                             }
                             else if(ivDrinkGlobalContainer.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.item_no_image).getConstantState()) {
@@ -633,7 +637,7 @@ public class CafeUpdateFragment extends Fragment {
                                 }
                                 else {
                                     newDrinkSecondConfirm = false;
-                                    btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_warning_16, 0, 0, 0);
+                                    ivImageNotAdded.setVisibility(View.VISIBLE);
                                 }
                             }
                             if(newDrinkSecondConfirm) {
@@ -642,7 +646,7 @@ public class CafeUpdateFragment extends Fragment {
                                 //if we chose not to pick image, drink will get default no_image
                                 CategoryDrink newCategoryDrink = new CategoryDrink(
                                         etNewDrinkDescription.getText().toString(),
-                                        "",
+                                        AppConstValue.variableConstValue.EMPTY_VALUE,
                                         etNewDrinkName.getText().toString(),
                                         Float.parseFloat(etNewDrinkPrice.getText().toString()));
                                 if(newDrinkImageSelected) {
@@ -655,7 +659,7 @@ public class CafeUpdateFragment extends Fragment {
                         }
                     }
                 });
-                btnNewDrinkDialogCancel.setOnClickListener(new View.OnClickListener() {
+                ibCloseNewDrink.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         newDrinkDialog.dismiss();
@@ -667,7 +671,7 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void uploadNewDrinkImage(String categoryId, CategoryDrink newCategoryDrink) {
-        setProgressDialog(getResources().getString(R.string.cafe_update_drink_image_uploading));
+        setProgressDialog(getResources().getString(R.string.cafe_update_drink_new_image_uploading));
         Date currentDate = new Date();
         String imageName = menuViewModel.getCafeId().getValue() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE +
                 newCategoryDrink.getCategoryDrinkName() + AppConstValue.characterConstValue.IMAGE_NAME_UNDERLINE + simpleDateFormat.format(currentDate);
