@@ -2,9 +2,12 @@ package com.example.onlinewaiter.ownerUI.statistics;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -13,8 +16,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
@@ -111,10 +116,27 @@ public class StatisticsFragment extends Fragment {
             public void onClick(View view) {
                 showChart = true;
                 View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
+                LinearLayoutCompat llStatisticsContentContainer = (LinearLayoutCompat) statisticsView.findViewById(R.id.llStatisticsContentContainer);
+                int containerPL = llStatisticsContentContainer.getPaddingLeft();
+                int containerPT = llStatisticsContentContainer.getPaddingTop();
+                int containerPR = llStatisticsContentContainer.getPaddingRight();
+                int containerPB = llStatisticsContentContainer.getPaddingBottom();
+                llStatisticsContentContainer.setBackgroundResource(R.drawable.action_dialog_owner_blue);
+                llStatisticsContentContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+                ImageView ivOwnerStatisticsIcon = (ImageView) statisticsView.findViewById(R.id.ivOwnerStatisticsIcon);
+                int iconPL = ivOwnerStatisticsIcon.getPaddingLeft();
+                int iconPT = ivOwnerStatisticsIcon.getPaddingTop();
+                int iconPR = ivOwnerStatisticsIcon.getPaddingRight();
+                int iconPB = ivOwnerStatisticsIcon.getPaddingBottom();
+                ivOwnerStatisticsIcon.setBackgroundResource(R.drawable.action_dialog_owner_blue);
+                ivOwnerStatisticsIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
+                TableRow trOwnerStatisticEmployeeTitle = (TableRow) statisticsView.findViewById(R.id.trOwnerStatisticEmployeeTitle);
+                trOwnerStatisticEmployeeTitle.setBackgroundColor(getResources().getColor(R.color.dialog_action_owner_blue));
                 TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
                 tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
                 tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_employees));
-                tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
 
                 Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
                 Button btnDialogStatisticsPercentages = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsPercentages);
@@ -123,7 +145,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-
+                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
 
@@ -134,12 +156,19 @@ public class StatisticsFragment extends Fragment {
                 final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
                         .setView(statisticsView)
                         .create();
+                statisticsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
 
                         databaseQuery(databaseQuerySize, 0);
 
+                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                statisticsDialog.dismiss();
+                            }
+                        });
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -193,14 +222,14 @@ public class StatisticsFragment extends Fragment {
                         btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_tumbleweed)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.GONE);
                                     etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                                     ivStatisticQuerySize.setVisibility(View.GONE);
                                 }
                                 else {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.VISIBLE);
                                     ivStatisticQuerySize.setVisibility(View.VISIBLE);
                                 }
@@ -241,10 +270,29 @@ public class StatisticsFragment extends Fragment {
             public void onClick(View view) {
                 showChart = true;
                 View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
+                LinearLayoutCompat llStatisticsContentContainer = (LinearLayoutCompat) statisticsView.findViewById(R.id.llStatisticsContentContainer);
+                int containerPL = llStatisticsContentContainer.getPaddingLeft();
+                int containerPT = llStatisticsContentContainer.getPaddingTop();
+                int containerPR = llStatisticsContentContainer.getPaddingRight();
+                int containerPB = llStatisticsContentContainer.getPaddingBottom();
+                llStatisticsContentContainer.setBackgroundResource(R.drawable.action_dialog_owner_green);
+                llStatisticsContentContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+                ImageView ivOwnerStatisticsIcon = (ImageView) statisticsView.findViewById(R.id.ivOwnerStatisticsIcon);
+                int iconPL = ivOwnerStatisticsIcon.getPaddingLeft();
+                int iconPT = ivOwnerStatisticsIcon.getPaddingTop();
+                int iconPR = ivOwnerStatisticsIcon.getPaddingRight();
+                int iconPB = ivOwnerStatisticsIcon.getPaddingBottom();
+                ivOwnerStatisticsIcon.setBackgroundResource(R.drawable.action_dialog_owner_green);
+                ivOwnerStatisticsIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
+                TableRow trOwnerStatisticEmployeeTitle = (TableRow) statisticsView.findViewById(R.id.trOwnerStatisticEmployeeTitle);
+                trOwnerStatisticEmployeeTitle.setBackgroundColor(getResources().getColor(R.color.dialog_action_owner_green));
                 TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
+                TextView tvStatisticsFirstTh = (TextView) statisticsView.findViewById(R.id.tvStatisticsFirstTh);
+                tvStatisticsFirstTh.setText(getResources().getString(R.string.statistics_table_drink_name_title));
                 tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
                 tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_drinks));
-                tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
 
                 Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
                 Button btnDialogStatisticsPercentages = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsPercentages);
@@ -253,6 +301,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
+                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -264,12 +313,19 @@ public class StatisticsFragment extends Fragment {
                 final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
                         .setView(statisticsView)
                         .create();
+                statisticsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
 
                         databaseQuery(databaseQuerySize, 1);
 
+                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                statisticsDialog.dismiss();
+                            }
+                        });
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -323,14 +379,14 @@ public class StatisticsFragment extends Fragment {
                         btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_tumbleweed)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.GONE);
                                     etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                                     ivStatisticQuerySize.setVisibility(View.GONE);
                                 }
                                 else {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.VISIBLE);
                                     ivStatisticQuerySize.setVisibility(View.VISIBLE);
                                 }
@@ -371,10 +427,29 @@ public class StatisticsFragment extends Fragment {
             public void onClick(View view) {
                 showChart = true;
                 View statisticsView = getLayoutInflater().inflate(R.layout.dialog_statistics_chart, null);
+                LinearLayoutCompat llStatisticsContentContainer = (LinearLayoutCompat) statisticsView.findViewById(R.id.llStatisticsContentContainer);
+                int containerPL = llStatisticsContentContainer.getPaddingLeft();
+                int containerPT = llStatisticsContentContainer.getPaddingTop();
+                int containerPR = llStatisticsContentContainer.getPaddingRight();
+                int containerPB = llStatisticsContentContainer.getPaddingBottom();
+                llStatisticsContentContainer.setBackgroundResource(R.drawable.action_dialog_owner_purple);
+                llStatisticsContentContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+                ImageView ivOwnerStatisticsIcon = (ImageView) statisticsView.findViewById(R.id.ivOwnerStatisticsIcon);
+                int iconPL = ivOwnerStatisticsIcon.getPaddingLeft();
+                int iconPT = ivOwnerStatisticsIcon.getPaddingTop();
+                int iconPR = ivOwnerStatisticsIcon.getPaddingRight();
+                int iconPB = ivOwnerStatisticsIcon.getPaddingBottom();
+                ivOwnerStatisticsIcon.setBackgroundResource(R.drawable.action_dialog_owner_purple);
+                ivOwnerStatisticsIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
+                TableRow trOwnerStatisticEmployeeTitle = (TableRow) statisticsView.findViewById(R.id.trOwnerStatisticEmployeeTitle);
+                trOwnerStatisticEmployeeTitle.setBackgroundColor(getResources().getColor(R.color.dialog_action_owner_purple));
                 TextView tvDialogStatisticsTitle = (TextView) statisticsView.findViewById(R.id.tvDialogStatisticsTitle);
+                TextView tvStatisticsFirstTh = (TextView) statisticsView.findViewById(R.id.tvStatisticsFirstTh);
+                tvStatisticsFirstTh.setText(getResources().getString(R.string.statistics_table_table_number));
                 tvStatisticsSize = (TextView) statisticsView.findViewById(R.id.tvStatisticsSize);
                 tvDialogStatisticsTitle.setText(getResources().getString(R.string.statistics_title_tables));
-                tvDialogStatisticsTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_green_overlay));
 
                 Button btnDialogStatisticsNumbers = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsNumbers);
                 Button btnDialogStatisticsPercentages = (Button) statisticsView.findViewById(R.id.btnDialogStatisticsPercentages);
@@ -383,6 +458,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
+                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -394,12 +470,19 @@ public class StatisticsFragment extends Fragment {
                 final AlertDialog statisticsDialog = new AlertDialog.Builder(getActivity())
                         .setView(statisticsView)
                         .create();
+                statisticsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
 
                         databaseQuery(databaseQuerySize, 2);
 
+                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                statisticsDialog.dismiss();
+                            }
+                        });
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -453,14 +536,14 @@ public class StatisticsFragment extends Fragment {
                         btnDialogStatisticsSize.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_pewter_blue)) {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.pewter_blue));
+                                if(btnDialogStatisticsSize.getBackgroundTintList() == getResources().getColorStateList(R.color.light_tumbleweed)) {
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.GONE);
                                     etStatisticQuerySize.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                                     ivStatisticQuerySize.setVisibility(View.GONE);
                                 }
                                 else {
-                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_pewter_blue));
+                                    btnDialogStatisticsSize.setBackgroundTintList(getResources().getColorStateList(R.color.light_tumbleweed));
                                     etStatisticQuerySize.setVisibility(View.VISIBLE);
                                     ivStatisticQuerySize.setVisibility(View.VISIBLE);
                                 }
@@ -635,7 +718,8 @@ public class StatisticsFragment extends Fragment {
         pieChart.setData(pieData);
         pieChart.getLegend().setEnabled(false);
         pieChart.getDescription().setTextSize(12f);
-        pieChart.getDescription().setTextColor(getResources().getColor(R.color.white));
+        pieChart.getDescription().setTextColor(getResources().getColor(R.color.black));
+        pieChart.setNoDataTextColor(getResources().getColor(R.color.black));
         pieChart.setExtraBottomOffset(2f);
         pieChart.setHoleColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
         pieChart.invalidate();
@@ -651,7 +735,7 @@ public class StatisticsFragment extends Fragment {
             statisticsValuesSum += pieChartStatistic.get(key);
         }
         for(String key : sortStatisticsEntry(pieChartStatistic, false).keySet()) {
-            View trEmployeeView = getLayoutInflater().inflate(R.layout.statistic_employee_row, tlStatisticEmployees, false);
+            View trEmployeeView = getLayoutInflater().inflate(R.layout.owner_statistics_row, tlStatisticEmployees, false);
 
             TextView tvStatisticEmployeePhoneNumber = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeePhoneNumber);
             TextView tvStatisticEmployeeValue = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeeValue);

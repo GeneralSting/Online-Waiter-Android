@@ -170,6 +170,8 @@
     <string name="statistics_tv_query_size_end">last bills</string>
     <string name="statistics_btn_query_size">Bills number</string>
     <string name="statistics_table_number_title">Phone number</string>
+    <string name="statistics_table_drink_name_title">Drink</string>
+    <string name="statistics_table_table_number">Table</string>
     <string name="statistics_table_value_title">Amount</string>
     <string name="statistics_table_percent_title">Percent</string>
     <string name="statistics_btn_show_table">Table</string>
@@ -178,6 +180,7 @@
     <string name="statistics_btn_drinks">Drinks</string>
     <string name="statistics_btn_tables">Tables</string>
     <string name="statistics_tables_table_number">Table:</string>
+    <string name="statistics_et_query_size_hint">12345</string>
 
     <!--Owner activity registered numbers fragment-->
     <string name="registered_numbers_title">Registered numbers</string>

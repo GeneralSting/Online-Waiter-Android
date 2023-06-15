@@ -273,10 +273,12 @@ public class PendingOrdersFragment extends Fragment {
                                         TextView tvCurrentOrderMessage = (TextView) orderMessageView.findViewById(R.id.tvCurrentOrderMessage);
                                         TextView tvCurrentOrderMessageTitle = (TextView) orderMessageView.findViewById(R.id.tvCurrentOrderMessageTitle);
                                         Button btnCurrentOrderRemove = (Button) orderMessageView.findViewById(R.id.btnCurrentOrderRemove);
+                                        ImageButton ibCloseOrderMessage = (ImageButton) orderMessageView.findViewById(R.id.ibCloseOrderMessage);
 
                                         final AlertDialog orderMessageDialog = new AlertDialog.Builder(getActivity())
                                                 .setView(orderMessageView)
                                                 .create();
+                                        orderMessageDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                         orderMessageDialog.setCanceledOnTouchOutside(false);
                                         orderMessageDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                             @Override
@@ -288,6 +290,13 @@ public class PendingOrdersFragment extends Fragment {
                                                     @Override
                                                     public void onClick(View view) {
                                                         cafeCurrentOrderRef.removeValue();
+                                                        orderMessageDialog.dismiss();
+                                                    }
+                                                });
+
+                                                ibCloseOrderMessage.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
                                                         orderMessageDialog.dismiss();
                                                     }
                                                 });
