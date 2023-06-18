@@ -166,8 +166,7 @@
     <string name="statistics_employees_chart_description">The pie chart shows a maximum of 10 numbers for clarity</string>
     <string name="statistics_drinks_chart_description">The pie chart shows a maximum of 10 drinks for clarity</string>
     <string name="statistics_tables_chart_description">The pie chart shows a maximum of 10 tables for clarity</string>
-    <string name="statistics_tv_query_size_start">Statistics performed on</string>
-    <string name="statistics_tv_query_size_end">last bills</string>
+    <string name="statistics_tv_query_size_description">Statistics performed on the bills:</string>
     <string name="statistics_btn_query_size">Bills number</string>
     <string name="statistics_table_number_title">Phone number</string>
     <string name="statistics_table_drink_name_title">Drink</string>

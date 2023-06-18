@@ -145,7 +145,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
+                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
 
@@ -163,12 +163,12 @@ public class StatisticsFragment extends Fragment {
 
                         databaseQuery(databaseQuerySize, 0);
 
-                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 statisticsDialog.dismiss();
                             }
-                        });
+                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -301,7 +301,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
+                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -320,12 +320,12 @@ public class StatisticsFragment extends Fragment {
 
                         databaseQuery(databaseQuerySize, 1);
 
-                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 statisticsDialog.dismiss();
                             }
-                        });
+                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -458,7 +458,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
+                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -477,12 +477,12 @@ public class StatisticsFragment extends Fragment {
 
                         databaseQuery(databaseQuerySize, 2);
 
-                        ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
+                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 statisticsDialog.dismiss();
                             }
-                        });
+                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -587,9 +587,8 @@ public class StatisticsFragment extends Fragment {
                 if(!cafeBillsSnapshot.exists()) {
                     return;
                 }
-                tvStatisticsSize.setText(getResources().getString(R.string.statistics_tv_query_size_start) + AppConstValue.characterConstValue.CHARACTER_SPACING +
-                        String.valueOf(cafeBillsSnapshot.getChildrenCount()) + AppConstValue.characterConstValue.CHARACTER_SPACING +
-                        getResources().getString(R.string.statistics_tv_query_size_end));
+                tvStatisticsSize.setText(
+                        String.valueOf(cafeBillsSnapshot.getChildrenCount()) );
                 for(DataSnapshot cafeBillSnapshot : cafeBillsSnapshot.getChildren()) {
                     if(!cafeBillSnapshot.exists()) {
                         return;
@@ -615,15 +614,15 @@ public class StatisticsFragment extends Fragment {
                             for(String cafeBillDrinkKey : cafeBill.getCafeBillDrinks().keySet()) {
                                 CafeBillDrink cafeBillDrink = cafeBill.getCafeBillDrinks().get(cafeBillDrinkKey);
                                 if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
-                                    pieChartStatistic.put(cafeBillDrink.getDrinkName(), 1);
+                                    pieChartStatistic.put(cafeBillDrink.getDrinkName(), cafeBillDrink.getDrinkAmount());
                                 }
                                 else {
                                     if(pieChartStatistic.containsKey(cafeBillDrink.getDrinkName())) {
                                         pieChartStatistic.put(cafeBillDrink.getDrinkName(), pieChartStatistic.get(
-                                                cafeBillDrink.getDrinkName()) + 1);
+                                                cafeBillDrink.getDrinkName()) + cafeBillDrink.getDrinkAmount());
                                     }
                                     else {
-                                        pieChartStatistic.put(cafeBillDrink.getDrinkName(), 1);
+                                        pieChartStatistic.put(cafeBillDrink.getDrinkName(), cafeBillDrink.getDrinkAmount());
                                     }
                                 }
                             }

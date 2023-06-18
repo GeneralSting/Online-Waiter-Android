@@ -166,8 +166,7 @@
     <string name="statistics_employees_chart_description">Kružni graf će prikazati najviše 10 brojeva zbog preglednosti</string>
     <string name="statistics_drinks_chart_description">Kružni graf će prikazati najviše 10 pića zbog preglednosti</string>
     <string name="statistics_tables_chart_description">Kružni graf će prikazati najviše 10 stolova zbog preglednosti</string>
-    <string name="statistics_tv_query_size_start">Statistika provedena na</string>
-    <string name="statistics_tv_query_size_end">zadnjih računa</string>
+    <string name="statistics_tv_query_size_description">Statistika provedena za broj računa:</string>
     <string name="statistics_btn_query_size">Broj računa</string>
     <string name="statistics_table_number_title">Broj mobitela</string>
     <string name="statistics_table_drink_name_title">Piće</string>

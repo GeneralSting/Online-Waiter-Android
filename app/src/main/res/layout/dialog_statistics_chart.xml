@@ -22,23 +22,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageButton
-            android:id="@+id/ibCloseOwnerStatistic"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="end"
-            android:padding="10dp"
-            android:layout_margin="4dp"
-            android:elevation="2dp"
-            android:background="@drawable/rounded_ripple_bg"
-            android:src="@drawable/icon_baseline_close_24" />
-
         <TextView
             android:id="@+id/tvDialogStatisticsTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/order_dialog_title"
+            android:layout_marginTop="8dp"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"/>
@@ -56,14 +45,28 @@
             android:layout_height="match_parent">
 
             <TextView
+                android:id="@+id/tvQuerySizeDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="64dp"
+                android:text="@string/statistics_tv_query_size_description"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@+id/tvStatisticsSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvStatisticsSize" />
+
+            <TextView
                 android:id="@+id/tvStatisticsSize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="4dp"
+                android:text="0"
+                android:textSize="18sp"
+                android:textStyle="bold"
                 android:textColor="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tvQuerySizeDescription"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <GridLayout
@@ -146,39 +149,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/statisticsGridLayout" />
 
-            <EditText
-                android:id="@+id/etStatisticQuerySize"
-                android:layout_width="0dp"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:backgroundTint="@color/black"
-                android:layout_marginStart="128dp"
+                android:layout_marginStart="48dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="128dp"
+                android:layout_marginEnd="48dp"
+                android:background="@drawable/table_border"
                 android:gravity="center"
-                android:textColorHint="@color/grey_transparent"
-                android:hint="@string/statistics_et_query_size_hint"
-                android:inputType="number"
-                android:maxLength="5"
-                android:visibility="gone"
+                android:weightSum="3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/statisticsGridLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/statisticsGridLayout">
 
-            <ImageButton
-                android:id="@+id/ivStatisticQuerySize"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="16dp"
-                android:visibility="gone"
-                android:src="@drawable/icon_baseline_query_stats_32"
-                android:backgroundTint="@color/tumbleweed"
-                android:background="@drawable/action_dialog_owner_blue"
-                android:elevation="10dp"
-                android:padding="15dp"
-                app:layout_constraintBottom_toBottomOf="@+id/etStatisticQuerySize"
-                app:layout_constraintStart_toEndOf="@+id/etStatisticQuerySize"
-                app:layout_constraintTop_toTopOf="@+id/etStatisticQuerySize" />
+                <EditText
+                    android:id="@+id/etStatisticQuerySize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:backgroundTint="@color/black"
+                    android:gravity="center"
+                    android:hint="@string/statistics_et_query_size_hint"
+                    android:inputType="number"
+                    android:maxLength="5"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/grey_transparent"
+                    android:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/ivStatisticQuerySize"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/action_dialog_owner_blue"
+                    android:backgroundTint="@color/tumbleweed"
+                    android:elevation="4dp"
+                    android:padding="10dp"
+                    android:src="@drawable/icon_baseline_query_stats_32"
+                    android:visibility="gone" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <TableLayout
                 android:id="@+id/tlOwnerStatisticEmployeesTitle"
