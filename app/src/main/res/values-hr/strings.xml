@@ -198,6 +198,7 @@
     <string name="registered_numbers_wrong_email_code">Netočan kod</string>
     <string name="registered_numbers_register_title">Registracija novog broja</string>
     <string name="registered_numbers_sc_text">Moj broj mobitela</string>
+    <string name="registered_numbers_btn_next">Dalje</string>
 
 
     <!--Owner activity logout fragment-->

@@ -2,9 +2,12 @@ package com.example.onlinewaiter.ownerUI.registeredNumbers;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -21,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
@@ -109,10 +114,12 @@ public class RegisteredNumbersFragment extends Fragment {
                 TextView tvRegisterNumberIncorrect = (TextView) registerNumberView.findViewById(R.id.tvRegisterNumberIncorrect);
                 EditText etRegisterNumber = (EditText) registerNumberView.findViewById(R.id.etRegisterNumber);
                 Button btnRegisterNumber = (Button) registerNumberView.findViewById(R.id.btnRegisterNumber);
+                ImageButton ibCloseNewNumber = (ImageButton) registerNumberView.findViewById(R.id.ibCloseNewNumber);
 
                 final AlertDialog registerNumberDialog = new AlertDialog.Builder(getActivity())
                         .setView(registerNumberView)
                         .create();
+                registerNumberDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 registerNumberDialog.setCanceledOnTouchOutside(false);
                 registerNumberDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
@@ -135,6 +142,13 @@ public class RegisteredNumbersFragment extends Fragment {
                                 else {
                                     tvRegisterNumberIncorrect.setText(getResources().getString(R.string.act_login_phone_number_incorrect));
                                 }
+                            }
+                        });
+
+                        ibCloseNewNumber.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                registerNumberDialog.dismiss();
                             }
                         });
                     }
@@ -274,13 +288,16 @@ public class RegisteredNumbersFragment extends Fragment {
         TextView tvDialogOwnerNumberTitle = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerNumberTitle);
         TextView tvDialogOwnerMainIncorrect = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerMainIncorrect);
         TextView tvDialogOwnerPart = (TextView) newOwnerNumberView.findViewById(R.id.tvDialogOwnerPart);
-        ConstraintLayout clDialogOwnerNumberTitle = (ConstraintLayout) newOwnerNumberView.findViewById(R.id.clDialogOwnerNumberTitle);
         EditText etDialogOwnerNumberMain = (EditText) newOwnerNumberView.findViewById(R.id.etDialogOwnerNumberMain);
         Button btnDialogOwnerNumber = (Button) newOwnerNumberView.findViewById(R.id.btnDialogOwnerNumber);
+        ImageView ivOwnerNumberIcon = (ImageView) newOwnerNumberView.findViewById(R.id.ivOwnerNumberIcon);
+        LinearLayoutCompat llOwnerNumberContainer = (LinearLayoutCompat) newOwnerNumberView.findViewById(R.id.llOwnerNumberContainer);
+        ImageButton ibCloseChangeNumber = (ImageButton) newOwnerNumberView.findViewById(R.id.ibCloseChangeNumber);
 
         final AlertDialog newOwnerNumberDialog = new AlertDialog.Builder(getActivity())
                 .setView(newOwnerNumberView)
                 .create();
+        newOwnerNumberDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         newOwnerNumberDialog.setCanceledOnTouchOutside(false);
 
         final boolean[] codeEntered = {false};
@@ -307,10 +324,23 @@ public class RegisteredNumbersFragment extends Fragment {
                                             registeredNumbersViewModel.getEmailRandomCode().getValue()) {
                                 codeEntered[0] = true;
                                 etDialogOwnerNumberMain.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
+                                int containerPL = llOwnerNumberContainer.getPaddingLeft();
+                                int containerPT = llOwnerNumberContainer.getPaddingTop();
+                                int containerPR = llOwnerNumberContainer.getPaddingRight();
+                                int containerPB = llOwnerNumberContainer.getPaddingBottom();
+                                llOwnerNumberContainer.setBackgroundResource(R.drawable.action_dialog_warning_bg);
+                                llOwnerNumberContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+                                int iconPL = ivOwnerNumberIcon.getPaddingLeft();
+                                int iconPT = ivOwnerNumberIcon.getPaddingTop();
+                                int iconPR = ivOwnerNumberIcon.getPaddingRight();
+                                int iconPB = ivOwnerNumberIcon.getPaddingBottom();
+                                ivOwnerNumberIcon.setBackgroundResource(R.drawable.action_dialog_warning_bg);
+                                ivOwnerNumberIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
                                 etDialogOwnerNumberMain.setFilters(new InputFilter[] {new InputFilter.LengthFilter(13)});
                                 etDialogOwnerNumberMain.setInputType(InputType.TYPE_CLASS_PHONE);
                                 etDialogOwnerNumberMain.setHint(getResources().getString(R.string.registered_numbers_dialog_owner_number));
-                                clDialogOwnerNumberTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
                                 tvDialogOwnerNumberTitle.setText(getResources().getString(R.string.registered_numbers_dialog_second_title));
                                 tvDialogOwnerPart.setText(getResources().getString(R.string.registered_numbers_dialog_second_part));
                                 tvDialogOwnerNumberDescription.setText(getResources().getString(R.string.registered_numbers_dialog_second_description));
@@ -320,6 +350,12 @@ public class RegisteredNumbersFragment extends Fragment {
                                 tvDialogOwnerMainIncorrect.setText(getResources().getString(R.string.registered_numbers_wrong_email_code));
                             }
                         }
+                    }
+                });
+                ibCloseChangeNumber.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        newOwnerNumberDialog.dismiss();
                     }
                 });
             }

@@ -3,11 +3,14 @@ package com.example.onlinewaiter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
@@ -84,7 +87,7 @@ public class OwnerActivity extends AppCompatActivity {
         navView.getMenu().findItem(R.id.nav_owner_logout).setOnMenuItemClickListener(menuItem -> {
             View ownerLogoutView = getLayoutInflater().inflate(R.layout.dialog_owner_logout, null);
             TextView tvOwnerLogoutNumberChanged = ownerLogoutView.findViewById(R.id.tvOwnerLogoutNumberChanged);
-            Button btnOwnerLogoutCancel = ownerLogoutView.findViewById(R.id.btnOwnerLogoutCancel);
+            ImageButton ibCloseOwnerLogout = ownerLogoutView.findViewById(R.id.ibCloseOwnerLogout);
             Button btnOwnerLogoutAccept = ownerLogoutView.findViewById(R.id.btnOwnerLogoutAccept);
             RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(this).get(RegisteredNumbersViewModel.class);
             if(registeredNumbersViewModel.getPhoneNumberChanged().getValue()) {
@@ -94,11 +97,12 @@ public class OwnerActivity extends AppCompatActivity {
             final AlertDialog ownerLogoutDialog = new AlertDialog.Builder(this)
                     .setView(ownerLogoutView)
                     .create();
+            ownerLogoutDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             ownerLogoutDialog.setCanceledOnTouchOutside(false);
             ownerLogoutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                 @Override
                 public void onShow(DialogInterface dialogInterface) {
-                    btnOwnerLogoutCancel.setOnClickListener(new View.OnClickListener() {
+                    ibCloseOwnerLogout.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
                             ownerLogoutDialog.dismiss();

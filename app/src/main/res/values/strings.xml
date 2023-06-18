@@ -200,6 +200,7 @@
     <string name="registered_numbers_wrong_email_code">Incorrect code</string>
     <string name="registered_numbers_register_title">Register new number</string>
     <string name="registered_numbers_sc_text">My phone number</string>
+    <string name="registered_numbers_btn_next">Next</string>
 
 
     <!--Owner activity logout fragment-->

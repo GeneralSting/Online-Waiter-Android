@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="8dp">
+    android:layout_margin="0dp">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvDialogOwnerNumberTitle"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llOwnerNumberContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="4dp"
-        android:elevation="12dp"
-        app:cardMaxElevation="16dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        android:paddingBottom="32dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clDialogOwnerNumberTitle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/cv_cafe_update_purple_overlay">
+        <ImageButton
+            android:id="@+id/ibCloseChangeNumber"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:src="@drawable/icon_baseline_close_24" />
 
-            <TextView
-                android:id="@+id/tvDialogOwnerNumberTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="@string/registered_numbers_dialog_first_title"
-                android:textAlignment="center"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/tvDialogOwnerPart"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tvDialogOwnerPart"
@@ -41,62 +44,102 @@
                 android:layout_marginStart="8dp"
                 android:text="@string/registered_numbers_dialog_first_part"
                 android:textAlignment="center"
+                android:textColor="@color/grey"
                 android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tvDialogOwnerNumberTitle"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvDialogOwnerNumberTitle" />
+
+            <TextView
+                android:id="@+id/tvDialogOwnerNumberTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:text="@string/registered_numbers_dialog_first_title"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+        <View
+            android:layout_width="200dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
 
-    <TextView
-        android:id="@+id/tvDialogOwnerNumberDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textAlignment="center"
-        android:text="@string/registered_numbers_dialog_first_description"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvDialogOwnerNumberDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/black"
+                android:text="@string/registered_numbers_dialog_first_description"
+                android:textAlignment="center" />
+
+            <EditText
+                android:id="@+id/etDialogOwnerNumberMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:hint="@string/registered_numbers_dialog_owner_code"
+                android:inputType="number"
+                android:maxLength="6"
+                android:textColorHint="@color/grey_transparent"
+                android:backgroundTint="@color/black"
+                android:textColor="@color/black"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvDialogOwnerNumberDescription" />
+
+            <TextView
+                android:id="@+id/tvDialogOwnerMainIncorrect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/red_negative"
+                app:layout_constraintEnd_toEndOf="@+id/etDialogOwnerNumberMain"
+                app:layout_constraintStart_toStartOf="@+id/etDialogOwnerNumberMain"
+                app:layout_constraintTop_toBottomOf="@+id/etDialogOwnerNumberMain" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btnDialogOwnerNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:text="@string/registered_numbers_btn_next" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:id="@+id/ivOwnerNumberIcon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="10dp"
+        android:padding="15dp"
+        android:src="@drawable/dialog_new_number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cvDialogOwnerNumberTitle" />
-
-    <EditText
-        android:id="@+id/etDialogOwnerNumberMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:hint="@string/registered_numbers_dialog_owner_code"
-        android:inputType="number"
-        android:maxLength="6"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvDialogOwnerNumberDescription" />
-
-    <TextView
-        android:id="@+id/tvDialogOwnerMainIncorrect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:textColor="@color/red_negative"
-        app:layout_constraintEnd_toEndOf="@+id/etDialogOwnerNumberMain"
-        app:layout_constraintStart_toStartOf="@+id/etDialogOwnerNumberMain"
-        app:layout_constraintTop_toBottomOf="@+id/etDialogOwnerNumberMain" />
-
-    <Button
-        android:id="@+id/btnDialogOwnerNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="64dp"
-        android:layout_marginEnd="32dp"
-        android:text="@string/accept"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etDialogOwnerNumberMain" />
-
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
