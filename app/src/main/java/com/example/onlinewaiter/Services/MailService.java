@@ -33,10 +33,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import papaya.in.sendmail.SendMail;
 
 public class MailService {
-    private String mOnlineWaiterMail = "AAppOnlineWaiter@gmail.com";
-    private String mOnlineWaiterPass = "hgbgjpjnswoubyvy";
+    private final String mOnlineWaiterMail = "AAppOnlineWaiter@gmail.com";
+    private final String mOnlineWaiterPass = "hgbgjpjnswoubyvy";
     private String mReceiverSubject, mReceiverBody, mReceiverMail, mReceiverBodyInfo;
-    private ViewModelStoreOwner mViewModelStoreOwner;
+    private final ViewModelStoreOwner mViewModelStoreOwner;
     MainViewModel mainViewModel;
 
 

@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Models.ViewPagerItem;
+import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.ViewMargins;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.ViewPagerItemHolder;
 
@@ -42,16 +44,22 @@ public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
         if(!viewPagerItem.isShowScrollIcon()) {
             holder.ivScrollPager.setVisibility(View.GONE);
         }
+        else {
+            holder.txtPagerItemDescription.setTextSize(18);
+            ViewMargins.setMargins(holder.txtPagerItemDescription, 0, 32, 0, 0);
+        }
         holder.txtPagerItemHeader.setText(viewPagerItem.getHeader());
-        if(viewPagerItem.getDescription().length() > 150) {
-            viewPagerItem.setDescription(viewPagerItem.getDescription().substring(0, 150));
+        if(viewPagerItem.getDescription().length() > AppConstValue.variableConstValue.MAIN_PAGER_DESCRIPTION_END) {
+            viewPagerItem.setDescription(viewPagerItem.getDescription().substring(
+                    AppConstValue.variableConstValue.MAIN_PAGER_DESCRIPTION_START,
+                    AppConstValue.variableConstValue.MAIN_PAGER_DESCRIPTION_END));
             ArrayList<String> splitedWords = new ArrayList<String>(Arrays.asList(viewPagerItem.getDescription().split("\\s+")));
             splitedWords.remove(splitedWords.size() - 1);
             viewPagerItem.setDescription(splitedWords.toString()
-                    .replace(",", "")  //remove the commas
-                    .replace("[", "")  //remove the right bracket
-                    .replace("]", "")  //remove the left bracket
-                    .trim() + "...");           //remove trailing spaces from partially initialized arrays);
+                    .replace(AppConstValue.variableConstValue.COMMA, AppConstValue.variableConstValue.EMPTY_VALUE)  //remove the commas
+                    .replace(AppConstValue.variableConstValue.SQUARE_BRACKETS_OPEN, AppConstValue.variableConstValue.EMPTY_VALUE)  //remove the right bracket
+                    .replace(AppConstValue.variableConstValue.SQUARE_BRACKETS_CLOSED, AppConstValue.variableConstValue.EMPTY_VALUE)  //remove the left bracket
+                    .trim() + context.getResources().getString(R.string.etc_dots));           //remove trailing spaces from partially initialized arrays);
             holder.txtPagerItemMoreDescription.setVisibility(View.VISIBLE);
             holder.txtPagerItemMoreDescription.setMovementMethod(LinkMovementMethod.getInstance());
             holder.txtPagerItemDescription.setText(viewPagerItem.getDescription());

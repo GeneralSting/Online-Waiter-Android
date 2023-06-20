@@ -39,7 +39,10 @@ public class AppConstValue {
         public static final int TABLE_DRINK_NAME_LENGTH = 15;
         public static final int MENU_DRINK_DESCRIPTION_LENGTH = 45;
         public static final int MENU_DRINK_DESCRIPTION_LENGTH_SUBSTRING = 42;
-
+        public static final int MAIN_PAGER_DESCRIPTION_START = 0;
+        public static final int MAIN_PAGER_DESCRIPTION_END = 150;
+        public static final String SQUARE_BRACKETS_OPEN = "[";
+        public static final String SQUARE_BRACKETS_CLOSED = "]";
     }
 
     public static class permissionConstValue {
