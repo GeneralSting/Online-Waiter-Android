@@ -6,6 +6,11 @@ public class AppConstValue {
         public static final String BUNDLE_PHONE_NUMBER = "phoneNumber";
     }
 
+    public static class sharedPreferencesValues {
+        public static final String PREFERENCE_PHONE_NUMBER = "preferencePhonenumber";
+        public static final String SHARED_PHONE_NUMBER = "sharedPhoneNumber";
+    }
+
     public static class characterConstValue {
         public static final String CHARACTER_SPACING = " ";
         public static final String IMAGE_NAME_UNDERLINE = "_";

@@ -6,8 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +57,9 @@ public class LoginActivity extends AppCompatActivity {
     Boolean numberFounded, showProgressBar, backPressEnabled;
     ToastMessage toastMessage;
     SmsBroadcastReceiver smsBroadcastReceiver;
+    private SharedPreferences sharedPreferences;
+    boolean saveSharedPhoneNumber = false;
+    private String sharedPhoneNumber = "";
 
     //firebase
     FirebaseAuth mAuth;
@@ -79,19 +84,41 @@ public class LoginActivity extends AppCompatActivity {
         loginProgressBar = findViewById(R.id.pbLogin);
         ivNumberQuestion = findViewById(R.id.ivLoginNumberQuestion);
 
+        sharedPreferences = getSharedPreferences(AppConstValue.sharedPreferencesValues.PREFERENCE_PHONE_NUMBER, MODE_PRIVATE);
         Bundle bundle = getIntent().getExtras();
         if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
-            ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_16);
-            ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
-                            getResources().getString(R.string.act_login_dialog_no_number_header),
-                            getResources().getString(R.string.act_login_dialog_no_number_body),
-                            getResources().getDrawable(R.drawable.modal_no_number));
-                    customAlertDialog.makeAlertDialog();
-                }
-            });
+            saveSharedPhoneNumber = true;
+            if (sharedPreferences.contains(AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER)) {
+                sharedPhoneNumber = sharedPreferences.getString(
+                        AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER,
+                        AppConstValue.sharedPreferencesValues.PREFERENCE_PHONE_NUMBER);
+                phoneNumber = sharedPhoneNumber;
+                etPhoneNumber.setText(phoneNumber);
+                ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_success_16);
+                ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
+                                getResources().getString(R.string.act_login_dialog_shared_number_header),
+                                getResources().getString(R.string.act_login_dialog_shared_number_body),
+                                getResources().getDrawable(R.drawable.modal_no_number));
+                        customAlertDialog.makeAlertDialog();
+                    }
+                });
+            }
+            else {
+                ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_16);
+                ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
+                                getResources().getString(R.string.act_login_dialog_no_number_header),
+                                getResources().getString(R.string.act_login_dialog_no_number_body),
+                                getResources().getDrawable(R.drawable.modal_no_number));
+                        customAlertDialog.makeAlertDialog();
+                    }
+                });
+            }
         } else {
             ivNumberQuestion.setImageResource(R.drawable.icon_baseline_download_done_16);
             ivNumberQuestion.setOnClickListener(new View.OnClickListener() {
@@ -300,6 +327,11 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        if(numberFounded && saveSharedPhoneNumber && !authNumber.equals(sharedPhoneNumber)) {
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString(AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER, phoneNumber);
+                            editor.apply();
+                        }
                         if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {
                             Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                             //flag -> If set, this activity will become the start of a new task on this history stack.

@@ -13,7 +13,7 @@
     <string name="act_main_dialog_permissions_warning_body">Bez odobravanja svih dopuštenja, nećete moći nastaviti s daljnim korištenjem ove aplikacije!</string>
     <string name="act_main_dialog_permissions_warning_header">Upozorenje!</string>
     <string name="act_main_dialog_permissions_denied_header">Dopuštenja su odbijena!</string>
-    <string name="act_main_dialog_permissions_denied_body">Nećemo Te više pitati za dopuštenja, ali nemaš pristup ostalim mogućnostima ove apliakcije!</string>
+    <string name="act_main_dialog_permissions_denied_body">Nećemo Te više pitati za dopuštenja, ali nemaš pristup ostalim mogućnostima ove aplikacije!</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Potvrdi PIN</string>
@@ -24,6 +24,8 @@
     <string name="act_login_successful_taken_number">Unjeli smo Vaš broj</string>
     <string name="act_login_dialog_no_number_header">Neuspješno dohvaćanje broja</string>
     <string name="act_login_dialog_no_number_body">Mobilni operater ne dopušta pristup broju mobitela, samostalno unesite broj mobitela.</string>
+    <string name="act_login_dialog_shared_number_header">Aplikacija sprema uneseni broj</string>
+    <string name="act_login_dialog_shared_number_body">Mobilni operater ne dopušta pristup broju mobitela, aplikacija sprema broj kako bi bila omogućena jednostavnija prijava</string>
     <string name="act_login_phone_number_incorrect">Neispravan oblik broja mobitela</string>
     <string name="act_login_otp_sent">PIN je poslan!</string>
     <string name="act_login_empty_otp">Unesite PIN!</string>

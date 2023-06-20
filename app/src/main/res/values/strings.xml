@@ -11,8 +11,8 @@
     <string name="act_main_pager_more_description"><a href="https://github.com/GeneralSting">More about</a></string>
     <string name="act_main_dialog_permissions_warning_body">You need to allow all asked permissions. If you disable them, You will not be able to procced!</string>
     <string name="act_main_dialog_permissions_warning_header">Alert message!</string>
-    <string name="act_main_dialog_permissions_denied_body">Permissions denied!</string>
-    <string name="act_main_dialog_permissions_denied_header">You will not be asked again for permissions but we can not allow you to go any further with this app!</string>
+    <string name="act_main_dialog_permissions_denied_header">Permissions denied!</string>
+    <string name="act_main_dialog_permissions_denied_body">You will not be asked again for permissions but we can not allow you to go any further with this app!</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Verify OTP</string>
@@ -23,6 +23,8 @@
     <string name="act_login_successful_taken_number">Your number has been entered</string>
     <string name="act_login_dialog_no_number_header">Number retrieval failed</string>
     <string name="act_login_dialog_no_number_body">The mobile operator does not allow access to the mobile number, enter the mobile number yourself.</string>
+    <string name="act_login_dialog_shared_number_header">The application saves the entered number</string>
+    <string name="act_login_dialog_shared_number_body">The mobile operator does not allow access to the mobile phone number, the application saves the number to enable easier registration</string>
     <string name="act_login_phone_number_incorrect">Enter valid phone Number.</string>
     <string name="act_login_otp_sent">OTP Sent!</string>
     <string name="act_login_empty_otp">Enter received OTP!</string>
