@@ -83,10 +83,11 @@
                 android:id="@+id/tvDialogOwnerNumberDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
                 android:text="@string/registered_numbers_dialog_first_description"
-                android:textAlignment="center" />
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/etDialogOwnerNumberMain"

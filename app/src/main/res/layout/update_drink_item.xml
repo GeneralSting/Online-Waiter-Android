@@ -56,13 +56,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
+                android:inputType="textMultiLine|textCapSentences"
+                android:backgroundTint="@color/tumbleweed"
                 android:maxLength="25"
-                android:textColor="@color/black" />
+                android:textColor="@color/white" />
 
             <EditText
                 android:id="@+id/etUpdateDrinkDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:inputType="textMultiLine|textCapSentences"
+                android:backgroundTint="@color/tumbleweed"
                 android:textSize="16sp"
                 android:maxLength="60" />
 
@@ -76,6 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
+                    android:backgroundTint="@color/tumbleweed"
                     android:inputType="numberDecimal"
                     android:maxLength="9" />
 

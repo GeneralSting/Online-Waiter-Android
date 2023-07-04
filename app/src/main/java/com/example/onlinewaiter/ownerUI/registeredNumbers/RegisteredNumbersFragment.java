@@ -310,9 +310,14 @@ public class RegisteredNumbersFragment extends Fragment {
                         if(codeEntered[0]) {
                             String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
                             if ((etDialogOwnerNumberMain.getText().toString().matches(phoneNumberValidator))) {
-                                registeredNumbersViewModel.setPhoneNumberChanged(true);
-                                changeOwnerNumber(registeredNumber, etDialogOwnerNumberMain.getText().toString());
-                                newOwnerNumberDialog.dismiss();
+                                if(!etDialogOwnerNumberMain.getText().toString().equals(mainViewModel.getOwnerPhoneNumber().getValue())) {
+                                    registeredNumbersViewModel.setPhoneNumberChanged(true);
+                                    changeOwnerNumber(registeredNumber, etDialogOwnerNumberMain.getText().toString());
+                                    newOwnerNumberDialog.dismiss();
+                                }
+                                else {
+                                    tvDialogOwnerMainIncorrect.setText(getResources().getString(R.string.act_login_phone_number_same));
+                                }
                             }
                             else {
                                 tvDialogOwnerMainIncorrect.setText(getResources().getString(R.string.act_login_phone_number_incorrect));

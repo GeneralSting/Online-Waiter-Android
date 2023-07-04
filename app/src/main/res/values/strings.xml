@@ -26,6 +26,7 @@
     <string name="act_login_dialog_shared_number_header">The application saves the entered number</string>
     <string name="act_login_dialog_shared_number_body">The mobile operator does not allow access to the mobile phone number, the application saves the number to enable easier registration</string>
     <string name="act_login_phone_number_incorrect">Enter valid phone Number.</string>
+    <string name="act_login_phone_number_same">Entered number is currently registered as your number</string>
     <string name="act_login_otp_sent">OTP Sent!</string>
     <string name="act_login_empty_otp">Enter received OTP!</string>
     <string name="act_login_wrong_otp">Entered wrong OTP!</string>

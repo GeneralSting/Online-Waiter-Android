@@ -22,6 +22,7 @@ public class AppConstValue {
         public static final String PRICE_DECIMAL_FORMAT_WITH_ZERO = "0.00";
         public static final String PRICE_DECIMAL_FORMAT_NO_ZERO = "#.00";
         public static final String PRICE_DECIMAL_COMMA_NO_ZERO = ",00";
+        public static final String PRICE_DECIMAL_DOT_NO_ZERO = ".00";
     }
 
     public static class notificationConstValue {

@@ -121,6 +121,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 .setSmallIcon(R.drawable.nav_header_img)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setContentIntent(notificationEmptyIntent);
 
         createNotificationChannel();
@@ -293,9 +294,9 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot orderSnapshot, @Nullable String previousChildName) {
-                if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                /*if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
                     removeCafeOrdersListener();
-                }
+                }*/
                 CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
                 if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
                 cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_READY) {

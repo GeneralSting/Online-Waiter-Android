@@ -90,7 +90,8 @@ public class CafeUpdateFragment extends Fragment {
 
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
-    boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkSecondConfirm, newDrinkImageSelected, addingNewDrink;
+    boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
+            newDrinkImageSelected, addingNewDrink;
     ToastMessage toastMessage;
     OrderViewModel orderViewModel;
     MenuViewModel menuViewModel;
@@ -106,6 +107,8 @@ public class CafeUpdateFragment extends Fragment {
     ImageView ivDrinkGlobalContainer;
     RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
     RecyclerView.LayoutManager layoutManagerCategories, layoutManagerCategoryDrinks;
+    EditText etGlobalNewDrinkPrice;
+    ImageView ivGlobalImageNotAdded;
 
     //firebase
     private FirebaseRefPaths firebaseRefPaths;
@@ -339,6 +342,7 @@ public class CafeUpdateFragment extends Fragment {
                                     priceToTextConverter(categoryDrink.getCategoryDrinkPrice()).equals(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()))) {
                                         if(!imageSame) {
                                             updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
+                                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
                                         }
                                         else {
                                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_no_change), 0);
@@ -373,7 +377,7 @@ public class CafeUpdateFragment extends Fragment {
                                 @Override
                                 public void onClick(View view) {
                                     ivDrinkGlobalContainer = holder.ivUpdateDrink;
-                                    bottomImagePikcer();
+                                    bottomImagePicker();
                                 }
                             });
                         }
@@ -408,7 +412,7 @@ public class CafeUpdateFragment extends Fragment {
         adapterCategoryDrinks.startListening();
     }
 
-    private void bottomImagePikcer() {
+    private void bottomImagePicker() {
         View imagePickerView = getLayoutInflater().inflate(R.layout.dialog_bottom_image_picker, null);
         final BottomSheetDialog dialogImagePicker = new BottomSheetDialog(getActivity());
         dialogImagePicker.setContentView(imagePickerView);
@@ -501,17 +505,19 @@ public class CafeUpdateFragment extends Fragment {
 
     private void createNewDrink(String categoryId, String categoryName) {
         checkNewDrinkName = checkNewDrinkDescription = checkNewDrinkPrice = false;
-        newDrinkSecondConfirm = newDrinkImageSelected = true;
+        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = newDrinkImageSelected = true;
 
         View newDrinkView = getLayoutInflater().inflate(R.layout.dialog_new_drink, null);
         EditText etNewDrinkName = newDrinkView.findViewById(R.id.etNewDrinkName);
         EditText etNewDrinkDescription = newDrinkView.findViewById(R.id.etNewDrinkDescription);
         EditText etNewDrinkPrice = newDrinkView.findViewById(R.id.etNewDrinkPrice);
+        etGlobalNewDrinkPrice = etNewDrinkPrice;
         TextView tvNewDrinkTitle = newDrinkView.findViewById(R.id.tvNewDrinkTitle);
         etNewDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
 
         ivDrinkGlobalContainer = newDrinkView.findViewById(R.id.ivNewDrink);
         ImageView ivImageNotAdded = newDrinkView.findViewById(R.id.ivImageNotAdded);
+        ivGlobalImageNotAdded = ivImageNotAdded;
         btnNewDrinkDialogAccept = newDrinkView.findViewById(R.id.newDrinkDialogAccept);
         ImageButton ibCloseNewDrink = newDrinkView.findViewById(R.id.ibCloseNewDrink);
 
@@ -532,7 +538,7 @@ public class CafeUpdateFragment extends Fragment {
                     }
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        newDrinkSecondConfirm = true;
+                        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = true;
                         etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                         ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkName.getText().length() >= 25) {
@@ -558,7 +564,7 @@ public class CafeUpdateFragment extends Fragment {
                     }
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        newDrinkSecondConfirm = true;
+                        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = true;
                         etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                         ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkDescription.getText().length() >= 60) {
@@ -584,7 +590,7 @@ public class CafeUpdateFragment extends Fragment {
                     }
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        newDrinkSecondConfirm = true;
+                        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = true;
                         etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
                         ivImageNotAdded.setVisibility(View.GONE);
                         if(etNewDrinkPrice.getText().length() == 2 &&
@@ -614,7 +620,7 @@ public class CafeUpdateFragment extends Fragment {
                 ivDrinkGlobalContainer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        bottomImagePikcer();
+                        bottomImagePicker();
                     }
                 });
 
@@ -624,26 +630,27 @@ public class CafeUpdateFragment extends Fragment {
                         if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0) {
                             DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_NO_ZERO);
                             double drinkPrice = Double.parseDouble(etNewDrinkPrice.getText().toString());
-                            if(decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)) {
-                                if(!newDrinkSecondConfirm) {
-                                    newDrinkSecondConfirm = true;
+                            if(decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)
+                            || decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_DOT_NO_ZERO)) {
+                                if(!newDrinkPriceSecondConfirm) {
+                                    newDrinkPriceSecondConfirm = true;
                                 }
                                 else {
-                                    newDrinkSecondConfirm = false;
+                                    newDrinkPriceSecondConfirm = false;
                                     etNewDrinkPrice.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_baseline_danger_16, 0, 0, 0);
                                 }
                             }
-                            else if(ivDrinkGlobalContainer.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.item_no_image).getConstantState()) {
-                                if(!newDrinkSecondConfirm) {
-                                    newDrinkSecondConfirm = true;
+                            if(ivDrinkGlobalContainer.getDrawable().getConstantState() == getResources().getDrawable(R.drawable.item_no_image).getConstantState()) {
+                                if(!newDrinkImageSecondConfirm) {
+                                    newDrinkImageSecondConfirm = true;
                                     newDrinkImageSelected = false;
                                 }
                                 else {
-                                    newDrinkSecondConfirm = false;
+                                    newDrinkImageSecondConfirm = false;
                                     ivImageNotAdded.setVisibility(View.VISIBLE);
                                 }
                             }
-                            if(newDrinkSecondConfirm) {
+                            if(newDrinkPriceSecondConfirm && newDrinkImageSecondConfirm) {
                                 newDrinkDialog.dismiss();
                                 //cafeDrinkImage is empty string, image will be added after
                                 //if we chose not to pick image, drink will get default no_image
@@ -839,7 +846,6 @@ public class CafeUpdateFragment extends Fragment {
                         }
                         insertCategoryDrinks(cafeCategoryId);
                         closeProgressDialog();
-                        toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
                     }
                 });
                 downloadImageUri.addOnFailureListener(new OnFailureListener() {
@@ -1215,9 +1221,11 @@ public class CafeUpdateFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        newDrinkSecondConfirm = true;
-        if(addingNewDrink)
-            btnNewDrinkDialogAccept.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = true;
+        if(addingNewDrink) {
+            etGlobalNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+            ivGlobalImageNotAdded.setVisibility(View.GONE);
+        }
 
         switch (requestCode) {
             case AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE:
