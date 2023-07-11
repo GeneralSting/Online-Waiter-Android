@@ -88,4 +88,10 @@ public class AppConstValue {
         public static final int RANDOM_ORIGIN = 100000;
         public static final int RANDOM_BOUND = 999999;
     }
+
+    public static class employeeNavigationSelected {
+        public static final int EMPLOYEE_NAV_MENU = 1;
+        public static final int EMPLOYEE_NAV_PENDING_ORDERS = 3;
+        public static final int EMPLOYEE_NAV_OTHERS = 999;
+    }
 }

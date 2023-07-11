@@ -318,7 +318,6 @@ public class CafeUpdateFragment extends Fragment {
                                     AppConstValue.variableConstValue.COMMA, AppConstValue.variableConstValue.DOT));
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrink);
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrinkComparison);
-
                             holder.btnUpdateDrinkAccept.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -844,7 +843,7 @@ public class CafeUpdateFragment extends Fragment {
                             storageDeleteImageRef = firebaseStorage.getReferenceFromUrl(updatedCategoryDrink.getCategoryDrinkImage());
                             storageDeleteImageRef.delete();
                         }
-                        insertCategoryDrinks(cafeCategoryId);
+                        //insertCategoryDrinks(cafeCategoryId);
                         closeProgressDialog();
                     }
                 });
@@ -920,7 +919,7 @@ public class CafeUpdateFragment extends Fragment {
         setProgressDialog(getResources().getString(R.string.cafe_update_drink_info_uploading));
         categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
         categoryDrinkRef.setValue(updatedCategoryDrink);
-        insertCategoryDrinks(cafeCategoryId);
+        //insertCategoryDrinks(cafeCategoryId);
         closeProgressDialog();
     }
 

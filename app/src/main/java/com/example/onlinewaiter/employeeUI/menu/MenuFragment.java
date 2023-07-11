@@ -1,6 +1,7 @@
 package com.example.onlinewaiter.employeeUI.menu;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.onlinewaiter.Adapter.MenuDrinksAdapter;
+import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
+import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -41,12 +45,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MenuFragment extends Fragment {
+public class MenuFragment extends Fragment implements CallBackOrder {
 
     //fragment views
     RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
@@ -59,6 +64,7 @@ public class MenuFragment extends Fragment {
     Boolean emptyOrder;
     ToastMessage toastMessage;
     private FragmentMenuBinding binding;
+    private MenuDrinksAdapter menuDrinksAdapter;
 
     //firebase
     private FirebaseDatabase firebaseDatabase;
@@ -85,14 +91,48 @@ public class MenuFragment extends Fragment {
         rvDrinksLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvMenuCategoryDrinks.setLayoutManager(rvDrinksLayoutManager);
 
+        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        final Observer<HashMap<String, CategoryDrink>> observingSearchedDrinks = new Observer<HashMap<String, CategoryDrink>>() {
+            @Override
+            public void onChanged(HashMap<String, CategoryDrink> searchedDrinks) {
+                menuViewModel.setDisplayingCategories(false);
+                insertSearchedDrinks(searchedDrinks);
+            }
+        };
+        menuViewModel.getSearchedDrinks().observe(requireActivity(), observingSearchedDrinks);
+
+        //displaying ceratin recyclerView (categories/drinks of category)
+        final Observer<Boolean> observingCurrentRv = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean showCategories) {
+                if(showCategories) {
+                    rvMenuCategoryDrinks.setVisibility(View.GONE);
+                    rvMenuCategories.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+        menuViewModel.getDisplayingCategories().observe(requireActivity(), observingCurrentRv);
+
         return root;
+    }
+
+    @Override
+    public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
+        orderViewModel.setDrinksInOrder(currentOrderDrinks);
+    }
+
+    private void insertSearchedDrinks(HashMap<String, CategoryDrink> searchedDrinks) {
+        if(isAdded()) {
+            menuDrinksAdapter = new MenuDrinksAdapter(getContext(), searchedDrinks, orderViewModel.getDrinksInOrder().getValue(), this);
+            rvMenuCategoryDrinks.setAdapter(menuDrinksAdapter);
+            menuDrinksAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
-        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         insertCafeCategories();
     }
 
@@ -160,26 +200,10 @@ public class MenuFragment extends Fragment {
 
     private void insertCategoryDrinks(String clickedCategoryId) {
         menuViewModel.setDisplayingCategories(false);
-        //displaying ceratin recyclerView (categories/drinks of category)
-        final Observer<Boolean> observingCurrentRv = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                if(aBoolean) {
-                    rvMenuCategoryDrinks.setVisibility(View.GONE);
-                    rvMenuCategories.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-        menuViewModel.getDisplayingCategories().observe(requireActivity(), observingCurrentRv);
 
         //cart/order for drinks
         final HashMap<String, CafeBillDrink>[] orderDrinks = new HashMap[]{new HashMap<>()};
-        emptyOrder = false;
-        HashMap<String, CafeBillDrink> addedOrderDrinks = orderViewModel.getDrinksInOrder().getValue();
-        if(addedOrderDrinks == null || addedOrderDrinks.isEmpty()) {
-            emptyOrder = true;
-        }
-
+        //ovdje je bio kod
         DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
@@ -219,6 +243,14 @@ public class MenuFragment extends Fragment {
                         }
 
                         final int[] drinkAmountCounter = {0};
+                        //Ovaj kod je bio na liniji 177
+                        //početak koda
+                        emptyOrder = false;
+                        HashMap<String, CafeBillDrink> addedOrderDrinks = orderViewModel.getDrinksInOrder().getValue();
+                        if(addedOrderDrinks == null || addedOrderDrinks.isEmpty()) {
+                            emptyOrder = true;
+                        }
+                        //kraj koda
                         if(!emptyOrder) {
                             for(String key: addedOrderDrinks.keySet()) {
                                 CafeBillDrink cafeBillDrink = addedOrderDrinks.get(key);

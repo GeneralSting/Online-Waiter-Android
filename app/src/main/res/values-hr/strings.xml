@@ -47,6 +47,8 @@
     <string name="act_employee_empty_order_fab_txt">Narudžba je prazna</string>
     <string name="act_employee_drink_deleted_title">Obrisano piće:</string>
     <string name="act_employee_drink_deleted_body">Piće se nalazilo u vašoj trenutnoj naruđžbi, obrisano je iz vaše naruđžbe</string>
+    <string name="act_employee_search_query_menu">Naziv pića…</string>
+    <string name="act_employee_search_query_orders">Broj stola…</string>
 
     <!--Employee activity menu fragment-->
     <string name="menu_drink_name_placeholder">Naziv Pića</string>

@@ -4,6 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.onlinewaiter.Models.CafeBillDrink;
+import com.example.onlinewaiter.Models.CategoryDrink;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class MenuViewModel extends ViewModel {
 
     private final MutableLiveData<Boolean> displayingCategories = new MutableLiveData<Boolean>();
@@ -34,5 +40,15 @@ public class MenuViewModel extends ViewModel {
 
     public void setPhoneNumber(String value) {
         phoneNumber.setValue(value);
+    }
+
+    private final MutableLiveData<HashMap<String, CategoryDrink>> searchedDrinks = new MutableLiveData<HashMap<String, CategoryDrink>>();
+
+    public LiveData<HashMap<String, CategoryDrink>> getSearchedDrinks() {
+        return searchedDrinks;
+    }
+
+    public void setSearchedDrinks(HashMap<String, CategoryDrink> value) {
+        searchedDrinks.setValue(value);
     }
 }

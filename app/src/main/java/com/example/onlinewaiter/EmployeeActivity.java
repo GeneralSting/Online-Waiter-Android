@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import android.text.InputType;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +19,8 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
+import com.example.onlinewaiter.Models.CafeDrinksCategory;
+import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
@@ -30,6 +36,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -54,6 +61,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,18 +71,22 @@ public class EmployeeActivity extends AppCompatActivity {
 
     //Activity view
     private AppBarConfiguration mAppBarConfiguration;
+    private SearchView svEmployeeAppBar;
     private ActivityEmployeeBinding binding;
     NavigationView navigationView;
     TextView tvCafeName;
 
     //gloabl variables/objects
     private Boolean isCategoriesDisplayed = true;
+    private int employee_nav_selected = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_MENU;
     String employeeCafeId, phoneNumber;
     ToastMessage toastMessage;
     FirebaseRefPaths firebaseRefPaths;
     NotificationManagerCompat notificationManagerCompat;
     NotificationCompat.Builder builder;
     int notificationId = 0;
+    private final int EMPLOYEE_NAV_MENU = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_MENU;
+    private final int EMPLOYEE_NAV_PENDING_ORDERS = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_PENDING_ORDERS;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
 
@@ -162,6 +174,78 @@ public class EmployeeActivity extends AppCompatActivity {
         setListeners();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.employee, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.itemSearch);
+        svEmployeeAppBar = (SearchView) searchMenuItem.getActionView();
+        switch(employee_nav_selected) {
+            case EMPLOYEE_NAV_MENU: {
+                searchMenuItem.setVisible(true);
+                svEmployeeAppBar.setQueryHint(getResources().getString(R.string.act_employee_search_query_orders));
+                svEmployeeAppBar.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                svEmployeeAppBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        HashMap<String, CategoryDrink> searchedDrinks = new HashMap<>();
+                        //function
+                        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+                        cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot cafeCategoriesSnapshot) {
+                                for(DataSnapshot categorySnapshot : cafeCategoriesSnapshot.getChildren()) {
+                                    DataSnapshot drinksSnapshot = categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild());
+                                    for(DataSnapshot drinkSnapshot : drinksSnapshot.getChildren()) {
+                                        CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
+                                        if(categoryDrink.getCategoryDrinkName() != null
+                                                && categoryDrink.getCategoryDrinkName().toLowerCase().contains(query.toLowerCase())) {
+                                            searchedDrinks.put(drinkSnapshot.getKey(), categoryDrink);
+                                        }
+                                    }
+                                }
+                                menuViewModel.setSearchedDrinks(searchedDrinks);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                                serverAlertDialog.makeAlertDialog();
+
+                                String currentDateTime = simpleDateFormat.format(new Date());
+                                appError = new AppError(
+                                        menuViewModel.getCafeId().getValue(),
+                                        menuViewModel.getPhoneNumber().getValue(),
+                                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                        error.getMessage().toString(),
+                                        currentDateTime
+                                );
+                                appError.sendError(appError);
+                            }
+                        });
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+                break;
+            }
+            case EMPLOYEE_NAV_PENDING_ORDERS: {
+                searchMenuItem.setVisible(true);
+                svEmployeeAppBar.setQueryHint(getResources().getString(R.string.act_employee_search_query_menu));
+                svEmployeeAppBar.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
+            }
+            default: {
+                searchMenuItem.setVisible(false);
+                break;
+            }
+        }
+        return super.onCreateOptionsMenu(menu);
+    }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -199,6 +283,31 @@ public class EmployeeActivity extends AppCompatActivity {
             logout();
             return true;
         });
+
+        navigationView.getMenu().findItem(R.id.nav_employee_menu).setOnMenuItemClickListener(menuItem -> {
+            employee_nav_selected = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_MENU;
+            invalidateMenu();
+            return false;
+        });
+
+        navigationView.getMenu().findItem(R.id.nav_employee_orders).setOnMenuItemClickListener(menuItem -> {
+            employee_nav_selected = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_OTHERS;
+            invalidateMenu();
+            return false;
+        });
+
+        navigationView.getMenu().findItem(R.id.nav_employee_pending_orders).setOnMenuItemClickListener(menuItem -> {
+            employee_nav_selected = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_PENDING_ORDERS;
+            invalidateMenu();
+            return false;
+        });
+
+        navigationView.getMenu().findItem(R.id.nav_employee_cafe_update).setOnMenuItemClickListener(menuItem -> {
+            employee_nav_selected = AppConstValue.employeeNavigationSelected.EMPLOYEE_NAV_OTHERS;
+            invalidateMenu();
+            return false;
+        });
+
         getCafeInfo(navigationView);
     }
 

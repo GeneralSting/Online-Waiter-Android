@@ -45,6 +45,8 @@
     <string name="act_employee_empty_order_fab_txt">Order is empty</string>
     <string name="act_employee_drink_deleted_title">Deleted drink:</string>
     <string name="act_employee_drink_deleted_body">This drink was in your current order, it is deleted and removed from order</string>
+    <string name="act_employee_search_query_menu">Drink name…</string>
+    <string name="act_employee_search_query_orders">Table number…</string>
 
 
     <!--Employe activity menu fragment-->
