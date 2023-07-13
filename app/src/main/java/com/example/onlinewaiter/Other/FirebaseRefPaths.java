@@ -39,6 +39,7 @@ public class FirebaseRefPaths {
     private final String refCurrentOrderStatusChild = "currentOrderStatus";
     private final String refCurrentOrderMessageChild = "currentOrderMessage";
     private final String refCafeNameChild = "cafeName";
+    private final String refCurrentOrderTableNumberChild = "currentOrderTableNumber";
 
     /*countriesNumber*/
 
@@ -207,6 +208,10 @@ public class FirebaseRefPaths {
 
     public String getRefCategoryDrinkNameChild() {
         return refCategoryDrinkNameChild;
+    }
+
+    public String getRefCurrentOrderTableNumberChild() {
+        return refCurrentOrderTableNumberChild;
     }
 
     /*countriesNumber*/

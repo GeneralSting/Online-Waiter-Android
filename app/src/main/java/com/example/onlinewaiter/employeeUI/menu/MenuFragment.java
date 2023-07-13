@@ -356,17 +356,14 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        adapterCategories.stopListening();
-        if(Boolean.FALSE.equals(menuViewModel.getDisplayingCategories().getValue())) {
-            adapterDrinks.stopListening();
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        if(Objects.nonNull(adapterCategories)) {
+            adapterCategories.stopListening();
+        }
+        if(Objects.nonNull(adapterDrinks)) {
+            adapterDrinks.stopListening();
+        }
     }
 }

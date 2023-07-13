@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.core.widget.TintableCheckedTextView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +35,7 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBill;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
+import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
@@ -53,6 +57,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -73,6 +78,7 @@ public class PendingOrdersFragment extends Fragment {
     MenuViewModel menuViewModel;
     RecyclerView.LayoutManager rvCurrentOrdersLayoutManager;
     ToastMessage toastMessage;
+    Boolean allOrders = false;
 
 
     //firebase
@@ -90,13 +96,16 @@ public class PendingOrdersFragment extends Fragment {
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         toastMessage = new ToastMessage(requireActivity());
+        PendingOrdersViewModel pendingOrdersViewModel = new ViewModelProvider(requireActivity()).get(PendingOrdersViewModel.class);
 
         scCafeCurrentOrders = (SwitchCompat) binding.scCafeCurrentOrders;
         scCafeCurrentOrders.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                stopAdapterListening();
-                populateOrdersRv(b);
+                if(pendingOrdersViewModel.getSearchedOrder().getValue() != null) {
+                    populateOrdersRv(pendingOrdersViewModel.getSearchedOrder().getValue());
+
+                }
             }
         });
 
@@ -104,15 +113,28 @@ public class PendingOrdersFragment extends Fragment {
         rvCurrentOrdersLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvCafeCurrentOrders.setLayoutManager(rvCurrentOrdersLayoutManager);
 
-        populateOrdersRv(false);
+        final Observer<Integer> observingSearchedDrinks = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer searchedOrder) {
+                stopAdapterListening();
+                populateOrdersRv(searchedOrder);
+            }
+        };
+        pendingOrdersViewModel.getSearchedOrder().observe(requireActivity(), observingSearchedDrinks);
 
+        populateOrdersRv(Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE));
         return root;
     }
 
-    private void populateOrdersRv(Boolean allOrders) {
+    private void populateOrdersRv(Integer searchedOrder) {
+        allOrders = scCafeCurrentOrders.isChecked();
+
         cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
         Query query = null;
-        if(allOrders) {
+        if(searchedOrder != Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE)) {
+            query = cafeCurrentOrdersRef.orderByChild(firebaseRefPaths.getRefCurrentOrderTableNumberChild()).equalTo(searchedOrder);
+        }
+        else if(allOrders) {
             query = cafeCurrentOrdersRef;
         }
         else {

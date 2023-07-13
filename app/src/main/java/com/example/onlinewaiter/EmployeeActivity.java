@@ -31,6 +31,7 @@ import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.employeeUI.cafeUpdate.CafeUpdateViewModel;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.example.onlinewaiter.employeeUI.order.OrderViewModel;
+import com.example.onlinewaiter.employeeUI.pendingOrders.PendingOrdersViewModel;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
@@ -99,6 +100,8 @@ public class EmployeeActivity extends AppCompatActivity {
     private MenuViewModel menuViewModel;
     private OrderViewModel orderViewModel;
     private CafeUpdateViewModel cafeUpdateViewModel;
+    private PendingOrdersViewModel pendingOrdersViewModel;
+
 
     //other
     private static long back_pressed;
@@ -112,6 +115,7 @@ public class EmployeeActivity extends AppCompatActivity {
         menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(this).get(CafeUpdateViewModel.class);
+        pendingOrdersViewModel = new ViewModelProvider(this).get(PendingOrdersViewModel.class);
 
         Bundle bundle = getIntent().getExtras();
         employeeCafeId = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID);
@@ -187,46 +191,14 @@ public class EmployeeActivity extends AppCompatActivity {
                 svEmployeeAppBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
-                        HashMap<String, CategoryDrink> searchedDrinks = new HashMap<>();
-                        //function
-                        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
-                        cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot cafeCategoriesSnapshot) {
-                                for(DataSnapshot categorySnapshot : cafeCategoriesSnapshot.getChildren()) {
-                                    DataSnapshot drinksSnapshot = categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild());
-                                    for(DataSnapshot drinkSnapshot : drinksSnapshot.getChildren()) {
-                                        CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
-                                        if(categoryDrink.getCategoryDrinkName() != null
-                                                && categoryDrink.getCategoryDrinkName().toLowerCase().contains(query.toLowerCase())) {
-                                            searchedDrinks.put(drinkSnapshot.getKey(), categoryDrink);
-                                        }
-                                    }
-                                }
-                                menuViewModel.setSearchedDrinks(searchedDrinks);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
-                                serverAlertDialog.makeAlertDialog();
-
-                                String currentDateTime = simpleDateFormat.format(new Date());
-                                appError = new AppError(
-                                        menuViewModel.getCafeId().getValue(),
-                                        menuViewModel.getPhoneNumber().getValue(),
-                                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
-                                        error.getMessage().toString(),
-                                        currentDateTime
-                                );
-                                appError.sendError(appError);
-                            }
-                        });
                         return false;
                     }
 
                     @Override
-                    public boolean onQueryTextChange(String newText) {
+                    public boolean onQueryTextChange(String query) {
+                        if(!query.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                            menuDrinksQuery(query);
+                        }
                         return false;
                     }
                 });
@@ -236,6 +208,23 @@ public class EmployeeActivity extends AppCompatActivity {
                 searchMenuItem.setVisible(true);
                 svEmployeeAppBar.setQueryHint(getResources().getString(R.string.act_employee_search_query_menu));
                 svEmployeeAppBar.setInputType(InputType.TYPE_CLASS_NUMBER);
+                svEmployeeAppBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String query) {
+                        if(query.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                            pendingOrdersViewModel.setSearchedOrder(Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE));
+                        }
+                        else {
+                            pendingOrdersViewModel.setSearchedOrder(Integer.parseInt(query));
+                        }
+                        return false;
+                    }
+                });
                 break;
             }
             default: {
@@ -244,19 +233,6 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         }
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(
-                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
-        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
     }
 
     @Override
@@ -311,6 +287,56 @@ public class EmployeeActivity extends AppCompatActivity {
         getCafeInfo(navigationView);
     }
 
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(
+                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
+        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    private void menuDrinksQuery(String query) {
+        HashMap<String, CategoryDrink> searchedDrinks = new HashMap<>();
+        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+        cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot cafeCategoriesSnapshot) {
+                for(DataSnapshot categorySnapshot : cafeCategoriesSnapshot.getChildren()) {
+                    DataSnapshot drinksSnapshot = categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild());
+                    for(DataSnapshot drinkSnapshot : drinksSnapshot.getChildren()) {
+                        CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
+                        if(categoryDrink.getCategoryDrinkName() != null
+                                && categoryDrink.getCategoryDrinkName().toLowerCase().contains(query.toLowerCase())) {
+                            searchedDrinks.put(drinkSnapshot.getKey(), categoryDrink);
+                        }
+                    }
+                }
+                menuViewModel.setSearchedDrinks(searchedDrinks);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
     private void getCafeInfo(NavigationView navigationView) {
         DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -358,6 +384,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
                     checkDrinkDeletion();
+                    checkSearchedDrinkDeletion();
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
                     tvCafeName.setText(cafeSnapshot.getValue(String.class));
@@ -464,6 +491,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
                             boolean drinkDeleted = true;
+                            boolean searchedDrinkDeleted = true;
                             for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
                                 for(DataSnapshot drinkSnapshot: categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild()).getChildren()) {
                                     if(Objects.equals(drinkSnapshot.getKey(), key)) {
@@ -511,6 +539,52 @@ public class EmployeeActivity extends AppCompatActivity {
                         }
                     });
                 }
+            }
+        }
+    }
+
+    private void checkSearchedDrinkDeletion() {
+
+        HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+        final boolean[] drinksSearched = {false};
+        if(menuViewModel.getSearchedDrinks().getValue() != null && !menuViewModel.getSearchedDrinks().getValue().isEmpty()) {
+            drinksSearched[0] = true;
+            for(String key : menuViewModel.getSearchedDrinks().getValue().keySet()) {
+                DatabaseReference cafeDrinksCategoriesRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+                cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
+                        boolean drinkDeleted = true;
+                        for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
+                            for (DataSnapshot drinkSnapshot : categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild()).getChildren()) {
+                                if(Objects.equals(drinkSnapshot.getKey(), key)) {
+                                    drinkDeleted = false;
+                                }
+                            }
+                        }
+                        if(drinkDeleted) {
+                            HashMap<String, CategoryDrink> updatedSearchedDrinks = menuViewModel.getSearchedDrinks().getValue();
+                            updatedSearchedDrinks.remove(key);
+                            menuViewModel.setSearchedDrinks(updatedSearchedDrinks);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                        serverAlertDialog.makeAlertDialog();
+
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                error.getMessage().toString(),
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
+                    }
+                });
             }
         }
     }
