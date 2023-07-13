@@ -110,10 +110,14 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                     rvMenuCategoryDrinks.setVisibility(View.GONE);
                     rvMenuCategories.setVisibility(View.VISIBLE);
                 }
+                else {
+                    rvMenuCategories.setVisibility(View.GONE);
+                    rvMenuCategoryDrinks.setVisibility(View.VISIBLE);
+                }
             }
         };
         menuViewModel.getDisplayingCategories().observe(requireActivity(), observingCurrentRv);
-
+        menuViewModel.setDisplayingCategories(true);
         return root;
     }
 
@@ -162,9 +166,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         holder.setItemClickListener(new ItemClickListener() {
                             @Override
                             public void onClick(View view, int position, boolean isLongClick) {
-                                rvMenuCategories.setVisibility(View.GONE);
+                                menuViewModel.setDisplayingCategories(false);
                                 insertCategoryDrinks(categorySnapshot.getKey());
-                                rvMenuCategoryDrinks.setVisibility(View.VISIBLE);
                             }
                         });
                     }
