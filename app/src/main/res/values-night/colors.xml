@@ -55,4 +55,16 @@
     <color name="grey_transparent">#8080806e</color>
     <color name="light_tumbleweed">#dbc4b1</color>
 
+    <!--Pie chart palette colors-->
+    <color name="pie_chart_darker_blue">#167288</color>
+    <color name="pie_chart_lighter_blue">#8cdaec</color>
+    <color name="pie_chart_darker_red">#b45248</color>
+    <color name="pie_chart_lighter_red">#d48c84</color>
+    <color name="pie_chart_darker_orange">#f46d43</color>
+    <color name="pie_chart_lighter_orange">#fdae61</color>
+    <color name="pie_chart_darker_green">#3cb464</color>
+    <color name="pie_chart_lighter_green">#9bddb1</color>
+    <color name="pie_chart_darker_purple">#643c6a</color>
+    <color name="pie_chart_lighter_purple">#836394</color>
+
 </resources>

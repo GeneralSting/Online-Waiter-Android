@@ -74,6 +74,7 @@ public class StatisticsFragment extends Fragment {
     private final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValues.QUERY_TYPE_EMPLOYEES;
     private final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValues.QUERY_TYPE_DRINKS;
     private final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValues.QUERY_TYPE_TABLES;
+    private StatisticsPieChartColors statisticsPieChartColors;
 
 
     //fragment views
@@ -107,6 +108,8 @@ public class StatisticsFragment extends Fragment {
 
         btnStatisticsTables = binding.btnStatisticsTables;
         btnTablesClickEvent();
+
+        statisticsPieChartColors = new StatisticsPieChartColors(requireActivity());
 
         return root;
     }
@@ -713,6 +716,7 @@ public class StatisticsFragment extends Fragment {
 
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(getResources().getColor(R.color.white));
+        pieDataSet.setColors(statisticsPieChartColors.getPieChartColors());
         pieData.setValueTextSize(12f);
         pieChart.setData(pieData);
         pieChart.getLegend().setEnabled(false);
