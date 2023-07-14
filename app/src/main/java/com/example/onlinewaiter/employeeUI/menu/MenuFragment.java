@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -56,6 +57,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     //fragment views
     RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
     RecyclerView.LayoutManager rvCategoriesLayoutManager, rvDrinksLayoutManager;
+    TextView tvSearchNoResult;
 
     //global variables/objects
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
@@ -90,6 +92,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         rvMenuCategories.setLayoutManager(rvCategoriesLayoutManager);
         rvDrinksLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvMenuCategoryDrinks.setLayoutManager(rvDrinksLayoutManager);
+        tvSearchNoResult = binding.tvSearchNoResult;
 
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
@@ -107,6 +110,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
             @Override
             public void onChanged(Boolean showCategories) {
                 if(showCategories) {
+                    tvSearchNoResult.setVisibility(View.GONE);
                     rvMenuCategoryDrinks.setVisibility(View.GONE);
                     rvMenuCategories.setVisibility(View.VISIBLE);
                 }
@@ -122,6 +126,12 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        insertCafeCategories();
+    }
+
+    @Override
     public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
         orderViewModel.setDrinksInOrder(currentOrderDrinks);
     }
@@ -131,13 +141,13 @@ public class MenuFragment extends Fragment implements CallBackOrder {
             menuDrinksAdapter = new MenuDrinksAdapter(getContext(), searchedDrinks, orderViewModel.getDrinksInOrder().getValue(), this);
             rvMenuCategoryDrinks.setAdapter(menuDrinksAdapter);
             menuDrinksAdapter.notifyDataSetChanged();
+            if(searchedDrinks.size() == 0) {
+                tvSearchNoResult.setVisibility(View.VISIBLE);
+            }
+            else {
+                tvSearchNoResult.setVisibility(View.GONE);
+            }
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        insertCafeCategories();
     }
 
     private void insertCafeCategories() {
@@ -281,6 +291,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                                 else {
                                     CafeBillDrink addingCafeBillDrink = new CafeBillDrink(
                                         categoryDrinkSnapshot.getKey(),
+                                            clickedCategoryId,
                                             categoryDrink.getCategoryDrinkName(),
                                             categoryDrink.getCategoryDrinkImage(),
                                             categoryDrink.getCategoryDrinkPrice(),

@@ -24,10 +24,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
+import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -66,6 +68,9 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     OrderViewModel orderViewModel;
     OrderDrinksAdapter orderDrinksAdapter;
     AlertDialog dialog;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private AppError appError;
+
 
     //firebase
     DatabaseReference cafeDrinksCategoriesRef, categoryDrinksRef, newCafeBillRef;
@@ -139,62 +144,49 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void insertOrderDrinks() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
-        cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot categoriesSnapshot) {
-                for(DataSnapshot drinksCategory: categoriesSnapshot.getChildren()) {
-                    checkDrinksByCategory(drinksCategory.getKey());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
-                serverAlertDialog.makeAlertDialog();
-            }
-        });
-    }
-
-    private void checkDrinksByCategory(String drinksCategoryId) {
-        categoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(drinksCategoryId));
-        categoryDrinksRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot categoryDrinksSnapshot) {
-                for(DataSnapshot snapshotCategoryDrink : categoryDrinksSnapshot.getChildren()) {
-                    boolean addNewCategoryDrink = false;
-                    CafeBillDrink newCafeBillDrink = new CafeBillDrink();
-                    for(String key : orderDrinks.keySet()) {
-                        CafeBillDrink cafeBillDrink = orderDrinks.get(key);
-                        if(Objects.equals(cafeBillDrink.getDrinkId(), snapshotCategoryDrink.getKey())) {
-                            CategoryDrink categoryDrink = snapshotCategoryDrink.getValue(CategoryDrink.class);
-                            CafeBillDrink cafeBillDrinkCopy = new CafeBillDrink(
-                                    cafeBillDrink.getDrinkId(),
-                                    categoryDrink.getCategoryDrinkName(),
-                                    categoryDrink.getCategoryDrinkImage(),
-                                    categoryDrink.getCategoryDrinkPrice(),
-                                    ((Float) categoryDrink.getCategoryDrinkPrice() * cafeBillDrink.getDrinkAmount()),
-                                    cafeBillDrink.getDrinkAmount()
-                            );
-                            addNewCategoryDrink = true;
-                            newCafeBillDrink = cafeBillDrinkCopy;
-                        }
+        for(String key : orderDrinks.keySet()) {
+            CafeBillDrink cafeBillDrink = orderDrinks.get(key);
+            cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(
+                    cafeBillDrink.getCategoryId(), cafeBillDrink.getDrinkId()));
+            cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot drinkSnapshot) {
+                    if(!drinkSnapshot.exists()) {
+                        orderDrinks.remove(key);
                     }
-                    if(addNewCategoryDrink) {
+                    else {
+                        CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
+                        CafeBillDrink newCafeBillDrink = new CafeBillDrink(
+                                cafeBillDrink.getDrinkId(),
+                                categoryDrink.getCategoryDrinkName(),
+                                categoryDrink.getCategoryDrinkImage(),
+                                categoryDrink.getCategoryDrinkPrice(),
+                                ((Float) categoryDrink.getCategoryDrinkPrice() * cafeBillDrink.getDrinkAmount()),
+                                cafeBillDrink.getDrinkAmount()
+                        );
                         modifiedOrderDrinks.put(newCafeBillDrink.getDrinkId(), newCafeBillDrink);
-                        if(modifiedOrderDrinks.size() == orderDrinks.size()) {
-                            displayOrderDrinks();
-                        }
+                    }
+                    if(modifiedOrderDrinks.size() == orderDrinks.size()) {
+                        displayOrderDrinks();
                     }
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
-                serverAlertDialog.makeAlertDialog();
-            }
-        });
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                    serverAlertDialog.makeAlertDialog();
+                    String currentDateTime = simpleDateFormat.format(new Date());
+                    appError = new AppError(
+                            menuViewModel.getCafeId().getValue(),
+                            menuViewModel.getPhoneNumber().getValue(),
+                            AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                            error.getMessage().toString(),
+                            currentDateTime
+                    );
+                    appError.sendError(appError);
+                }
+            });
+        }
     }
 
     private void displayOrderDrinks() {

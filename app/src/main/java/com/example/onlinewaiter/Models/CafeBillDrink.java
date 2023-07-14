@@ -1,7 +1,7 @@
 package com.example.onlinewaiter.Models;
 
 public class CafeBillDrink {
-    String drinkId, drinkName, drinkImage;
+    String drinkId, drinkName, drinkImage, categoryId;
     float drinkPrice, drinkTotalPrice;
     int drinkAmount;
 
@@ -9,6 +9,16 @@ public class CafeBillDrink {
 
     public CafeBillDrink(String drinkId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount) {
         this.drinkId = drinkId;
+        this.drinkName = drinkName;
+        this.drinkImage = drinkImage;
+        this.drinkPrice = drinkPrice;
+        this.drinkTotalPrice = drinkTotalPrice;
+        this.drinkAmount = drinkAmount;
+    }
+
+    public CafeBillDrink(String drinkId, String categoryId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount) {
+        this.drinkId = drinkId;
+        this.categoryId = categoryId;
         this.drinkName = drinkName;
         this.drinkImage = drinkImage;
         this.drinkPrice = drinkPrice;
@@ -62,5 +72,13 @@ public class CafeBillDrink {
 
     public void setDrinkAmount(int drinkAmount) {
         this.drinkAmount = drinkAmount;
+    }
+
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 }

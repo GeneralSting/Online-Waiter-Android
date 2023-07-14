@@ -54,6 +54,7 @@
     <string name="menu_drink_description_placeholder">Drink Description</string>
     <string name="menu_drink_price_placeholder">0.00$</string>
     <string name="menu_drink_description_dialog_title">Description for a drink: </string>
+    <string name="menu_search_no_result">No matched results</string>
 
 
     <!--Employee activity order fragment-->

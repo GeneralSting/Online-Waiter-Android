@@ -55,6 +55,7 @@
     <string name="menu_drink_description_placeholder">Opis Pića</string>
     <string name="menu_drink_price_placeholder">0,00€</string>
     <string name="menu_drink_description_dialog_title">Puni opis pića: </string>
+    <string name="menu_search_no_result">Nema pronađenih pića</string>
 
 
     <!--Employee activity order fragment-->
