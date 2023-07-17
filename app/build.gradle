@@ -76,4 +76,6 @@ dependencies {
     //firebase crashlytics
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics'
+    //image cropper
+    implementation 'com.github.krokyze:ucropnedit:2.2.6-2'
 }

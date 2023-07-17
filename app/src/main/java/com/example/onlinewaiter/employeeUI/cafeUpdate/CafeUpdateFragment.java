@@ -28,6 +28,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
@@ -41,7 +44,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Filters.DecimalPriceInputFilter;
+import com.example.onlinewaiter.ImageCropperActivity;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -99,6 +104,7 @@ public class CafeUpdateFragment extends Fragment {
     ProgressDialog progressDialog;
     DecimalFormat decimalFormat;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    ActivityResultLauncher<String> launchImageCropper;
 
     //fragment views
     LinearLayoutCompat linearLayoutContainer;
@@ -151,6 +157,18 @@ public class CafeUpdateFragment extends Fragment {
         layoutManagerCategoryDrinks = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvCafeUpdateCategories.setLayoutManager(layoutManagerCategories);
         rvCafeUpdateCategoryDrinks.setLayoutManager(layoutManagerCategoryDrinks);
+
+        launchImageCropper = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
+            @Override
+            public void onActivityResult(Uri resultUri) {
+                Intent intent = new Intent(getActivity(), ImageCropperActivity.class);
+                if(resultUri != null) {
+                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA, resultUri.toString());
+                    startActivityForResult(intent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
+                }
+
+            }
+        });
 
         final Observer<Integer> viewDisplayedObserver = new Observer<Integer>() {
             @Override
@@ -1205,8 +1223,9 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void openDeviceGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
+        launchImageCropper.launch(AppConstValue.variableConstValue.OPEN_ALL_IMAGES);
+//        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        startActivityForResult(galleryIntent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
     }
 
     @Override
@@ -1228,13 +1247,18 @@ public class CafeUpdateFragment extends Fragment {
 
         switch (requestCode) {
             case AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE:
-                if(data != null && data.getData() != null) {
-                    ivDrinkGlobalContainer.setImageURI(data.getData());
+                if(resultCode == AppConstValue.permissionConstValue.GALLERY_RESULT_CODE) {
+                    String result = data.getStringExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_RESULT);
+                    Uri resultUri = null;
+                    if(result != null) {
+                        resultUri = Uri.parse(result);
+                    }
+                    ivDrinkGlobalContainer.setImageURI(resultUri);
                 }
                 break;
             case AppConstValue.permissionConstValue.CAMERA_REQUEST_CODE:
                 if(data != null) {
-                    ivDrinkGlobalContainer.setImageBitmap((Bitmap) data.getExtras().get(AppConstValue.permissionConstValue.CAMERA_EXTRAS_DATA));
+                    ivDrinkGlobalContainer.setImageBitmap((Bitmap) data.getExtras().get(AppConstValue.variableConstValue.CAMERA_EXTRAS_DATA));
                 }
                 break;
         }

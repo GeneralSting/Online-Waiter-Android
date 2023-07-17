@@ -4,6 +4,8 @@ public class AppConstValue {
     public static class bundleConstValue {
         public static final String BUNDLE_CAFE_ID = "cafeId";
         public static final String BUNDLE_PHONE_NUMBER = "phoneNumber";
+        public static final String BUNDLE_CROPPER_IMAGE_DATA = "imageCropperData";
+        public static final String BUNDLE_CROPPER_IMAGE_RESULT = "imageCropperResult";
     }
 
     public static class sharedPreferencesValues {
@@ -49,15 +51,19 @@ public class AppConstValue {
         public static final int MAIN_PAGER_DESCRIPTION_END = 150;
         public static final String SQUARE_BRACKETS_OPEN = "[";
         public static final String SQUARE_BRACKETS_CLOSED = "]";
+        public static final String CAMERA_EXTRAS_DATA = "data";
+        public static final String OPEN_ALL_IMAGES = "image/*";
+        public static final String IMAGE_FORMAT_JPG = ".jpg";
+
     }
 
     public static class permissionConstValue {
-        public static final String CAMERA_EXTRAS_DATA = "data";
-        public static final int REQ_USER_CONSENT = 200;
-        public static final int MULTIPLE_PERMISSIONS = 124;
-        public static final int CAMERA_PERMISSION_CODE = 101;
-        public static final int CAMERA_REQUEST_CODE = 102;
-        public static final int GALLERY_REQUEST_CODE = 105;
+        public static final int REQ_READING_LOGIN_OTP = 200;
+        public static final int MULTIPLE_PERMISSIONS = 300;
+        public static final int CAMERA_PERMISSION_CODE = 100;
+        public static final int CAMERA_REQUEST_CODE = 101;
+        public static final int GALLERY_REQUEST_CODE = 111;
+        public static final int GALLERY_RESULT_CODE = 112;
     }
 
     public static class dateConstValue {

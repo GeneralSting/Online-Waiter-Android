@@ -10,6 +10,7 @@ public class AppErrorMessages {
         public static final String RETRIEVING_FIREBASE_DATA_FAILED = "Failed to get data for firebase recycler adapter";
         public static final String RETRIEVING_FIREBASE_DATA_FAILED_OWNER = "Failed to get data for firebase recycler adapter on owner's side";
         public static final String SENDING_EMAIL_FAILED_OWNER = "Failed to send email to owner's e-mail due to changing phone number";
+        public static final String IMAGE_CROPPER_RESULT_ERROR = "Image Cropper Activity error";
     }
 }
 

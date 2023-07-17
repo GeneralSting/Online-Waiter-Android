@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -172,7 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AppConstValue.permissionConstValue.REQ_USER_CONSENT) {
+        if (requestCode == AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP) {
             if ((resultCode == RESULT_OK) && (data != null)) {
                 String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
                 getOtpFromMessage(message);
@@ -196,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
         smsBroadcastReceiver.initListener(new SmsBroadcastReceiverListener() {
             @Override
             public void onSuccess(Intent intent) {
-                startActivityForResult(intent, AppConstValue.permissionConstValue.REQ_USER_CONSENT);
+                startActivityForResult(intent, AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP);
             }
 
             @Override
