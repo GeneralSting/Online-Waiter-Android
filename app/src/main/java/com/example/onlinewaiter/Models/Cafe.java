@@ -3,7 +3,7 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class Cafe {
-    String cafeLocation, cafeName, cafeOwnerGmail, getCafeOwnerLastname, cafeOwnerName, cafeOwnerOib, cafeOwnerPhoneNumber;
+    String cafeLocation, cafeName, cafeOwnerGmail, getCafeOwnerLastname, cafeOwnerName, cafeOwnerOib, cafeOwnerPhoneNumber, cafeCountry;
     Integer cafeTables;
     HashMap<String, CafeDrinksCategory> cafeDrinksCategories;
     HashMap<String, CafeBill> cafeBills;
@@ -13,9 +13,10 @@ public class Cafe {
         // Default constructor required for calls to DataSnapshot.getValue(Cafe.class)
     }
 
-    public Cafe(String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String getCafeOwnerLastname, String cafeOwnerName,
+    public Cafe(String cafeCountry, String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String getCafeOwnerLastname, String cafeOwnerName,
                 String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories,
                 HashMap<String, CafeEmployee> cafeEmployees) {
+        this.cafeCountry = cafeCountry;
         this.cafeLocation = cafeLocation;
         this.cafeName = cafeName;
         this.cafeTables = cafeTables;

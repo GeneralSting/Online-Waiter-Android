@@ -11,6 +11,11 @@ public class AppErrorMessages {
         public static final String RETRIEVING_FIREBASE_DATA_FAILED_OWNER = "Failed to get data for firebase recycler adapter on owner's side";
         public static final String SENDING_EMAIL_FAILED_OWNER = "Failed to send email to owner's e-mail due to changing phone number";
         public static final String IMAGE_CROPPER_RESULT_ERROR = "Image Cropper Activity error";
+        public static final String FIREBASE_PATH_NOT_EXISTING = "Firebase reference path not found";
+    }
+
+    public static class ErrorsMessages {
+        public static final String FIREBASE_PATH_REGISTERED_COUNTRY = "Path for registered country code not found, country standards are not collected";
     }
 }
 

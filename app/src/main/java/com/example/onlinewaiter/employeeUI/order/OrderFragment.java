@@ -69,6 +69,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     OrderDrinksAdapter orderDrinksAdapter;
     AlertDialog dialog;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    SimpleDateFormat simpleDateLocaleFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
     private AppError appError;
 
 

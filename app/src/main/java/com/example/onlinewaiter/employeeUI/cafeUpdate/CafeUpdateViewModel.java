@@ -20,4 +20,11 @@ public class CafeUpdateViewModel extends ViewModel {
     public void setCafeUpdateDisplayChange(Boolean value) {
         cafeUpdateDisplayChange.setValue(value);
     }
+    public final MutableLiveData<String> cafeCountry = new MutableLiveData<>();
+    public LiveData<String> getCafeCountry() {
+        return cafeCountry;
+    }
+    public void setCafeCountry(String value) {
+        cafeCountry.setValue(value);
+    }
 }

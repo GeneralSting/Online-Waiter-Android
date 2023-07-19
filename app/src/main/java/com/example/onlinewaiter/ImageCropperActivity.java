@@ -28,20 +28,17 @@ public class ImageCropperActivity extends AppCompatActivity {
     private AppError appError;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_cropper);
 
         readIntent();
+
         String destUri = UUID.randomUUID().toString() + AppConstValue.variableConstValue.IMAGE_FORMAT_JPG;
-
-        UCrop.Options options = new UCrop.Options();
-
-
+        UCrop.Options cropOptions = new UCrop.Options();
         UCrop.of(fileUri, Uri.fromFile(new File(getCacheDir(), destUri)))
-                .withOptions(options)
+                .withOptions(cropOptions)
                 .withAspectRatio(0,0)
                 .useSourceImageAspectRatio()
                 .withMaxResultSize(2000, 2000)
@@ -71,7 +68,6 @@ public class ImageCropperActivity extends AppCompatActivity {
             if(!cropError.getMessage().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE) && cropError.getMessage() != null) {
                 errorMessage = cropError.getMessage().toString();
             }
-
             MenuViewModel menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
             String currentDateTime = simpleDateFormat.format(new Date());
             appError = new AppError(

@@ -54,6 +54,7 @@ public class AppConstValue {
         public static final String CAMERA_EXTRAS_DATA = "data";
         public static final String OPEN_ALL_IMAGES = "image/*";
         public static final String IMAGE_FORMAT_JPG = ".jpg";
+        public static final String DEFAULT_CAFE_COUNTRY_CODE = "GB";
 
     }
 
@@ -68,7 +69,7 @@ public class AppConstValue {
 
     public static class dateConstValue {
         public static final String DATE_TIME_FORMAT_NORMAL = "yyyy_MM_dd_hh_mm_ss";
-        public static final String DATE_TIME_FORMAT_CRO = "dd.MM.yyyy HH:mm:ss";
+        public static final String DATE_TIME_FORMAT_CRO = "d. M. yyyy. HH:mm:ss";
     }
 
     public static class orderStatusConstValue {

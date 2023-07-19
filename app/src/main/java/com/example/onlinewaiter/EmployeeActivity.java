@@ -21,6 +21,7 @@ import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
+import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
@@ -28,6 +29,7 @@ import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Services.OnAppKilledService;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.employeeUI.cafeUpdate.CafeUpdateViewModel;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.example.onlinewaiter.employeeUI.order.OrderViewModel;
@@ -95,6 +97,8 @@ public class EmployeeActivity extends AppCompatActivity {
     //firebase
     private ChildEventListener cafeChildsEventListener, cafeCurrentOrdersListener;
     DatabaseReference cafeRef, cafeCurrentOrdersRef;
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference cafeDrinksCategoriesRef;
 
     //viewModels
     private MenuViewModel menuViewModel;
@@ -130,6 +134,18 @@ public class EmployeeActivity extends AppCompatActivity {
             menuViewModel.setPhoneNumber(phoneNumber);
         }
 
+        startService(new Intent(getBaseContext(), OnAppKilledService.class));
+        toastMessage = new ToastMessage(this);
+        firebaseRefPaths = new FirebaseRefPaths(this);
+
+        creatingNotificationChannel();
+        setDisplayingObserver();
+        collectCafeCountry();
+        setFabAction();
+        setListeners();
+    }
+
+    private void creatingNotificationChannel() {
         PendingIntent notificationEmptyIntent =
                 PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
 
@@ -142,11 +158,9 @@ public class EmployeeActivity extends AppCompatActivity {
 
         createNotificationChannel();
         notificationManagerCompat = NotificationManagerCompat.from(this);
+    }
 
-        startService(new Intent(getBaseContext(), OnAppKilledService.class));
-        toastMessage = new ToastMessage(this);
-        firebaseRefPaths = new FirebaseRefPaths(this);
-        //liveData for onBackPressed
+    private void setDisplayingObserver() {
         final Observer<Boolean> displayingCategoriesObserver = new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
@@ -154,7 +168,81 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         };
         menuViewModel.getDisplayingCategories().observe(this, displayingCategoriesObserver);
+    }
 
+    private void collectCafeCountry() {
+        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCountry());
+        cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
+                cafeUpdateViewModel.setCafeCountry(countrySnapshot.getValue(String.class));
+                collectCountryStandards(countrySnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void collectCountryStandards(String countryCode) {
+        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCountry(countryCode));
+        refRegisteredCountry.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot registeredCountrySnapshot) {
+                if(!registeredCountrySnapshot.exists()) {
+                    ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                    serverAlertDialog.makeAlertDialog();
+
+                    String currentDateTime = simpleDateFormat.format(new Date());
+                    appError = new AppError(
+                            menuViewModel.getCafeId().getValue(),
+                            menuViewModel.getPhoneNumber().getValue(),
+                            AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessages.ErrorsMessages.FIREBASE_PATH_REGISTERED_COUNTRY,
+                            currentDateTime
+                    );
+                    appError.sendError(appError);
+                    return;
+                }
+                EmployeeViewModel employeeViewModel = new ViewModelProvider(EmployeeActivity.this).get(EmployeeViewModel.class);
+                RegisteredCountry registeredCountry = registeredCountrySnapshot.getValue(RegisteredCountry.class);
+                employeeViewModel.setCafeCurrency(registeredCountry.getCurrency());
+                employeeViewModel.setCafeDateTimeFormat(registeredCountry.getDateTimeFormat());
+                employeeViewModel.setCafeDecimalSeperator(registeredCountry.getDecimalSeperator());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void setFabAction() {
         binding.appBarEmployee.ordersNumberFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,7 +263,6 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
             }
         });
-        setListeners();
     }
 
     @Override
@@ -302,7 +389,7 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void menuDrinksQuery(String query) {
         HashMap<String, CategoryDrink> searchedDrinks = new HashMap<>();
-        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeCategoriesSnapshot) {
@@ -338,7 +425,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void getCafeInfo(NavigationView navigationView) {
-        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
+        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafe());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -370,7 +457,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafe());
+        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -379,9 +466,6 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                    removeCafeListener();
-                }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
                     checkDrinkDeletion();
                     checkSearchedDrinkDeletion();
@@ -391,6 +475,9 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeTablesChild()))) {
                     orderViewModel.setCafeTablesNumber(cafeSnapshot.getValue(Integer.class));
+                }
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeCountryChild()))) {
+                    cafeUpdateViewModel.setCafeCountry(cafeSnapshot.getValue(String.class));
                 }
             }
 
@@ -421,7 +508,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         });
 
-        cafeCurrentOrdersRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCurrentOrders());
+        cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
         cafeCurrentOrdersListener = cafeCurrentOrdersRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -430,9 +517,6 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot orderSnapshot, @Nullable String previousChildName) {
-                /*if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                    removeCafeOrdersListener();
-                }*/
                 CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
                 if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
                 cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_READY) {
@@ -486,7 +570,7 @@ public class EmployeeActivity extends AppCompatActivity {
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             for(String key : orderDrinks.keySet()) {
                 if(!deletedDrinkFounded[0]) {
-                    DatabaseReference cafeDrinksCategoriesRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+                    cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
                     cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
@@ -550,7 +634,7 @@ public class EmployeeActivity extends AppCompatActivity {
         if(menuViewModel.getSearchedDrinks().getValue() != null && !menuViewModel.getSearchedDrinks().getValue().isEmpty()) {
             drinksSearched[0] = true;
             for(String key : menuViewModel.getSearchedDrinks().getValue().keySet()) {
-                DatabaseReference cafeDrinksCategoriesRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefCafeCategories());
+                cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
                 cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {

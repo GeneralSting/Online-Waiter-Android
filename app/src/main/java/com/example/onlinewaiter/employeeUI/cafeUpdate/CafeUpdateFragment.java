@@ -90,13 +90,12 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class CafeUpdateFragment extends Fragment {
-    //permissions
-
 
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
     boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
             newDrinkImageSelected, addingNewDrink;
+    private String cafeCountryCode = AppConstValue.variableConstValue.DEFAULT_CAFE_COUNTRY_CODE;
     ToastMessage toastMessage;
     OrderViewModel orderViewModel;
     MenuViewModel menuViewModel;
@@ -138,6 +137,7 @@ public class CafeUpdateFragment extends Fragment {
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(requireActivity()).get(CafeUpdateViewModel.class);
+        cafeCountryCode = cafeUpdateViewModel.getCafeCountry().getValue();
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         progressDialog = new ProgressDialog(getActivity());
@@ -479,13 +479,13 @@ public class CafeUpdateFragment extends Fragment {
                             return;
                         }
                         DrinksCategory drinksCategory = categoryDrinkSnapshot.getValue(DrinksCategory.class);
-                        holder.tvMenuCategory.setText(drinksCategory.getCategoryName());
+                        holder.tvMenuCategory.setText(drinksCategory.getCategoryNames().get(cafeCountryCode));
                         Glide.with(getActivity()).load(drinksCategory.getCategoryImage()).into(holder.ivMenuCategory);
 
                         holder.setItemClickListener(new ItemClickListener() {
                             @Override
                             public void onClick(View view, int position, boolean isLongClick) {
-                                createNewDrink(getRef(position).getKey(), drinksCategory.getCategoryName());
+                                createNewDrink(getRef(position).getKey(), drinksCategory.getCategoryNames().get(cafeCountryCode));
                             }
                         });
                     }
@@ -776,7 +776,7 @@ public class CafeUpdateFragment extends Fragment {
                             CafeDrinksCategory newCafeDrinksCategory = new CafeDrinksCategory(
                                 drinksCategory.getCategoryDescription().toString(),
                                 drinksCategory.getCategoryImage().toString(),
-                                drinksCategory.getCategoryName().toString(),
+                                drinksCategory.getCategoryNames().get(cafeCountryCode),
                                 null
                             );
                             menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());

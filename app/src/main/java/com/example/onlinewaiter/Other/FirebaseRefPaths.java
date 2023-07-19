@@ -40,6 +40,8 @@ public class FirebaseRefPaths {
     private final String refCurrentOrderMessageChild = "currentOrderMessage";
     private final String refCafeNameChild = "cafeName";
     private final String refCurrentOrderTableNumberChild = "currentOrderTableNumber";
+    private final String refCafeCountryChild = "cafeCountry";
+    private final String refCafeCountry = "/cafeCountry";
 
     /*countriesNumber*/
 
@@ -47,6 +49,13 @@ public class FirebaseRefPaths {
 
     /*drinksCategories*/
     private final String refDrinksCategories = "drinksCategories/";
+
+
+    /* registeredCountries */
+    private final String refRegisteredCountries = "/registeredCountries/";
+    private final String refRCCurrency = "/currency";
+    private final String refRCDateTimeFormat = "/dateTimeFormat";
+    private final String refRCDecimalSeperator = "/decimalSeperator";
 
 
     /*registeredNumbers*/
@@ -214,6 +223,14 @@ public class FirebaseRefPaths {
         return refCurrentOrderTableNumberChild;
     }
 
+    public String getRefCafeCountryChild() {
+        return refCafeCountryChild;
+    }
+
+    public String getRefCafeCountry() {
+        return getRefCafe() + refCafeCountry;
+    }
+
     /*countriesNumber*/
 
 
@@ -230,6 +247,26 @@ public class FirebaseRefPaths {
         return drinksCategoryId;
     }
 
+
+    /* registeredCountries */
+    public String getRefRegisteredCountries() {
+        return refRegisteredCountries;
+    }
+
+    public String getRefRegisteredCountry(String registeredCountry) {
+        return getRefRegisteredCountries() + registeredCountry;
+    }
+
+    public String getRefRCCurrency(String registeredCountry) {
+        return getRefRegisteredCountry(registeredCountry) + refRCCurrency;
+    }
+
+    public String getRefRCDateTime(String registeredCountry) {
+        return getRefRegisteredCountry(registeredCountry) + refRCDateTimeFormat;
+    }
+    public String getRefRCDecimalSeperator(String registeredCountry) {
+        return getRefRegisteredCountry(registeredCountry) + refRCDecimalSeperator;
+    }
 
     /*registeredNumbers*/
     public String getRefRegisteredNumbers() {
