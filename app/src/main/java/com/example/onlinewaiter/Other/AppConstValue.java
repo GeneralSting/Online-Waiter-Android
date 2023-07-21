@@ -8,7 +8,7 @@ public class AppConstValue {
         public static final String BUNDLE_CROPPER_IMAGE_RESULT = "imageCropperResult";
     }
 
-    public static class sharedPreferencesValues {
+    public static class sharedPreferencesValue {
         public static final String PREFERENCE_PHONE_NUMBER = "preferencePhonenumber";
         public static final String SHARED_PHONE_NUMBER = "sharedPhoneNumber";
     }
@@ -37,6 +37,7 @@ public class AppConstValue {
     public static class variableConstValue {
         public static final String EMPTY_VALUE = "";
         public static final String DOT = ".";
+        public static final String DEFAULT_DECIMAL_SEPERATOR = ".";
         public static final String COMMA = ",";
         public static final char CHAR_DOT = '.';
         public static final char CHAR_COMMA = ',';
@@ -79,19 +80,19 @@ public class AppConstValue {
         public static final int ORDER_STATUS_REMOVAL_REQUEST = 3;
     }
 
-    public static class statisticsConstValues {
+    public static class statisticsConstValue {
         public static final String PIE_CHART_LABEL = "Pie chart data set";
         public static final int QUERY_TYPE_EMPLOYEES = 0;
         public static final int QUERY_TYPE_DRINKS = 1;
         public static final int QUERY_TYPE_TABLES = 2;
     }
 
-    public static class registeredNumberConstValues {
+    public static class registeredNumberConstValue {
         public static final String NUMBER_ROLE_WAITER = "waiter";
         public static final boolean NUMBER_ALLOWED = true;
     }
 
-    public static class emailConstValues {
+    public static class emailConstValue {
         public static final int RANDOM_ORIGIN = 100000;
         public static final int RANDOM_BOUND = 999999;
     }
@@ -100,5 +101,16 @@ public class AppConstValue {
         public static final int EMPLOYEE_NAV_MENU = 1;
         public static final int EMPLOYEE_NAV_PENDING_ORDERS = 3;
         public static final int EMPLOYEE_NAV_OTHERS = 999;
+    }
+
+    public static class decimalPriceInputFilter {
+        public static final int MAX_DIGITS_BEFORE_DOT = 6;
+        public static final int MAX_DIGITS_AFTER_DOT = 2;
+        public static final int MAX_VALUE = 1000000;
+    }
+
+    public static class regex {
+        public static final String NON_NUMERIC_CHARACHTERS = "\\D";
+
     }
 }

@@ -18,7 +18,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Filters.DecimalPriceInputFilter;
 import com.example.onlinewaiter.ImageCropperActivity;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
@@ -62,6 +60,7 @@ import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuCategoryViewHolder;
 import com.example.onlinewaiter.ViewHolder.UpdateDrinkViewHolder;
 import com.example.onlinewaiter.databinding.FragmentCafeUpdateBinding;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.example.onlinewaiter.employeeUI.order.OrderViewModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -82,6 +81,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -99,9 +99,12 @@ public class CafeUpdateFragment extends Fragment {
     ToastMessage toastMessage;
     OrderViewModel orderViewModel;
     MenuViewModel menuViewModel;
+    private EmployeeViewModel employeeViewModel;
     CafeUpdateViewModel cafeUpdateViewModel;
     ProgressDialog progressDialog;
-    DecimalFormat decimalFormat;
+    DecimalFormat cafeDecimalFormat;
+    private final DecimalFormat databaseDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+    DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     ActivityResultLauncher<String> launchImageCropper;
 
@@ -136,12 +139,14 @@ public class CafeUpdateFragment extends Fragment {
 
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(requireActivity()).get(CafeUpdateViewModel.class);
         cafeCountryCode = cafeUpdateViewModel.getCafeCountry().getValue();
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         progressDialog = new ProgressDialog(getActivity());
-        decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+        decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
+        cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
         addingNewDrink = false;
 
         linearLayoutContainer = binding.llCafeUpdateContainer;
@@ -286,7 +291,7 @@ public class CafeUpdateFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );
@@ -331,9 +336,10 @@ public class CafeUpdateFragment extends Fragment {
                             holder.etUpdateDrinkName.setText(categoryDrink.getCategoryDrinkName());
                             holder.etUpdateDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
                             holder.etUpdateDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(
-                                    6,2, 1000000)});
-                            holder.etUpdateDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()).replace(
-                                    AppConstValue.variableConstValue.COMMA, AppConstValue.variableConstValue.DOT));
+                                    AppConstValue.decimalPriceInputFilter.MAX_DIGITS_BEFORE_DOT,
+                                    AppConstValue.decimalPriceInputFilter.MAX_DIGITS_AFTER_DOT,
+                                    AppConstValue.decimalPriceInputFilter.MAX_VALUE)});
+                            holder.etUpdateDrinkPrice.setText(cafeDecimalFormat.format(categoryDrink.getCategoryDrinkPrice()));
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrink);
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrinkComparison);
                             holder.btnUpdateDrinkAccept.setOnClickListener(new View.OnClickListener() {
@@ -346,11 +352,15 @@ public class CafeUpdateFragment extends Fragment {
                                         holder.etUpdateDrinkPrice.setText(AppConstValue.variableConstValue.ZERO_VALUE);
                                     }
 
+                                    String defaultDecimalDrinkPrice = holder.etUpdateDrinkPrice.getText().toString().replaceAll(
+                                            AppConstValue.regex.NON_NUMERIC_CHARACHTERS,
+                                            AppConstValue.variableConstValue.DEFAULT_DECIMAL_SEPERATOR);
+
                                     CategoryDrink updatedCategoryDrink = new CategoryDrink(
                                             holder.etUpdateDrinkDescription.getText().toString(),
                                             categoryDrink.getCategoryDrinkImage(),
                                             holder.etUpdateDrinkName.getText().toString(),
-                                            Float.parseFloat(holder.etUpdateDrinkPrice.getText().toString())
+                                            Float.parseFloat(defaultDecimalDrinkPrice)
                                     );
 
 
@@ -408,7 +418,7 @@ public class CafeUpdateFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );
@@ -499,7 +509,7 @@ public class CafeUpdateFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );
@@ -645,10 +655,10 @@ public class CafeUpdateFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0) {
-                            DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_NO_ZERO);
+                            DecimalFormat decimalFormatNoZero = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_NO_ZERO);
                             double drinkPrice = Double.parseDouble(etNewDrinkPrice.getText().toString());
-                            if(decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)
-                            || decimalFormat.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_DOT_NO_ZERO)) {
+                            if(decimalFormatNoZero.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)
+                            || decimalFormatNoZero.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_DOT_NO_ZERO)) {
                                 if(!newDrinkPriceSecondConfirm) {
                                     newDrinkPriceSecondConfirm = true;
                                 }
@@ -730,7 +740,7 @@ public class CafeUpdateFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                                 e.toString(),
                                 currentDateTime
                         );
@@ -750,7 +760,7 @@ public class CafeUpdateFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.IMAGE_UPLOAD_TASK_FAILED,
+                        AppErrorMessages.Message.IMAGE_UPLOAD_TASK_FAILED,
                         e.toString(),
                         currentDateTime
                 );
@@ -795,7 +805,7 @@ public class CafeUpdateFragment extends Fragment {
                             appError = new AppError(
                                     menuViewModel.getCafeId().getValue(),
                                     menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                    AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                                     error.getMessage().toString(),
                                     currentDateTime
                             );
@@ -815,7 +825,7 @@ public class CafeUpdateFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -875,7 +885,7 @@ public class CafeUpdateFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                                 e.toString(),
                                 currentDateTime
                         );
@@ -895,7 +905,7 @@ public class CafeUpdateFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.IMAGE_UPLOAD_TASK_FAILED,
+                        AppErrorMessages.Message.IMAGE_UPLOAD_TASK_FAILED,
                         e.toString(),
                         currentDateTime
                 );
@@ -997,7 +1007,7 @@ public class CafeUpdateFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -1077,7 +1087,7 @@ public class CafeUpdateFragment extends Fragment {
                             appError = new AppError(
                                     menuViewModel.getCafeId().getValue(),
                                     menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                                    AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                                     error.getMessage().toString(),
                                     currentDateTime
                             );
@@ -1098,7 +1108,7 @@ public class CafeUpdateFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.DOWNLOAD_IMAGE_URI_FAILED,
+                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );

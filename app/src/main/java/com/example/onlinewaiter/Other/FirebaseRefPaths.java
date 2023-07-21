@@ -111,6 +111,10 @@ public class FirebaseRefPaths {
     public String getOwnerRefCafe(String cafeId) {
         return getRefCafes() + cafeId;
     }
+
+    public String getOwnerRefCafeCountry(String cafeId) {
+        return getOwnerRefCafe(cafeId) + refCafeCountry;
+    }
     public String getOwnerRefCafeBills(String cafeId) {
         return getOwnerRefCafe(cafeId) + refCafeBills;
     }

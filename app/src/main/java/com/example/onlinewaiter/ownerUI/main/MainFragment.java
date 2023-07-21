@@ -181,7 +181,7 @@ public class MainFragment extends Fragment {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
                         currentDateTime
                 );

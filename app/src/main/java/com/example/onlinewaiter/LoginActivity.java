@@ -83,14 +83,14 @@ public class LoginActivity extends AppCompatActivity {
         loginProgressBar = findViewById(R.id.pbLogin);
         ivNumberQuestion = findViewById(R.id.ivLoginNumberQuestion);
 
-        sharedPreferences = getSharedPreferences(AppConstValue.sharedPreferencesValues.PREFERENCE_PHONE_NUMBER, MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(AppConstValue.sharedPreferencesValue.PREFERENCE_PHONE_NUMBER, MODE_PRIVATE);
         Bundle bundle = getIntent().getExtras();
         if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
             saveSharedPhoneNumber = true;
-            if (sharedPreferences.contains(AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER)) {
+            if (sharedPreferences.contains(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER)) {
                 sharedPhoneNumber = sharedPreferences.getString(
-                        AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER,
-                        AppConstValue.sharedPreferencesValues.PREFERENCE_PHONE_NUMBER);
+                        AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER,
+                        AppConstValue.sharedPreferencesValue.PREFERENCE_PHONE_NUMBER);
                 phoneNumber = sharedPhoneNumber;
                 etPhoneNumber.setText(phoneNumber);
                 ivNumberQuestion.setImageResource(R.drawable.icon_baseline_question_mark_success_16);
@@ -328,7 +328,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         if(numberFounded && saveSharedPhoneNumber && !authNumber.equals(sharedPhoneNumber)) {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(AppConstValue.sharedPreferencesValues.SHARED_PHONE_NUMBER, phoneNumber);
+                            editor.putString(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER, phoneNumber);
                             editor.apply();
                         }
                         if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {

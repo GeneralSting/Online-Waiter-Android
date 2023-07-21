@@ -1,7 +1,6 @@
 package com.example.onlinewaiter.employeeUI.menu;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Adapter.MenuDrinksAdapter;
-import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Models.AppError;
@@ -33,6 +31,7 @@ import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuCategoryViewHolder;
 import com.example.onlinewaiter.ViewHolder.MenuDrinkViewHolder;
 import com.example.onlinewaiter.databinding.FragmentMenuBinding;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.employeeUI.order.OrderViewModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -45,8 +44,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,6 +62,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
+    private EmployeeViewModel employeeViewModel;
     Boolean emptyOrder;
     ToastMessage toastMessage;
     private FragmentMenuBinding binding;
@@ -94,6 +94,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         rvMenuCategoryDrinks.setLayoutManager(rvDrinksLayoutManager);
         tvSearchNoResult = binding.tvSearchNoResult;
 
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         final Observer<HashMap<String, CategoryDrink>> observingSearchedDrinks = new Observer<HashMap<String, CategoryDrink>>() {
@@ -190,7 +191,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );
@@ -213,11 +214,12 @@ public class MenuFragment extends Fragment implements CallBackOrder {
 
     private void insertCategoryDrinks(String clickedCategoryId) {
         menuViewModel.setDisplayingCategories(false);
-
-        //cart/order for drinks
         final HashMap<String, CafeBillDrink>[] orderDrinks = new HashMap[]{new HashMap<>()};
-        //ovdje je bio kod
-        DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
+        DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
+
         menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
                 .Builder<CategoryDrink>()
@@ -235,7 +237,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         }
                         CategoryDrink categoryDrink = categoryDrinkSnapshot.getValue(CategoryDrink.class);
                         holder.tvMenuDrinkName.setText(categoryDrink.getCategoryDrinkName());
-                        holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + getResources().getString(R.string.country_currency));
+                        holder.tvMenuDrinkPrice.setText(cafeDecimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + employeeViewModel.getCafeCurrency().getValue());
                         Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 
                         if(categoryDrink.getCategoryDrinkDescription().length() > AppConstValue.variableConstValue.MENU_DRINK_DESCRIPTION_LENGTH) {
@@ -337,7 +339,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );

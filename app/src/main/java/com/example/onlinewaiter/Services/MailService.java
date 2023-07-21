@@ -1,7 +1,6 @@
 package com.example.onlinewaiter.Services;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,7 +12,6 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.example.onlinewaiter.ViewHolder.RegisteredNumberViewHolder;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
 import com.google.firebase.database.DataSnapshot;
@@ -28,7 +26,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 import papaya.in.sendmail.SendMail;
 
@@ -55,8 +52,8 @@ public class MailService {
                 mReceiverMail = Objects.requireNonNull(cafeSnapshot.getValue(Cafe.class)).getCafeOwnerGmail();
                 mReceiverSubject = receiverSubject;
                 mReceiverBodyInfo = receiverBodyInfo;
-                final int randomCode = new Random().nextInt((AppConstValue.emailConstValues.RANDOM_BOUND - AppConstValue.emailConstValues.RANDOM_ORIGIN) +
-                        1) + AppConstValue.emailConstValues.RANDOM_ORIGIN;
+                final int randomCode = new Random().nextInt((AppConstValue.emailConstValue.RANDOM_BOUND - AppConstValue.emailConstValue.RANDOM_ORIGIN) +
+                        1) + AppConstValue.emailConstValue.RANDOM_ORIGIN;
                 RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(mViewModelStoreOwner).get(RegisteredNumbersViewModel.class);
                 registeredNumbersViewModel.setEmailRandomCode(randomCode);
                 Date currentDate = Calendar.getInstance().getTime();
@@ -79,7 +76,7 @@ public class MailService {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.SENDING_EMAIL_FAILED_OWNER,
+                        AppErrorMessages.Message.SENDING_EMAIL_FAILED_OWNER,
                         error.getMessage().toString(),
                         currentDateTime
                 );

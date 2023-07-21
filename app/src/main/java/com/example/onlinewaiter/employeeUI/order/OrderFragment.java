@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentOrderBinding;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,6 +67,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     FirebaseRefPaths firebaseRefPaths;
     MenuViewModel menuViewModel;
     OrderViewModel orderViewModel;
+    private EmployeeViewModel employeeViewModel;
     OrderDrinksAdapter orderDrinksAdapter;
     AlertDialog dialog;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
@@ -102,6 +104,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         orderDrinks = orderViewModel.getDrinksInOrder().getValue();
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
@@ -180,7 +183,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     appError = new AppError(
                             menuViewModel.getCafeId().getValue(),
                             menuViewModel.getPhoneNumber().getValue(),
-                            AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                             error.getMessage().toString(),
                             currentDateTime
                     );
@@ -214,7 +217,9 @@ public class OrderFragment extends Fragment implements CallBackOrder {
             else {
                 Float orderTotalPrice = 0f;
                 int orderProductsAmount = 0;
-                DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+                decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
+                DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
                 for(String key : currentOrderDrinks.keySet()) {
                     CafeBillDrink cafeBillDrink = currentOrderDrinks.get(key);
                     orderTotalPrice += (Float) cafeBillDrink.getDrinkTotalPrice();
@@ -224,7 +229,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                 cafeBillDrinkAmount = (int) orderProductsAmount;
                 cafeBillDrinks = (HashMap<String, CafeBillDrink>) currentOrderDrinks;
                 tvOrderBillAmount.setText(orderProductsAmount + " " + getResources().getString(R.string.order_summary_amount));
-                tvOrderBillTotalPrice.setText(decimalFormat.format(orderTotalPrice) + getResources().getString(R.string.country_currency));
+                tvOrderBillTotalPrice.setText(cafeDecimalFormat.format(orderTotalPrice) + employeeViewModel.getCafeCurrency().getValue());
             }
         }
     }

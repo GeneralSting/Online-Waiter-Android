@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.widget.TintableCheckedTextView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,7 +33,6 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBill;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
-import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
@@ -44,6 +41,7 @@ import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.CurrentOrderViewHolder;
 import com.example.onlinewaiter.databinding.FragmentPendingOrdersBinding;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -55,9 +53,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -76,9 +74,12 @@ public class PendingOrdersFragment extends Fragment {
     SimpleDateFormat simpleDateLocaleFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
     private AppError appError;
     MenuViewModel menuViewModel;
+    private EmployeeViewModel employeeViewModel;
     RecyclerView.LayoutManager rvCurrentOrdersLayoutManager;
     ToastMessage toastMessage;
     Boolean allOrders = false;
+    DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+    DecimalFormat cafeDecimalFormat;
 
 
     //firebase
@@ -95,6 +96,9 @@ public class PendingOrdersFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
+        decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
+        cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
         toastMessage = new ToastMessage(requireActivity());
         PendingOrdersViewModel pendingOrdersViewModel = new ViewModelProvider(requireActivity()).get(PendingOrdersViewModel.class);
 
@@ -207,9 +211,8 @@ public class PendingOrdersFragment extends Fragment {
 
                                                 tvOrderPaymentPrice.setText(getResources().getString(R.string.pending_orders_payment_title) +
                                                         AppConstValue.characterConstValue.CHARACTER_SPACING +
-                                                        cafeCurrentOrder.getCurrentOrderTotalPrice().toString() + getResources().getString(R.string.country_currency));
-
-                                                DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+                                                        cafeDecimalFormat.format(Float.parseFloat(cafeCurrentOrder.getCurrentOrderTotalPrice())) +
+                                                        employeeViewModel.getCafeCurrency().getValue());
 
                                                 etOrderPaymentReceived.addTextChangedListener(new TextWatcher() {
                                                     @Override
@@ -230,12 +233,12 @@ public class PendingOrdersFragment extends Fragment {
                                                             float result = receivedPrice - Float.parseFloat(cafeCurrentOrder.getCurrentOrderTotalPrice());
                                                             if(result >= 0f) {
                                                                 tvPaymentIcon.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_green_baseline_double_arrow_32, 0, 0, 0);
-                                                                etOrderPaymentReturn.setText(decimalFormat.format(result));
+                                                                etOrderPaymentReturn.setText(cafeDecimalFormat.format(result));
                                                                 etOrderPaymentReturn.setTextColor(getResources().getColor(R.color.green_positive));
                                                             }
                                                             else {
                                                                 tvPaymentIcon.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.icon_red_baseline_double_arrow_32, 0, 0, 0);
-                                                                etOrderPaymentReturn.setText(decimalFormat.format(result));
+                                                                etOrderPaymentReturn.setText(cafeDecimalFormat.format(result));
                                                                 etOrderPaymentReturn.setTextColor(getResources().getColor(R.color.red_negative));
                                                             }
                                                         }
@@ -364,7 +367,7 @@ public class PendingOrdersFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );
@@ -419,9 +422,6 @@ public class PendingOrdersFragment extends Fragment {
                 break;
             }
         }
-
-        DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
-
         currentOrderDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCurrentOrderDrinks(currentOrderId));
         currentOrderDrinksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -448,8 +448,8 @@ public class PendingOrdersFragment extends Fragment {
                     tvCurrentOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
 
                     TextView tvCurrentOrderDrinkPrice = (TextView) trDrinkView.findViewById(R.id.tvCurrentOrderDrinkPrice);
-                    tvCurrentOrderDrinkPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) +
-                            getResources().getString(R.string.country_currency));
+                    tvCurrentOrderDrinkPrice.setText(cafeDecimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) +
+                            employeeViewModel.getCafeCurrency().getValue());
 
                     tlCurrentOrderDrinks.addView(trDrinkView);
                 }
@@ -464,8 +464,8 @@ public class PendingOrdersFragment extends Fragment {
 
                 TextView tvCurrentOrderDrinkPrice = (TextView) trTotalView.findViewById(R.id.tvCurrentOrderDrinkPrice);
                 tvCurrentOrderDrinkName.setTypeface(Typeface.DEFAULT_BOLD);
-                tvCurrentOrderDrinkPrice.setText(decimalFormat.format(Float.valueOf(cafeCurrentOrder.getCurrentOrderTotalPrice())) +
-                        getResources().getString(R.string.country_currency));
+                tvCurrentOrderDrinkPrice.setText(cafeDecimalFormat.format(Float.valueOf(cafeCurrentOrder.getCurrentOrderTotalPrice())) +
+                        employeeViewModel.getCafeCurrency().getValue());
 
                 tlCurrentOrderDrinks.addView(trTotalView);
             }
@@ -478,7 +478,7 @@ public class PendingOrdersFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );

@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +18,6 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
-import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
@@ -43,7 +41,6 @@ import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -64,7 +61,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -188,7 +184,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -210,8 +206,8 @@ public class EmployeeActivity extends AppCompatActivity {
                     appError = new AppError(
                             menuViewModel.getCafeId().getValue(),
                             menuViewModel.getPhoneNumber().getValue(),
-                            AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
-                            AppErrorMessages.ErrorsMessages.FIREBASE_PATH_REGISTERED_COUNTRY,
+                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessages.ErrorsMessage.FIREBASE_PATH_REGISTERED_COUNTRY,
                             currentDateTime
                     );
                     appError.sendError(appError);
@@ -233,7 +229,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -415,7 +411,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -447,7 +443,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -500,7 +496,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -555,7 +551,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -615,7 +611,7 @@ public class EmployeeActivity extends AppCompatActivity {
                             appError = new AppError(
                                     menuViewModel.getCafeId().getValue(),
                                     menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                    AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                     error.getMessage().toString(),
                                     currentDateTime
                             );
@@ -662,7 +658,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );

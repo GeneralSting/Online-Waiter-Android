@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -71,9 +70,9 @@ public class StatisticsFragment extends Fragment {
     final int databaseQuerySize = AppConstValue.variableConstValue.STATISTICS_DEFAULT_QUERY_SIZE;
     DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
     boolean showChart;
-    private final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValues.QUERY_TYPE_EMPLOYEES;
-    private final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValues.QUERY_TYPE_DRINKS;
-    private final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValues.QUERY_TYPE_TABLES;
+    private final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValue.QUERY_TYPE_EMPLOYEES;
+    private final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValue.QUERY_TYPE_DRINKS;
+    private final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValue.QUERY_TYPE_TABLES;
     private StatisticsPieChartColors statisticsPieChartColors;
 
 
@@ -669,7 +668,7 @@ public class StatisticsFragment extends Fragment {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -687,7 +686,7 @@ public class StatisticsFragment extends Fragment {
         for(String key : sortStatisticsEntry(pieChartStatistic, true).keySet()) {
             pieEntryList.add(new PieEntry(pieChartStatistic.get(key), key));
         }
-        PieDataSet pieDataSet = new PieDataSet(pieEntryList, AppConstValue.statisticsConstValues.PIE_CHART_LABEL);
+        PieDataSet pieDataSet = new PieDataSet(pieEntryList, AppConstValue.statisticsConstValue.PIE_CHART_LABEL);
         pieData = new PieData(pieDataSet);
 
         if(showPercentage) {

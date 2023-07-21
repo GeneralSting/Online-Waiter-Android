@@ -64,7 +64,7 @@ public class ImageCropperActivity extends AppCompatActivity {
         }
         else if(resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
-            String errorMessage = AppErrorMessages.Messages.IMAGE_CROPPER_RESULT_ERROR;
+            String errorMessage = AppErrorMessages.Message.IMAGE_CROPPER_RESULT_ERROR;
             if(!cropError.getMessage().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE) && cropError.getMessage() != null) {
                 errorMessage = cropError.getMessage().toString();
             }
@@ -73,7 +73,7 @@ public class ImageCropperActivity extends AppCompatActivity {
             appError = new AppError(
                     menuViewModel.getCafeId().getValue(),
                     menuViewModel.getPhoneNumber().getValue(),
-                    AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED,
+                    AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
                     errorMessage,
                     currentDateTime
             );

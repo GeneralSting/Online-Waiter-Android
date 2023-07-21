@@ -6,18 +6,20 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
+import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
+import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
+import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
+import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -28,7 +30,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
@@ -40,6 +41,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,6 +56,7 @@ public class OwnerActivity extends AppCompatActivity {
     int updateCafeInfo = 0;
     private static long back_pressed;
     MainViewModel mainViewModel;
+    private OwnerViewModel ownerViewModel;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
 
@@ -61,6 +64,7 @@ public class OwnerActivity extends AppCompatActivity {
     private DatabaseReference cafeRef;
     private FirebaseRefPaths firebaseRefPaths;
     ChildEventListener cafeChildListener;
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
 
     @Override
@@ -79,6 +83,7 @@ public class OwnerActivity extends AppCompatActivity {
             logout();
         }
 
+        ownerViewModel = new ViewModelProvider(OwnerActivity.this).get(OwnerViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.setOwnerPhoneNumber(ownerNumber);
         mainViewModel.setOwnerCafeId(ownerCafeId);
@@ -122,17 +127,87 @@ public class OwnerActivity extends AppCompatActivity {
 
             return true;
         });
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
         NavigationUI.setupWithNavController(binding.navOwnerView, navController);
+
+        collectCafeCountry();
+        setCafeListener();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getOwnerRefCafe(mainViewModel.getOwnerCafeId().getValue()));
+    private void collectCafeCountry() {
+        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafeCountry(mainViewModel.getOwnerCafeId().getValue()));
+        cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
+                ownerViewModel.setCafeCountry(countrySnapshot.getValue(String.class));
+                collectCountryStandards(countrySnapshot.getValue(String.class));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(OwnerActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        mainViewModel.getOwnerCafeId().getValue(),
+                        mainViewModel.getOwnerPhoneNumber().getValue(),
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void collectCountryStandards(String countryCode) {
+        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCountry(countryCode));
+        refRegisteredCountry.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot registeredCountrySnapshot) {
+                if(!registeredCountrySnapshot.exists()) {
+                    ServerAlertDialog serverAlertDialog = new ServerAlertDialog(OwnerActivity.this);
+                    serverAlertDialog.makeAlertDialog();
+
+                    String currentDateTime = simpleDateFormat.format(new Date());
+                    appError = new AppError(
+                            mainViewModel.getOwnerCafeId().getValue(),
+                            mainViewModel.getOwnerPhoneNumber().getValue(),
+                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                            AppErrorMessages.ErrorsMessage.FIREBASE_PATH_REGISTERED_COUNTRY_OWNER,
+                            currentDateTime
+                    );
+                    appError.sendError(appError);
+                    return;
+                }
+                RegisteredCountry registeredCountry = registeredCountrySnapshot.getValue(RegisteredCountry.class);
+                ownerViewModel.setCafeCurrency(registeredCountry.getCurrency());
+                ownerViewModel.setCafeDateTimeFormat(registeredCountry.getDateTimeFormat());
+                ownerViewModel.setCafeDecimalSeperator(registeredCountry.getDecimalSeperator());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(OwnerActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        mainViewModel.getOwnerCafeId().getValue(),
+                        mainViewModel.getOwnerPhoneNumber().getValue(),
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    private void setCafeListener() {
+        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafe(mainViewModel.getOwnerCafeId().getValue()));
         cafeChildListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -141,12 +216,8 @@ public class OwnerActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                    removeCafeChildListener();
-                }
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCurrentOrdersChild()) ||
                         Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeBillsChild())) {
-
                 }
                 else {
                     mainViewModel.setUpdateInfo(updateCafeInfo);
@@ -170,7 +241,7 @@ public class OwnerActivity extends AppCompatActivity {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
                         currentDateTime
                 );
@@ -180,7 +251,9 @@ public class OwnerActivity extends AppCompatActivity {
     }
 
     private void removeCafeChildListener() {
-        cafeRef.removeEventListener(cafeChildListener);
+        if(Objects.nonNull(cafeChildListener)) {
+            cafeRef.removeEventListener(cafeChildListener);
+        }
     }
 
     private void logout() {

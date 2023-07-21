@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.InputFilter;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +129,7 @@ public class RegisteredNumbersFragment extends Fragment {
                                 if ((etRegisterNumber.getText().toString().matches(phoneNumberValidator))) {
                                     RegisteredNumber registeredNumber = new RegisteredNumber(
                                             firebaseRefPaths.getRefRegisteredNumberWaiter(),
-                                            AppConstValue.registeredNumberConstValues.NUMBER_ALLOWED
+                                            AppConstValue.registeredNumberConstValue.NUMBER_ALLOWED
                                     );
                                     DatabaseReference newRegisteredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCafe(
                                             mainViewModel.getOwnerCafeId().getValue()
@@ -186,7 +184,7 @@ public class RegisteredNumbersFragment extends Fragment {
                         }
                         RegisteredNumber registeredNumber = registeredNumberSnapshot.getValue(RegisteredNumber.class);
                         holder.tvRegisteredNumber.setText(registeredNumberSnapshot.getKey());
-                        if(registeredNumber.getRole().equals(AppConstValue.registeredNumberConstValues.NUMBER_ROLE_WAITER)) {
+                        if(registeredNumber.getRole().equals(AppConstValue.registeredNumberConstValue.NUMBER_ROLE_WAITER)) {
                             if(registeredNumber.isAllowed()) {
                                 holder.btnRegisteredNumberDisable.setText(getResources().getString(R.string.registered_numbers_btn_disable));
                                 holder.clRegisteredNumber.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
@@ -246,7 +244,7 @@ public class RegisteredNumbersFragment extends Fragment {
                         appError = new AppError(
                                 mainViewModel.getOwnerCafeId().getValue(),
                                 mainViewModel.getOwnerPhoneNumber().getValue(),
-                                AppErrorMessages.Messages.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                                 error.getMessage().toString(),
                                 currentDateTime
                         );

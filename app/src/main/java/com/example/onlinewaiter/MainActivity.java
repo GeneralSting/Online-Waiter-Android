@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -226,9 +225,9 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(
-                    AppErrorMessages.Messages.CAFE_NOT_FOUND,
+                    AppErrorMessages.Message.CAFE_NOT_FOUND,
                     currentUser.getPhoneNumber(),
-                    AppErrorMessages.Messages.USER_NOT_LOGGED_OUT,
+                    AppErrorMessages.Message.USER_NOT_LOGGED_OUT,
                     currentDateTime
             );
             appError.sendError(appError);
