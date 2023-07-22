@@ -43,6 +43,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -54,49 +55,52 @@ import java.util.Objects;
 public class MenuFragment extends Fragment implements CallBackOrder {
 
     //fragment views
-    RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
-    RecyclerView.LayoutManager rvCategoriesLayoutManager, rvDrinksLayoutManager;
-    TextView tvSearchNoResult;
+    private RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
+    private TextView tvSearchNoResult;
 
     //global variables/objects
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private FragmentMenuBinding binding;
+    private boolean emptyOrder;
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     private EmployeeViewModel employeeViewModel;
-    Boolean emptyOrder;
-    ToastMessage toastMessage;
-    private FragmentMenuBinding binding;
-    private MenuDrinksAdapter menuDrinksAdapter;
-
-    //firebase
-    private FirebaseDatabase firebaseDatabase;
-    DatabaseReference menuCategoriesRef, menuCategoryRef, menuCategoryDrinksRef, menuCategoryDrinkRef;
-    FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
-    FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder> adapterDrinks;
-    FirebaseRefPaths firebaseRefPaths;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    //firebase
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference menuCategoryRef, menuCategoryDrinkRef;
+    private FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
+    private FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder> adapterDrinks;
+    private FirebaseRefPaths firebaseRefPaths;
+
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentMenuBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
-        firebaseDatabase = FirebaseDatabase.getInstance();
-
-        rvMenuCategories = (RecyclerView) binding.rvMenuCategories;
-        rvMenuCategoryDrinks = (RecyclerView) binding.rvMenuCategoryDrinks;
-        rvCategoriesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        rvMenuCategories.setLayoutManager(rvCategoriesLayoutManager);
-        rvDrinksLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        rvMenuCategoryDrinks.setLayoutManager(rvDrinksLayoutManager);
-        tvSearchNoResult = binding.tvSearchNoResult;
-
         employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+
+        rvMenuCategories = (RecyclerView) binding.rvMenuCategories;
+        rvMenuCategoryDrinks = (RecyclerView) binding.rvMenuCategoryDrinks;
+        RecyclerView.LayoutManager rvCategoriesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        rvMenuCategories.setLayoutManager(rvCategoriesLayoutManager);
+        RecyclerView.LayoutManager rvDrinksLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        rvMenuCategoryDrinks.setLayoutManager(rvDrinksLayoutManager);
+        tvSearchNoResult = binding.tvSearchNoResult;
+
+        searchedDrinksObserver();
+        displayingRvObserver();
+
+        menuViewModel.setDisplayingCategories(true);
+
+        return root;
+    }
+
+    private void searchedDrinksObserver() {
         final Observer<HashMap<String, CategoryDrink>> observingSearchedDrinks = new Observer<HashMap<String, CategoryDrink>>() {
             @Override
             public void onChanged(HashMap<String, CategoryDrink> searchedDrinks) {
@@ -105,7 +109,9 @@ public class MenuFragment extends Fragment implements CallBackOrder {
             }
         };
         menuViewModel.getSearchedDrinks().observe(requireActivity(), observingSearchedDrinks);
+    }
 
+    private void displayingRvObserver() {
         //displaying ceratin recyclerView (categories/drinks of category)
         final Observer<Boolean> observingCurrentRv = new Observer<Boolean>() {
             @Override
@@ -122,8 +128,6 @@ public class MenuFragment extends Fragment implements CallBackOrder {
             }
         };
         menuViewModel.getDisplayingCategories().observe(requireActivity(), observingCurrentRv);
-        menuViewModel.setDisplayingCategories(true);
-        return root;
     }
 
     @Override
@@ -132,14 +136,13 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         insertCafeCategories();
     }
 
-    @Override
-    public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
-        orderViewModel.setDrinksInOrder(currentOrderDrinks);
-    }
-
     private void insertSearchedDrinks(HashMap<String, CategoryDrink> searchedDrinks) {
         if(isAdded()) {
-            menuDrinksAdapter = new MenuDrinksAdapter(getContext(), searchedDrinks, orderViewModel.getDrinksInOrder().getValue(), this);
+            MenuDrinksAdapter menuDrinksAdapter = new MenuDrinksAdapter(getContext(),
+                    searchedDrinks,
+                    orderViewModel.getDrinksInOrder().getValue(),
+                    employeeViewModel.getCafeCurrency().getValue(),
+                    this);
             rvMenuCategoryDrinks.setAdapter(menuDrinksAdapter);
             menuDrinksAdapter.notifyDataSetChanged();
             if(searchedDrinks.size() == 0) {
@@ -152,11 +155,10 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     }
 
     private void insertCafeCategories() {
-        menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
-        Query query = menuCategoriesRef;
+        DatabaseReference menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
         FirebaseRecyclerOptions<CafeDrinksCategory> options = new FirebaseRecyclerOptions
                 .Builder<CafeDrinksCategory>()
-                .setQuery(query, CafeDrinksCategory.class)
+                .setQuery(menuCategoriesRef, CafeDrinksCategory.class)
                 .build();
         adapterCategories = new FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder>(options) {
             @Override
@@ -204,7 +206,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
             @Override
             public MenuCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.menu_category_item, parent, false);
+                        .inflate(R.layout.menu_category_item, parent, false);
                 return new MenuCategoryViewHolder(view);
             }
         };
@@ -220,7 +222,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
         DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
 
-        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
+        DatabaseReference menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
                 .Builder<CategoryDrink>()
                 .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
@@ -258,14 +260,11 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         }
 
                         final int[] drinkAmountCounter = {0};
-                        //Ovaj kod je bio na liniji 177
-                        //početak koda
                         emptyOrder = false;
                         HashMap<String, CafeBillDrink> addedOrderDrinks = orderViewModel.getDrinksInOrder().getValue();
                         if(addedOrderDrinks == null || addedOrderDrinks.isEmpty()) {
                             emptyOrder = true;
                         }
-                        //kraj koda
                         if(!emptyOrder) {
                             for(String key: addedOrderDrinks.keySet()) {
                                 CafeBillDrink cafeBillDrink = addedOrderDrinks.get(key);
@@ -281,18 +280,18 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                             @Override
                             public void onClick(View view) {
                                 drinkAmountCounter[0]++;
+                                CafeBillDrink addingCafeBillDrink;
                                 if(drinkAmountCounter[0] > 1) {
-                                    CafeBillDrink addingCafeBillDrink = orderDrinks[0].get(categoryDrinkSnapshot.getKey());
+                                    addingCafeBillDrink = orderDrinks[0].get(categoryDrinkSnapshot.getKey());
                                     addingCafeBillDrink.setDrinkAmount(drinkAmountCounter[0]);
                                     addingCafeBillDrink.setDrinkTotalPrice(
-                                            roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]), 2)
-                                    );
+                                        roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]),
+                                        AppConstValue.variableConstValue.DRINK_PRICE_ROUND_DECIMAL_PLACE));
                                     orderDrinks[0].put(categoryDrinkSnapshot.getKey(), addingCafeBillDrink);
-                                    orderViewModel.setDrinksInOrder(orderDrinks[0]);
                                 }
                                 else {
-                                    CafeBillDrink addingCafeBillDrink = new CafeBillDrink(
-                                        categoryDrinkSnapshot.getKey(),
+                                    addingCafeBillDrink = new CafeBillDrink(
+                                            categoryDrinkSnapshot.getKey(),
                                             clickedCategoryId,
                                             categoryDrink.getCategoryDrinkName(),
                                             categoryDrink.getCategoryDrinkImage(),
@@ -301,8 +300,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                                             drinkAmountCounter[0]
                                     );
                                     orderDrinks[0].put(addingCafeBillDrink.getDrinkId(), addingCafeBillDrink);
-                                    orderViewModel.setDrinksInOrder(orderDrinks[0]);
                                 }
+                                orderViewModel.setDrinksInOrder(orderDrinks[0]);
                                 holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
                             }
                         });
@@ -316,8 +315,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                                         CafeBillDrink addingCafeBillDrink = orderDrinks[0].get(categoryDrinkSnapshot.getKey());
                                         addingCafeBillDrink.setDrinkAmount(drinkAmountCounter[0]);
                                         addingCafeBillDrink.setDrinkTotalPrice(
-                                                roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]), 2)
-                                        );
+                                            roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]),
+                                            AppConstValue.variableConstValue.DRINK_PRICE_ROUND_DECIMAL_PLACE));
                                         orderDrinks[0].put(categoryDrinkSnapshot.getKey(), addingCafeBillDrink);
                                         orderViewModel.setDrinksInOrder(orderDrinks[0]);
                                     }
@@ -364,8 +363,13 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     //for setting 2 decimals for Float numbers
     public static float roundDecimal(float d, int decimalPlace) {
         BigDecimal bd = new BigDecimal(Float.toString(d));
-        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        bd = bd.setScale(decimalPlace, RoundingMode.HALF_UP);
         return bd.floatValue();
+    }
+
+    @Override
+    public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
+        orderViewModel.setDrinksInOrder(currentOrderDrinks);
     }
 
     @Override

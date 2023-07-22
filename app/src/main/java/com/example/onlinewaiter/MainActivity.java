@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -41,23 +42,20 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     //Activity views
-    Button btnLogin;
-    ViewPager2 vpMainPager;
+    private Button btnLogin;
+    private ViewPager2 vpMainPager;
 
     //global variables/objects
-    ArrayList<ViewPagerItem> viewPagerItems = new ArrayList<>();
-    CustomAlertDialog customAlertDialog;
-    ToastMessage toastMessage;
+    private ArrayList<ViewPagerItem> viewPagerItems = new ArrayList<>();
+    private CustomAlertDialog customAlertDialog;
 
     //firebase
-    FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
-    DatabaseReference appInfoRef;
+    private final FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         //This flag is not normally set by application code, but set for you by the system
         if ((getIntent().getFlags() & Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT) != 0) {
@@ -66,13 +64,15 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        toastMessage = new ToastMessage(this);
-        /*
-        Animation shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
-        btnApplication.startAnimation(shake);*/
+
         vpMainPager = findViewById(R.id.vpMainDialogPager);
-        insertMainPager();
         btnLogin = findViewById(R.id.btnMainLogin);
+
+        btnLoginAction();
+        insertMainPager();
+    }
+
+    private void btnLoginAction() {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,41 +126,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (grantResults.length) {
-            case 1: {
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    enterLogin();
-                }
-                else {
-                    if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
-                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        permissionsDialogWarning();
-                    } else {
-                        permissionDeniedDialog();
-                    }
-                }
-            }
-            break;
-            case 2: {
-                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                    enterLogin();
-                }
-                else {
-                    if(shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
-                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                        permissionsDialogWarning();
-                    }
-                    else {
-                        permissionDeniedDialog();
-                    }
-                }
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     private void permissionsDialogWarning() {
         customAlertDialog = new CustomAlertDialog(MainActivity.this,
                 getResources().getString(R.string.act_main_dialog_permissions_warning_header),
@@ -178,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void insertMainPager() {
-        appInfoRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppInfo());
+        DatabaseReference appInfoRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppInfo());
         appInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -220,8 +185,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //user did not manaully logged out,
         if(currentUser != null) {
+            //user was not logged out,
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(
@@ -236,5 +201,40 @@ public class MainActivity extends AppCompatActivity {
             mAuth = FirebaseAuth.getInstance();
             mAuth.signOut();
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (grantResults.length) {
+            case 1: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    enterLogin();
+                }
+                else {
+                    if (shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
+                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        permissionsDialogWarning();
+                    } else {
+                        permissionDeniedDialog();
+                    }
+                }
+            }
+            break;
+            case 2: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    enterLogin();
+                }
+                else {
+                    if(shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_NUMBERS) ||
+                            shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                        permissionsDialogWarning();
+                    }
+                    else {
+                        permissionDeniedDialog();
+                    }
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

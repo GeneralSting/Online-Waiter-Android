@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.CafeBillDrink;
+import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.OrderDrinkViewHolder;
 
@@ -19,13 +20,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolder> {
-    Context context;
-    HashMap<String, CafeBillDrink> orderDrinks;
-    CallBackOrder callBackOrder;
+    private final Context context;
+    private final HashMap<String, CafeBillDrink> orderDrinks;
+    private final String cafeCurrency;
+    private final CallBackOrder callBackOrder;
 
-    public OrderDrinksAdapter (Context context, HashMap<String, CafeBillDrink> orderDrinks, CallBackOrder callBackOrder) {
+    public OrderDrinksAdapter (Context context, HashMap<String, CafeBillDrink> orderDrinks, String cafeCurrency, CallBackOrder callBackOrder) {
         this.context = context;
         this.orderDrinks = orderDrinks;
+        this.cafeCurrency = cafeCurrency;
         this.callBackOrder = callBackOrder;
     }
 
@@ -38,17 +41,15 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
 
     @Override
     public void onBindViewHolder(@NonNull OrderDrinkViewHolder holder, int position) {
-        String countryCurrency = context.getResources().getString(R.string.country_currency);
         int counter = 0;
-        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         HashMap<String, CafeBillDrink> newOrderDrinks = new HashMap<>();
         for(Map.Entry<String, CafeBillDrink> entry : orderDrinks.entrySet()) {
             if(holder.getAbsoluteAdapterPosition() == counter) {
                 CafeBillDrink cafeBillDrink = entry.getValue();
                 holder.tvOrderDrinkName.setText(cafeBillDrink.getDrinkName());
-                holder.tvOrderDrinkPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkPrice()) +
-                        context.getResources().getString(R.string.country_currency));
-                holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + countryCurrency);
+                holder.tvOrderDrinkPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkPrice()) + cafeCurrency);
+                holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
                 holder.tvOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
                 Glide.with(context).load(cafeBillDrink.getDrinkImage()).into(holder.ivOrderDrinkImage);
 
@@ -57,7 +58,7 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
                     public void onClick(View view) {
                         cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount() + 1));
                         cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
-                        holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + countryCurrency);
+                        holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
                         holder.tvOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
                         orderDrinks.put(cafeBillDrink.getDrinkId(), cafeBillDrink);
                         callBackOrder.updateOrderDrinks(orderDrinks);
@@ -71,7 +72,7 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
                             cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount()) - 1);
                             if(cafeBillDrink.getDrinkAmount() > 0) {
                                 cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
-                                holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + countryCurrency);
+                                holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
                                 holder.tvOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
                                 orderDrinks.put(cafeBillDrink.getDrinkId(), cafeBillDrink);
                                 callBackOrder.updateOrderDrinks(orderDrinks);

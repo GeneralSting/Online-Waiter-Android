@@ -26,16 +26,19 @@ import java.util.Map;
 import java.util.Objects;
 
 public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder> {
-    Context context;
-    HashMap<String, CategoryDrink> searchedDrinks;
-    HashMap<String, CafeBillDrink> orderDrinks;
-    CallBackOrder callBackOrder;
+    private final Context context;
+    private final HashMap<String, CategoryDrink> searchedDrinks;
+    private HashMap<String, CafeBillDrink> orderDrinks;
+    private final String cafeCurrency;
+    private final CallBackOrder callBackOrder;
 
 
-    public MenuDrinksAdapter (Context context, HashMap<String, CategoryDrink> searchedDrinks, HashMap<String, CafeBillDrink> orderDrinks, CallBackOrder callBackOrder) {
+    public MenuDrinksAdapter (Context context, HashMap<String, CategoryDrink> searchedDrinks, HashMap<String, CafeBillDrink> orderDrinks,
+                              String cafeCurrency, CallBackOrder callBackOrder) {
         this.context = context;
         this.searchedDrinks = searchedDrinks;
         this.orderDrinks = orderDrinks;
+        this.cafeCurrency = cafeCurrency;
         this.callBackOrder = callBackOrder;
     }
 
@@ -48,9 +51,6 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull MenuDrinkViewHolder holder, int position) {
-        for(String key : searchedDrinks.keySet()) {
-        }
-        String countryCurrency = context.getResources().getString(R.string.country_currency);
         DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         int counter = 0;
         for(String searchedDrinkKey : searchedDrinks.keySet()) {
@@ -58,7 +58,7 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
                 CategoryDrink categoryDrink = searchedDrinks.get(searchedDrinkKey);
                 holder.tvMenuDrinkName.setText(categoryDrink.getCategoryDrinkName());
                 holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
-                holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + countryCurrency);
+                holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + cafeCurrency);
                 final int[] drinkAmountCounter = {0};
                 holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
                 Glide.with(context).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);

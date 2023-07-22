@@ -45,24 +45,24 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity {
 
     //Activity views
-    EditText etPhoneNumber, etRecivedOtp;
-    ImageView ivNumberQuestion;
-    Button btnSendPhoneNumber, btnVerifyOtp;
-    ProgressBar loginProgressBar;
+    private EditText etPhoneNumber, etRecivedOtp;
+    private ImageView ivNumberQuestion;
+    private Button btnSendPhoneNumber, btnVerifyOtp;
+    private ProgressBar loginProgressBar;
 
     //global variables/objects
-    String phoneNumber = AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER;
-    String authNumber, verificationId, numberRole, numberCafeId;
-    Boolean numberFounded, showProgressBar, backPressEnabled;
-    ToastMessage toastMessage;
-    SmsBroadcastReceiver smsBroadcastReceiver;
-    private SharedPreferences sharedPreferences;
+    private String phoneNumber = AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER;
+    private String authNumber, verificationId, numberRole, numberCafeId;
+    private String sharedPhoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
+    private boolean numberFounded, backPressEnabled;
     boolean saveSharedPhoneNumber = false;
-    private String sharedPhoneNumber = "";
+    private SharedPreferences sharedPreferences;
+    private ToastMessage toastMessage;
+    private SmsBroadcastReceiver smsBroadcastReceiver;
 
     //firebase
-    FirebaseAuth mAuth;
-    FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
+    private FirebaseAuth mAuth;
+    private final FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
 
 
     @Override
@@ -70,11 +70,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        toastMessage = new ToastMessage(this);
-        showProgressBar = backPressEnabled = true;
-        authNumber = numberRole = AppConstValue.variableConstValue.EMPTY_VALUE;
         numberFounded = false;
+        backPressEnabled = true;
+        authNumber = numberRole = AppConstValue.variableConstValue.EMPTY_VALUE;
         mAuth = FirebaseAuth.getInstance();
+        toastMessage = new ToastMessage(this);
 
         etPhoneNumber = findViewById(R.id.etLoginEnterNumber);
         etRecivedOtp = findViewById(R.id.etLoginEnterOtp);
@@ -83,6 +83,13 @@ public class LoginActivity extends AppCompatActivity {
         loginProgressBar = findViewById(R.id.pbLogin);
         ivNumberQuestion = findViewById(R.id.ivLoginNumberQuestion);
 
+        setPhoneNumber();
+        btnSendNumberAction();
+        btnVerifyOtpAction();
+        activateOtpReceiver();
+    }
+
+    private void setPhoneNumber() {
         sharedPreferences = getSharedPreferences(AppConstValue.sharedPreferencesValue.PREFERENCE_PHONE_NUMBER, MODE_PRIVATE);
         Bundle bundle = getIntent().getExtras();
         if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
@@ -129,103 +136,26 @@ public class LoginActivity extends AppCompatActivity {
             phoneNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
             etPhoneNumber.setText(phoneNumber);
         }
+    }
 
+    private void btnSendNumberAction() {
         btnSendPhoneNumber.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                btnSendPhoneNumber.setEnabled(false);
-                backPressEnabled = false;
                 // regex to check the validity of the mobile phone number, it works for Croatian numbers and other countries
-                String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
+                String phoneNumberValidator = AppConstValue.regex.PHONE_NUMBER_VALIDATOR;
                 if (!(etPhoneNumber.getText().toString().matches(phoneNumberValidator))) {
                     toastMessage.showToast(getResources().getString(R.string.act_login_phone_number_incorrect), 0);
                 }
                 else {
+                    btnSendPhoneNumber.setEnabled(false);
+                    backPressEnabled = false;
                     authNumber = etPhoneNumber.getText().toString();
-                    if (showProgressBar) {
-                        loginProgressBar.setVisibility(View.VISIBLE);
-                        showProgressBar = false;
-                    }
+                    loginProgressBar.setVisibility(View.VISIBLE);
                     checkNumber();
                 }
             }
         });
-        btnVerifyOtp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(etRecivedOtp.getText().toString())) {
-                    toastMessage.showToast(getResources().getString(R.string.act_login_empty_otp), 0);
-                } else {
-                    verifycode(etRecivedOtp.getText().toString());
-                }
-            }
-        });
-        otpReceiver();
-    }
-
-    private void otpReceiver() {
-        SmsRetrieverClient client = SmsRetriever.getClient(this);
-        client.startSmsUserConsent(null);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP) {
-            if ((resultCode == RESULT_OK) && (data != null)) {
-                String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
-                getOtpFromMessage(message);
-            }
-        }
-    }
-
-    private void getOtpFromMessage(String message) {
-        Pattern otpPattern = Pattern.compile("(|^)\\d{6}");
-        Matcher matcher = otpPattern.matcher(message);
-        if (matcher.find()) {
-            btnVerifyOtp.setEnabled(false);
-            loginProgressBar.setEnabled(true);
-            etRecivedOtp.setText(matcher.group(0));
-            verifycode(etRecivedOtp.getText().toString());
-        }
-    }
-
-    private void registerBroadcastReceiver() {
-        smsBroadcastReceiver = new SmsBroadcastReceiver();
-        smsBroadcastReceiver.initListener(new SmsBroadcastReceiverListener() {
-            @Override
-            public void onSuccess(Intent intent) {
-                startActivityForResult(intent, AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP);
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-        });
-
-        IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
-        registerReceiver(smsBroadcastReceiver, intentFilter);
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        //additional verification measure, currentUser should not be true, user can not go to loginActivity
-        //if he is not logout from firebase first
-        if (currentUser != null) {
-            mAuth = FirebaseAuth.getInstance();
-            mAuth.signOut();
-        }
-        registerBroadcastReceiver();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(smsBroadcastReceiver);
     }
 
     private void checkNumber() {
@@ -245,7 +175,7 @@ public class LoginActivity extends AppCompatActivity {
                             if(registeredNumber.getRole().equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && !registeredNumber.isAllowed()) {
                                 toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
                                 loginProgressBar.setVisibility(View.INVISIBLE);
-                                showProgressBar = true;
+                                btnSendPhoneNumber.setEnabled(true);
                             }
                             else {
                                 sendverificationcode(authNumber);
@@ -260,7 +190,7 @@ public class LoginActivity extends AppCompatActivity {
                             getResources().getDrawable(R.drawable.modal_no_number));
                     customAlertDialog.makeAlertDialog();
                     loginProgressBar.setVisibility(View.INVISIBLE);
-                    showProgressBar = true;
+                    btnSendPhoneNumber.setEnabled(true);
                 }
             }
 
@@ -270,23 +200,55 @@ public class LoginActivity extends AppCompatActivity {
                 serverAlertDialog.makeAlertDialog();
             }
         });
-        btnSendPhoneNumber.setEnabled(true);
     }
 
-    private void sendverificationcode(String phoneNumber) {
-        PhoneAuthOptions options =
-                PhoneAuthOptions.newBuilder(mAuth)
-                        .setPhoneNumber(phoneNumber)  // Phone number to verify
-                        .setTimeout(0L, TimeUnit.SECONDS) // Timeout and unit, 0L because of sms receiver
-                        .setActivity(this)                 // Activity (for callback binding)
-                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
-                        .build();
-        PhoneAuthProvider.verifyPhoneNumber(options);
+    private void btnVerifyOtpAction() {
+        btnVerifyOtp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(etRecivedOtp.getText().toString())) {
+                    toastMessage.showToast(getResources().getString(R.string.act_login_empty_otp), 0);
+                } else {
+                    verifycode(etRecivedOtp.getText().toString());
+                }
+            }
+        });
     }
 
-    private final PhoneAuthProvider.OnVerificationStateChangedCallbacks
-            mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-        // never been called
+    private void activateOtpReceiver() {
+        SmsRetrieverClient client = SmsRetriever.getClient(this);
+        client.startSmsUserConsent(null);
+    }
+
+    private void registerBroadcastReceiver() {
+        smsBroadcastReceiver = new SmsBroadcastReceiver();
+        smsBroadcastReceiver.initListener(new SmsBroadcastReceiverListener() {
+            @Override
+            public void onSuccess(Intent intent) {
+                startActivityForResult(intent, AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP);
+            }
+
+            @Override
+            public void onFailure() {
+
+            }
+        });
+
+        IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
+        registerReceiver(smsBroadcastReceiver, intentFilter);
+    }
+
+    private void getOtpFromMessage(String message) {
+        Pattern otpPattern = Pattern.compile(AppConstValue.regex.LOGIN_OTP_VALIDATOR);
+        Matcher matcher = otpPattern.matcher(message);
+        if (matcher.find()) {
+            btnVerifyOtp.setEnabled(false);
+            etRecivedOtp.setText(matcher.group(0));
+            verifycode(etRecivedOtp.getText().toString());
+        }
+    }
+
+    private final PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(@NonNull PhoneAuthCredential credential) {
             final String code = credential.getSmsCode();
@@ -304,8 +266,8 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onCodeSent(@NonNull String s,
-                               @NonNull PhoneAuthProvider.ForceResendingToken token) {
+        public void onCodeSent(@NonNull String s, @NonNull PhoneAuthProvider.ForceResendingToken token) {
+            btnSendPhoneNumber.setEnabled(true);
             backPressEnabled = true;
             super.onCodeSent(s, token);
             verificationId = s;
@@ -315,49 +277,88 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    private void sendverificationcode(String phoneNumber) {
+        PhoneAuthOptions options =
+                PhoneAuthOptions.newBuilder(mAuth)
+                        .setPhoneNumber(phoneNumber)  // Phone number to verify
+                        .setTimeout(0L, TimeUnit.SECONDS) // Timeout and unit, 0L because of sms receiver
+                        .setActivity(this)                 // Activity (for callback binding)
+                        .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
+                        .build();
+        PhoneAuthProvider.verifyPhoneNumber(options);
+    }
+
     private void verifycode(String Code) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, Code);
         signinbyCredentials(credential);
     }
 
     private void signinbyCredentials(PhoneAuthCredential credential) {
-        showProgressBar = true;
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if(numberFounded && saveSharedPhoneNumber && !authNumber.equals(sharedPhoneNumber)) {
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putString(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER, phoneNumber);
-                            editor.apply();
-                        }
-                        if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {
-                            Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
-                            //flag -> If set, this activity will become the start of a new task on this history stack.
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
-                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
-                            //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
-                            //afinitet, srodstvo
-                            finishAffinity();
-                            startActivity(intent);
-                        }
-                        else if(numberRole.equals(firebaseRefPaths.getRefRegisteredNumberOwner()) && numberFounded) {
-                            Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
-                            //flag -> If set, this activity will become the start of a new task on this history stack.
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
-                            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
-                            //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
-                            //afinitet, srodstvo
-                            finishAffinity();
-                            startActivity(intent);
-                        }
-                    }
-                    else {
-                        toastMessage.showToast(getResources().getString(R.string.act_login_wrong_otp), 0);
-                    }
-                });
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if(numberFounded && saveSharedPhoneNumber && !authNumber.equals(sharedPhoneNumber)) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER, phoneNumber);
+                    editor.apply();
+                }
+                if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {
+                    Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
+                    //flag -> If set, this activity will become the start of a new task on this history stack.
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
+                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                    //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
+                    //afinitet, srodstvo
+                    finishAffinity();
+                    startActivity(intent);
+                }
+                else if(numberRole.equals(firebaseRefPaths.getRefRegisteredNumberOwner()) && numberFounded) {
+                    Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
+                    //flag -> If set, this activity will become the start of a new task on this history stack.
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
+                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                    //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
+                    //afinitet, srodstvo
+                    finishAffinity();
+                    startActivity(intent);
+                }
+            }
+            else {
+                toastMessage.showToast(getResources().getString(R.string.act_login_wrong_otp), 0);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        //additional verification measure, currentUser should not be true, user can not go to loginActivity
+        //if he is not logout from firebase first
+        if (currentUser != null) {
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.signOut();
+        }
+        registerBroadcastReceiver();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AppConstValue.permissionConstValue.REQ_READING_LOGIN_OTP) {
+            if ((resultCode == RESULT_OK) && (data != null)) {
+                String message = data.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE);
+                getOtpFromMessage(message);
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(smsBroadcastReceiver);
     }
 
     @Override

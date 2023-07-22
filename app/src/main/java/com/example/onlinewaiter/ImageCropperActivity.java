@@ -22,11 +22,8 @@ import java.util.UUID;
 
 public class ImageCropperActivity extends AppCompatActivity {
 
-    //global variables/objects
-    String result;
-    Uri fileUri;
-    private AppError appError;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    //global objects/variables
+    private Uri fileUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +31,18 @@ public class ImageCropperActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_cropper);
 
         readIntent();
+        croppingImage();
+    }
 
+    private void readIntent() {
+        Intent intent = getIntent();
+        if(intent.getExtras() != null) {
+            String result = intent.getStringExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA);
+            fileUri = Uri.parse(result);
+        }
+    }
+
+    private void croppingImage() {
         String destUri = UUID.randomUUID().toString() + AppConstValue.variableConstValue.IMAGE_FORMAT_JPG;
         UCrop.Options cropOptions = new UCrop.Options();
         UCrop.of(fileUri, Uri.fromFile(new File(getCacheDir(), destUri)))
@@ -43,14 +51,6 @@ public class ImageCropperActivity extends AppCompatActivity {
                 .useSourceImageAspectRatio()
                 .withMaxResultSize(2000, 2000)
                 .start(ImageCropperActivity.this);
-    }
-
-    private void readIntent() {
-        Intent intent = getIntent();
-        if(intent.getExtras() != null) {
-            result = intent.getStringExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA);
-            fileUri = Uri.parse(result);
-        }
     }
 
     @Override
@@ -68,9 +68,10 @@ public class ImageCropperActivity extends AppCompatActivity {
             if(!cropError.getMessage().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE) && cropError.getMessage() != null) {
                 errorMessage = cropError.getMessage().toString();
             }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
             MenuViewModel menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
             String currentDateTime = simpleDateFormat.format(new Date());
-            appError = new AppError(
+            AppError appError = new AppError(
                     menuViewModel.getCafeId().getValue(),
                     menuViewModel.getPhoneNumber().getValue(),
                     AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,

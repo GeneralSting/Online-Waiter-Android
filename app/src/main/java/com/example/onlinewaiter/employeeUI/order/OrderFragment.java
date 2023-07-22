@@ -31,7 +31,6 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentOrderBinding;
 import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
@@ -53,104 +52,76 @@ import java.util.Objects;
 public class OrderFragment extends Fragment implements CallBackOrder {
 
     //fragment views
-    RecyclerView rvOrderDrinks;
-    TextView tvOrderBillAmount, tvOrderBillTotalPrice;
-    Button btnOrderAccept;
-    ImageButton ibtnOrderCancel;
+    private RecyclerView rvOrderDrinks;
+    private TextView tvOrderBillAmount, tvOrderBillTotalPrice;
+    private Button btnOrderAccept;
+    private ImageButton btnOrderCancel;
 
     //global variables/objects
     private FragmentOrderBinding binding;
-    HashMap<String, CafeBillDrink> orderDrinks, modifiedOrderDrinks, cafeBillDrinks;
-    int cafeBillDrinkAmount;
-    String cafeBillDrinkTotalPrice;
-    ToastMessage toastMessage;
-    FirebaseRefPaths firebaseRefPaths;
-    MenuViewModel menuViewModel;
-    OrderViewModel orderViewModel;
+    private int cafeBillDrinkAmount;
+    private String cafeBillDrinkTotalPrice;
+    private HashMap<String, CafeBillDrink> orderDrinks, modifiedOrderDrinks, cafeBillDrinks;
+    private MenuViewModel menuViewModel;
+    private OrderViewModel orderViewModel;
     private EmployeeViewModel employeeViewModel;
-    OrderDrinksAdapter orderDrinksAdapter;
-    AlertDialog dialog;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-    SimpleDateFormat simpleDateLocaleFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
+    private AlertDialog dialog;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
-
+    DecimalFormatSymbols decimalFormatSymbols;
+    DecimalFormat cafeDecimalFormat;
 
     //firebase
-    DatabaseReference cafeDrinksCategoriesRef, categoryDrinksRef, newCafeBillRef;
-    FirebaseDatabase firebaseDatabase;
+    private FirebaseDatabase firebaseDatabase;
+    private FirebaseRefPaths firebaseRefPaths;
 
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentOrderBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
+        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
+        menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
+        decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
+        cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
 
         tvOrderBillAmount = (TextView)binding.tvOrderAmount;
         tvOrderBillTotalPrice = (TextView)binding.tvOrderTotalPrice;
-        tvOrderBillTotalPrice.setText(getResources().getString(R.string.order_summary_total_price_zero)
-                + getResources().getString(R.string.country_currency));
+        tvOrderBillTotalPrice.setText(cafeDecimalFormat.format(AppConstValue.variableConstValue.FLOAT_PRICE_ZERO));
         btnOrderAccept = (Button) binding.btnOrderAccept;
-        ibtnOrderCancel = (ImageButton) binding.ibtnOrderCancel;
+        btnOrderCancel = (ImageButton) binding.btnOrderCancel;
 
         rvOrderDrinks = (RecyclerView)binding.rvOrderDrinks;
         rvOrderDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
 
         disableOrderConfirm();
 
-        orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
-        menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
-        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         orderDrinks = orderViewModel.getDrinksInOrder().getValue();
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
             insertOrderDrinks();
         }
+        drinksOrderObserver();
+        orderBtnsActions();
 
-        final Observer<Integer> observeOrderDrinksChange = new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer viewDisplayedDepth) {
-                orderDrinks = orderViewModel.getDrinksInOrder().getValue();
-                if(dialog != null) {
-                    if (dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
-                }
-                if(orderDrinks != null && !orderDrinks.isEmpty()) {
-                    modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
-                    insertOrderDrinks();
-                }
-                else {
-                    removeOrderDrinks();
-                }
-            }
-        };
-        orderViewModel.getCheckDrinksOrder().observe(requireActivity(), observeOrderDrinksChange);
-
-        ibtnOrderCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                removeOrderDrinks();
-            }
-        });
-        btnOrderAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finishOrder();
-            }
-        });
         return root;
+    }
+
+    private void disableOrderConfirm() {
+        btnOrderAccept.setEnabled(false);
+        btnOrderAccept.setBackgroundColor(getResources().getColor(R.color.order_btn_disabled));
+        btnOrderAccept.setTextColor(getResources().getColor(R.color.order_txt_disabled));
+        btnOrderCancel.setEnabled(false);
     }
 
     private void insertOrderDrinks() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         for(String key : orderDrinks.keySet()) {
             CafeBillDrink cafeBillDrink = orderDrinks.get(key);
-            cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(
+            DatabaseReference cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(
                     cafeBillDrink.getCategoryId(), cafeBillDrink.getDrinkId()));
             cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -196,13 +167,13 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     private void displayOrderDrinks() {
         if(isAdded()) {
             updateOrderSummary(modifiedOrderDrinks);
-            orderDrinksAdapter = new OrderDrinksAdapter(getContext(), modifiedOrderDrinks, this);
+            OrderDrinksAdapter orderDrinksAdapter = new OrderDrinksAdapter(getContext(), modifiedOrderDrinks, employeeViewModel.getCafeCurrency().getValue(), this);
             rvOrderDrinks.setAdapter(orderDrinksAdapter);
             orderDrinksAdapter.notifyDataSetChanged();
             btnOrderAccept.setEnabled(true);
             btnOrderAccept.setBackgroundColor(getResources().getColor(R.color.green_positive));
             btnOrderAccept.setTextColor(getResources().getColor(R.color.white));
-            ibtnOrderCancel.setEnabled(true);
+            btnOrderCancel.setEnabled(true);
         }
     }
 
@@ -210,41 +181,62 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         if(isAdded()) {
             if(currentOrderDrinks == null || currentOrderDrinks.isEmpty()) {
                 tvOrderBillAmount.setText(getResources().getString(R.string.order_summary_amount_empty));
-                tvOrderBillTotalPrice.setText(getResources().getString(R.string.order_summary_total_price_zero)
-                        + getResources().getString(R.string.country_currency));
+                String zeroPrice = cafeDecimalFormat.format(AppConstValue.variableConstValue.FLOAT_PRICE_ZERO);
+                tvOrderBillTotalPrice.setText(zeroPrice + employeeViewModel.getCafeCurrency().getValue());
                 disableOrderConfirm();
             }
             else {
                 Float orderTotalPrice = 0f;
                 int orderProductsAmount = 0;
-                DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-                decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
-                DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
                 for(String key : currentOrderDrinks.keySet()) {
                     CafeBillDrink cafeBillDrink = currentOrderDrinks.get(key);
                     orderTotalPrice += (Float) cafeBillDrink.getDrinkTotalPrice();
                     orderProductsAmount += (int) cafeBillDrink.getDrinkAmount();
                 }
-                cafeBillDrinkTotalPrice = String.format(Locale.US, "%.2f", orderTotalPrice);
+                cafeBillDrinkTotalPrice = cafeDecimalFormat.format(orderTotalPrice);
                 cafeBillDrinkAmount = (int) orderProductsAmount;
                 cafeBillDrinks = (HashMap<String, CafeBillDrink>) currentOrderDrinks;
-                tvOrderBillAmount.setText(orderProductsAmount + " " + getResources().getString(R.string.order_summary_amount));
+                tvOrderBillAmount.setText(orderProductsAmount + AppConstValue.characterConstValue.CHARACTER_SPACING + getResources().getString(R.string.order_summary_amount));
                 tvOrderBillTotalPrice.setText(cafeDecimalFormat.format(orderTotalPrice) + employeeViewModel.getCafeCurrency().getValue());
             }
         }
     }
 
-    private void disableOrderConfirm() {
-        btnOrderAccept.setEnabled(false);
-        btnOrderAccept.setBackgroundColor(getResources().getColor(R.color.order_btn_disabled));
-        btnOrderAccept.setTextColor(getResources().getColor(R.color.order_txt_disabled));
-        ibtnOrderCancel.setEnabled(false);
+    private void drinksOrderObserver() {
+        final Observer<Integer> observeOrderDrinksChange = new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer viewDisplayedDepth) {
+                orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+                if(dialog != null) {
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                }
+                if(orderDrinks != null && !orderDrinks.isEmpty()) {
+                    modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
+                    insertOrderDrinks();
+                }
+                else {
+                    removeOrderDrinks();
+                }
+            }
+        };
+        orderViewModel.getCheckDrinksOrder().observe(requireActivity(), observeOrderDrinksChange);
     }
 
-    @Override
-    public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
-        orderViewModel.setDrinksInOrder(currentOrderDrinks);
-        updateOrderSummary(currentOrderDrinks);
+    private void orderBtnsActions() {
+        btnOrderCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeOrderDrinks();
+            }
+        });
+        btnOrderAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishOrder();
+            }
+        });
     }
 
     private void removeOrderDrinks() {
@@ -252,6 +244,12 @@ public class OrderFragment extends Fragment implements CallBackOrder {
             rvOrderDrinks.setAdapter(null);
             updateOrderDrinks(new HashMap<>());
         }
+    }
+
+    @Override
+    public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
+        orderViewModel.setDrinksInOrder(currentOrderDrinks);
+        updateOrderSummary(currentOrderDrinks);
     }
 
     private void finishOrder() {
@@ -290,7 +288,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void saveOrder(int tableNumber, boolean myOrder) {
-        newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
+        DatabaseReference newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
         String currentDateTime = simpleDateFormat.format(new Date());
 

@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,30 +94,27 @@ public class CafeUpdateFragment extends Fragment {
 
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
-    boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
+    private boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
             newDrinkImageSelected, addingNewDrink;
     private String cafeCountryCode = AppConstValue.variableConstValue.DEFAULT_CAFE_COUNTRY_CODE;
-    ToastMessage toastMessage;
-    OrderViewModel orderViewModel;
-    MenuViewModel menuViewModel;
-    private EmployeeViewModel employeeViewModel;
-    CafeUpdateViewModel cafeUpdateViewModel;
-    ProgressDialog progressDialog;
-    DecimalFormat cafeDecimalFormat;
-    private final DecimalFormat databaseDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
-    DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-    ActivityResultLauncher<String> launchImageCropper;
+    private ToastMessage toastMessage;
+    private OrderViewModel orderViewModel;
+    private MenuViewModel menuViewModel;
+    private CafeUpdateViewModel cafeUpdateViewModel;
+    private ProgressDialog progressDialog;
+    private DecimalFormat cafeDecimalFormat;
+    private final DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private ActivityResultLauncher<String> launchImageCropper;
 
     //fragment views
-    LinearLayoutCompat linearLayoutContainer;
-    Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnNewDrinkDialogAccept;
-    TextView tvCafeUpdateNewDrink, tvCafeUpdateMenu, tvCafeUpdateTables;
-    ImageView ivDrinkGlobalContainer;
-    RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
-    RecyclerView.LayoutManager layoutManagerCategories, layoutManagerCategoryDrinks;
-    EditText etGlobalNewDrinkPrice;
-    ImageView ivGlobalImageNotAdded;
+    private LinearLayoutCompat linearLayoutContainer;
+    private Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnNewDrinkDialogAccept;
+    private TextView tvCafeUpdateNewDrink, tvCafeUpdateMenu;
+    private ImageView ivDrinkGlobalContainer;
+    private RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
+    private EditText etGlobalNewDrinkPrice;
+    private ImageView ivGlobalImageNotAdded;
 
     //firebase
     private FirebaseRefPaths firebaseRefPaths;
@@ -126,20 +124,19 @@ public class CafeUpdateFragment extends Fragment {
     private FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     private FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder> adapterCategoryDrinks;
     private FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder> adapterDrinksCategory;
-    StorageReference storageRef, storageDeleteImageRef;
+    private StorageReference storageRef, storageDeleteImageRef;
     private final FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
     private AppError appError;
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = FragmentCafeUpdateBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
-        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
+        EmployeeViewModel employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(requireActivity()).get(CafeUpdateViewModel.class);
         cafeCountryCode = cafeUpdateViewModel.getCafeCountry().getValue();
         toastMessage = new ToastMessage(getActivity());
@@ -155,11 +152,10 @@ public class CafeUpdateFragment extends Fragment {
         btnCafeUpdateTables = binding.btnCafeUpdateTables;
         tvCafeUpdateMenu = binding.tvCafeUpdateMenu;
         tvCafeUpdateNewDrink = binding.tvCafeUpdateNewDrink;
-        tvCafeUpdateTables = binding.tvCafeUpdateTables;
         rvCafeUpdateCategories = binding.rvCafeUpdateCategories;
         rvCafeUpdateCategoryDrinks = binding.rvCafeUpdateCategoryDrinks;
-        layoutManagerCategories = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        layoutManagerCategoryDrinks = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView.LayoutManager layoutManagerCategories = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView.LayoutManager layoutManagerCategoryDrinks = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvCafeUpdateCategories.setLayoutManager(layoutManagerCategories);
         rvCafeUpdateCategoryDrinks.setLayoutManager(layoutManagerCategoryDrinks);
 
@@ -171,7 +167,6 @@ public class CafeUpdateFragment extends Fragment {
                     intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA, resultUri.toString());
                     startActivityForResult(intent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
                 }
-
             }
         });
 
@@ -320,7 +315,7 @@ public class CafeUpdateFragment extends Fragment {
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions.Builder<CategoryDrink>()
                 .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
                 .build();
-        FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder> adapterCategoryDrinks = new FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder>(options) {
+        adapterCategoryDrinks = new FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UpdateDrinkViewHolder holder, int position, @NonNull CategoryDrink model) {
                 menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, getRef(position).getKey()));
@@ -477,9 +472,7 @@ public class CafeUpdateFragment extends Fragment {
         FirebaseRecyclerOptions<DrinksCategory> drinksCategoryOptions = new FirebaseRecyclerOptions.Builder<DrinksCategory>()
                 .setQuery(query, DrinksCategory.class)
                 .build();
-
-        FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder> adapterDrinksCategory =
-                new FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder>(drinksCategoryOptions) {
+        adapterDrinksCategory = new FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder>(drinksCategoryOptions) {
             @Override
             protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull DrinksCategory model) {
                 drinksCategoriesRef.child(firebaseRefPaths.getRefDrinksCategoriesChild(getRef(position).getKey())).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -53,7 +53,7 @@ public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
             viewPagerItem.setDescription(viewPagerItem.getDescription().substring(
                     AppConstValue.variableConstValue.MAIN_PAGER_DESCRIPTION_START,
                     AppConstValue.variableConstValue.MAIN_PAGER_DESCRIPTION_END));
-            ArrayList<String> splitedWords = new ArrayList<String>(Arrays.asList(viewPagerItem.getDescription().split("\\s+")));
+            ArrayList<String> splitedWords = new ArrayList<String>(Arrays.asList(viewPagerItem.getDescription().split(AppConstValue.regex.WHITESPACE_CHARACHTERS)));
             splitedWords.remove(splitedWords.size() - 1);
             viewPagerItem.setDescription(splitedWords.toString()
                     .replace(AppConstValue.variableConstValue.COMMA, AppConstValue.variableConstValue.EMPTY_VALUE)  //remove the commas

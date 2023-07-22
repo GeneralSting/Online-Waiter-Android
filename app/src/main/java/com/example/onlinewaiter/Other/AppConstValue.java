@@ -56,7 +56,9 @@ public class AppConstValue {
         public static final String OPEN_ALL_IMAGES = "image/*";
         public static final String IMAGE_FORMAT_JPG = ".jpg";
         public static final String DEFAULT_CAFE_COUNTRY_CODE = "GB";
-
+        public static final String FAB_DRINKS_ACTION_TEXT = "Action";
+        public static final float FLOAT_PRICE_ZERO = 0f;
+        public static final int DRINK_PRICE_ROUND_DECIMAL_PLACE = 2;
     }
 
     public static class permissionConstValue {
@@ -111,6 +113,8 @@ public class AppConstValue {
 
     public static class regex {
         public static final String NON_NUMERIC_CHARACHTERS = "\\D";
-
+        public static final String PHONE_NUMBER_VALIDATOR = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
+        public static final String LOGIN_OTP_VALIDATOR = "(|^)\\d{6}";
+        public static final String WHITESPACE_CHARACHTERS = "\\s+";
     }
 }
