@@ -26,7 +26,6 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuCategoryViewHolder;
 import com.example.onlinewaiter.ViewHolder.MenuDrinkViewHolder;
@@ -39,7 +38,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
@@ -155,7 +153,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     }
 
     private void insertCafeCategories() {
-        DatabaseReference menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+        DatabaseReference menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
         FirebaseRecyclerOptions<CafeDrinksCategory> options = new FirebaseRecyclerOptions
                 .Builder<CafeDrinksCategory>()
                 .setQuery(menuCategoriesRef, CafeDrinksCategory.class)
@@ -163,7 +161,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         adapterCategories = new FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull CafeDrinksCategory model) {
-                menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(getRef(position).getKey()));
+                menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategory(getRef(position).getKey()));
                 menuCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
@@ -171,8 +169,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                             return;
                         }
                         String categoryImage, categoryName;
-                        categoryImage = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryImage()).getValue()).toString();
-                        categoryName = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryName()).getValue()).toString();
+                        categoryImage = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getCafeCategoryImageChild()).getValue()).toString();
+                        categoryName = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getCafeCategoryNameChild()).getValue()).toString();
                         holder.tvMenuCategory.setText(categoryName);
                         Glide.with(requireActivity()).load(categoryImage).into(holder.ivMenuCategory);
 
@@ -222,7 +220,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
         DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
 
-        DatabaseReference menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(clickedCategoryId));
+        DatabaseReference menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(clickedCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
                 .Builder<CategoryDrink>()
                 .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
@@ -230,7 +228,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         adapterDrinks = new FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuDrinkViewHolder holder, int position, @NonNull CategoryDrink model) {
-                menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(clickedCategoryId, getRef(position).getKey()));
+                menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(clickedCategoryId, getRef(position).getKey()));
                 menuCategoryDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {

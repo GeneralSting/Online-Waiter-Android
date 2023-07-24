@@ -15,8 +15,6 @@ public class UpdateDrinkViewHolder extends RecyclerView.ViewHolder {
     public ImageView ivUpdateDrinkComparison, ivUpdateDrink;
     public ImageButton btnUpdateDrinkAccept, btnUpdateDrinkRemove;
 
-    private ItemClickListener itemClickListener;
-
     public UpdateDrinkViewHolder(View itemView) {
         super(itemView);
 
@@ -27,9 +25,5 @@ public class UpdateDrinkViewHolder extends RecyclerView.ViewHolder {
         ivUpdateDrink = (ImageView) itemView.findViewById(R.id.ivUpdateDrink);
         btnUpdateDrinkAccept = (ImageButton) itemView.findViewById(R.id.btnUpdateDrinkAccept);
         btnUpdateDrinkRemove = (ImageButton) itemView.findViewById(R.id.btnUpdateDrinkRemove);
-    }
-
-    public void setItemClickListener(ItemClickListener itemClickListener) {
-        this.itemClickListener = itemClickListener;
     }
 }

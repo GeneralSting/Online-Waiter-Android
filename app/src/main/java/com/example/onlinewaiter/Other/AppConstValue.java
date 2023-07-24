@@ -116,5 +116,18 @@ public class AppConstValue {
         public static final String PHONE_NUMBER_VALIDATOR = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
         public static final String LOGIN_OTP_VALIDATOR = "(|^)\\d{6}";
         public static final String WHITESPACE_CHARACHTERS = "\\s+";
+        public static final String FILTER_ONLY_DIGITS_PART = "[^\\d?!.]";
+    }
+
+    public static class recyclerViewDisplayed {
+        public static final int UPDATE_NON_DISPLAYED = 0;
+        public static final int UPDATE_CATEGORIES_DISPLAYED = 1;
+        public static final int UPDATE_DRINKS_DISPLAYED = 2;
+
+    }
+
+    public static class registeredNumbersRole {
+        public static final String OWNER = "owner";
+        public static final String WAITER = "waiter";
     }
 }

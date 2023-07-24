@@ -126,7 +126,7 @@ public class MainFragment extends Fragment {
     }
 
     private void cafeDetails(String cafeId) {
-        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getOwnerRefCafe(cafeId));
+        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getCafeOwner(cafeId));
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {

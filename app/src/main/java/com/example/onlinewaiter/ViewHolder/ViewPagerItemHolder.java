@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.onlinewaiter.R;
 
 public class ViewPagerItemHolder extends RecyclerView.ViewHolder {
-
     public ImageView ivPagerItemImage, ivScrollPager;
     public TextView txtPagerItemHeader, txtPagerItemDescription, txtPagerItemMoreDescription;
     public ViewPagerItemHolder(@NonNull View itemView) {

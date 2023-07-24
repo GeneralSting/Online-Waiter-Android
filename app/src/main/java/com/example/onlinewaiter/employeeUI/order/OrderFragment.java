@@ -68,8 +68,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     private AlertDialog dialog;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private AppError appError;
-    DecimalFormatSymbols decimalFormatSymbols;
-    DecimalFormat cafeDecimalFormat;
+    private DecimalFormat cafeDecimalFormat;
 
     //firebase
     private FirebaseDatabase firebaseDatabase;
@@ -84,7 +83,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
-        decimalFormatSymbols = new DecimalFormatSymbols();
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
         cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
 
@@ -121,7 +120,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         firebaseDatabase = FirebaseDatabase.getInstance();
         for(String key : orderDrinks.keySet()) {
             CafeBillDrink cafeBillDrink = orderDrinks.get(key);
-            DatabaseReference cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(
+            DatabaseReference cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(
                     cafeBillDrink.getCategoryId(), cafeBillDrink.getDrinkId()));
             cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -288,9 +287,9 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void saveOrder(int tableNumber, boolean myOrder) {
-        DatabaseReference newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
-        String currentDateTime = simpleDateFormat.format(new Date());
+        DatabaseReference newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrders());
+        SimpleDateFormat simpleDateFormatLocale = new SimpleDateFormat(employeeViewModel.getCafeDateTimeFormat().getValue(), Locale.getDefault());
+        String currentDateTime = simpleDateFormatLocale.format(new Date());
 
         CafeCurrentOrder cafeCurrentOrder;
         if(myOrder) {

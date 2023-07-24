@@ -12,7 +12,6 @@ import com.example.onlinewaiter.R;
 public class MenuCategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public ImageView ivMenuCategory;
     public TextView tvMenuCategory;
-
     private ItemClickListener itemClickListener;
 
     public MenuCategoryViewHolder(View itemView) {

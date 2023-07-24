@@ -18,7 +18,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,7 +73,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -92,6 +90,15 @@ import java.util.Objects;
 
 public class CafeUpdateFragment extends Fragment {
 
+    //fragment views
+    private LinearLayoutCompat linearLayoutContainer;
+    private Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnNewDrinkDialogAccept;
+    private TextView tvCafeUpdateNewDrink, tvCafeUpdateMenu;
+    private ImageView ivDrinkGlobalContainer;
+    private RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
+    private EditText etGlobalNewDrinkPrice;
+    private ImageView ivGlobalImageNotAdded;
+
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
     private boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
@@ -106,15 +113,6 @@ public class CafeUpdateFragment extends Fragment {
     private final DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
     private ActivityResultLauncher<String> launchImageCropper;
-
-    //fragment views
-    private LinearLayoutCompat linearLayoutContainer;
-    private Button btnCafeUpdateMenu, btnCafeUpdateNewDrink, btnCafeUpdateTables, btnNewDrinkDialogAccept;
-    private TextView tvCafeUpdateNewDrink, tvCafeUpdateMenu;
-    private ImageView ivDrinkGlobalContainer;
-    private RecyclerView rvCafeUpdateCategories, rvCafeUpdateCategoryDrinks;
-    private EditText etGlobalNewDrinkPrice;
-    private ImageView ivGlobalImageNotAdded;
 
     //firebase
     private FirebaseRefPaths firebaseRefPaths;
@@ -159,17 +157,29 @@ public class CafeUpdateFragment extends Fragment {
         rvCafeUpdateCategories.setLayoutManager(layoutManagerCategories);
         rvCafeUpdateCategoryDrinks.setLayoutManager(layoutManagerCategoryDrinks);
 
+        ImageCropperActivity();
+        updateBtnsActions();
+        displayedRvObserver();
+        cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
+        cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_NON_DISPLAYED);
+
+        return root;
+    }
+
+    private void ImageCropperActivity() {
         launchImageCropper = registerForActivityResult(new ActivityResultContracts.GetContent(), new ActivityResultCallback<Uri>() {
             @Override
             public void onActivityResult(Uri resultUri) {
-                Intent intent = new Intent(getActivity(), ImageCropperActivity.class);
+                Intent imageCropeprIntent = new Intent(getActivity(), ImageCropperActivity.class);
                 if(resultUri != null) {
-                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA, resultUri.toString());
-                    startActivityForResult(intent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
+                    imageCropeprIntent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA, resultUri.toString());
+                    startActivityForResult(imageCropeprIntent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
                 }
             }
         });
+    }
 
+    private void displayedRvObserver() {
         final Observer<Integer> viewDisplayedObserver = new Observer<Integer>() {
             @Override
             public void onChanged(Integer viewDisplayedDepth) {
@@ -188,19 +198,14 @@ public class CafeUpdateFragment extends Fragment {
             }
         };
         cafeUpdateViewModel.getCafeUpdateRvDispalyed().observe(requireActivity(), viewDisplayedObserver);
-        cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
-        cafeUpdateViewModel.setCafeUpdateRvDisplayed(0);
-        setBtnsAction();
-
-        return root;
     }
 
-    private void setBtnsAction() {
+    private void updateBtnsActions() {
         btnCafeUpdateMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
-                cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
+                cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_CATEGORIES_DISPLAYED);
                 addingNewDrink = false;
                 insertCafeCategories();
                 tvCafeUpdateMenu.setVisibility(View.GONE);
@@ -221,7 +226,7 @@ public class CafeUpdateFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 cafeUpdateViewModel.setCafeUpdateDisplayChange(false);
-                cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
+                cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_CATEGORIES_DISPLAYED);
                 linearLayoutContainer.setVisibility(View.GONE);
                 addingNewDrink = true;
                 insertAllCategories();
@@ -247,16 +252,15 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void insertCafeCategories() {
-        menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
-        Query query = menuCategoriesRef;
+        menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
         FirebaseRecyclerOptions<CafeDrinksCategory> options = new FirebaseRecyclerOptions.Builder<CafeDrinksCategory>()
-                .setQuery(query, CafeDrinksCategory.class)
+                .setQuery(menuCategoriesRef, CafeDrinksCategory.class)
                 .build();
         adapterCategories = new FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull CafeDrinksCategory model) {
                 menuCategoryRef = firebaseDatabase.getReference(
-                        firebaseRefPaths.getRefCafeCategory(getRef(position).getKey()));
+                        firebaseRefPaths.getCafeCategory(getRef(position).getKey()));
                 menuCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categorySnapshot) {
@@ -264,8 +268,8 @@ public class CafeUpdateFragment extends Fragment {
                             return;
                         }
                         String categoryImage, categoryName;
-                        categoryImage = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryImage()).getValue()).toString();
-                        categoryName = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getRefSingleCafeCategoryName()).getValue()).toString();
+                        categoryImage = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getCafeCategoryImageChild()).getValue()).toString();
+                        categoryName = Objects.requireNonNull(categorySnapshot.child(firebaseRefPaths.getCafeCategoryNameChild()).getValue()).toString();
                         holder.tvMenuCategory.setText(categoryName);
                         Glide.with(requireActivity()).load(categoryImage).into(holder.ivMenuCategory);
 
@@ -308,17 +312,17 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void insertCategoryDrinks(String cafeCategoryId) {
-        cafeUpdateViewModel.setCafeUpdateRvDisplayed(2);
+        cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_DRINKS_DISPLAYED);
         rvCafeUpdateCategories.setVisibility(View.GONE);
         rvCafeUpdateCategoryDrinks.setVisibility(View.VISIBLE);
-        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(cafeCategoryId));
+        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(cafeCategoryId));
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions.Builder<CategoryDrink>()
                 .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
                 .build();
         adapterCategoryDrinks = new FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UpdateDrinkViewHolder holder, int position, @NonNull CategoryDrink model) {
-                menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, getRef(position).getKey()));
+                menuCategoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, getRef(position).getKey()));
                 menuCategoryDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {
@@ -467,15 +471,14 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void insertAllCategories() {
-        drinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefDrinksCategories());
-        Query query = drinksCategoriesRef;
+        drinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getDrinksCategories());
         FirebaseRecyclerOptions<DrinksCategory> drinksCategoryOptions = new FirebaseRecyclerOptions.Builder<DrinksCategory>()
-                .setQuery(query, DrinksCategory.class)
+                .setQuery(drinksCategoriesRef, DrinksCategory.class)
                 .build();
         adapterDrinksCategory = new FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder>(drinksCategoryOptions) {
             @Override
             protected void onBindViewHolder(@NonNull MenuCategoryViewHolder holder, int position, @NonNull DrinksCategory model) {
-                drinksCategoriesRef.child(firebaseRefPaths.getRefDrinksCategoriesChild(getRef(position).getKey())).addListenerForSingleValueEvent(new ValueEventListener() {
+                drinksCategoriesRef.child(firebaseRefPaths.getDrinksCategoriesChild(getRef(position).getKey())).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {
                         if(!categoryDrinkSnapshot.exists()) {
@@ -763,7 +766,7 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void checkNewCafeCategory(String categoryId, CategoryDrink newCategoryDrink, boolean hasImage) {
-        menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(categoryId));
+        menuCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategory(categoryId));
         menuCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeCategorySnapshot) {
@@ -771,7 +774,7 @@ public class CafeUpdateFragment extends Fragment {
                     addNewDrink(categoryId, newCategoryDrink, hasImage);
                 }
                 else {
-                    drinksCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefDrinksCategory(categoryId));
+                    drinksCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getDrinksCategory(categoryId));
                     drinksCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot drinksCategorySnapshot) {
@@ -782,7 +785,7 @@ public class CafeUpdateFragment extends Fragment {
                                 drinksCategory.getCategoryNames().get(cafeCountryCode),
                                 null
                             );
-                            menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+                            menuCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
                             menuCategoriesRef.child(categoryId).setValue(newCafeDrinksCategory);
 
                             addNewDrink(categoryId, newCategoryDrink, hasImage);
@@ -828,7 +831,7 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void addNewDrink(String categoryId, CategoryDrink newCategoryDrink, boolean hasImage) {
-        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(categoryId));
+        menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(categoryId));
         setProgressDialog(getResources().getString(R.string.cafe_update_new_drink_adding));
         if(!hasImage) {
             newCategoryDrink.setCategoryDrinkImage(firebaseRefPaths.getStorageCategoryDrinksNoImage());
@@ -938,9 +941,8 @@ public class CafeUpdateFragment extends Fragment {
 
     private void updateDrinkInfo(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink) {
         setProgressDialog(getResources().getString(R.string.cafe_update_drink_info_uploading));
-        categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
+        categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
         categoryDrinkRef.setValue(updatedCategoryDrink);
-        //insertCategoryDrinks(cafeCategoryId);
         closeProgressDialog();
     }
 
@@ -983,7 +985,7 @@ public class CafeUpdateFragment extends Fragment {
             tvRemoveDrinkTitle.setText(getResources().getString(R.string.cafe_update_drink_remove_dialog_order_title));
         }
 
-        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategoryName(cafeCategoryId));
+        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategoryName(cafeCategoryId));
         removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot categoryNameSnapshot) {
@@ -1054,17 +1056,17 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void checkDeletedDrinkCategory(String cafeCategoryId, String categoryDrinkId) {
-        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrink(cafeCategoryId, categoryDrinkId));
+        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
         removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()) {
-                    deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCategoryDrinks(cafeCategoryId));
+                    deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(cafeCategoryId));
                     deleteCafeCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             if(!snapshot.exists() || snapshot.getChildrenCount() == 1) {
-                                firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategory(cafeCategoryId)).removeValue();
+                                firebaseDatabase.getReference(firebaseRefPaths.getCafeCategory(cafeCategoryId)).removeValue();
                             }
                             else {
                                 removeDrinkRef.removeValue();
@@ -1155,7 +1157,7 @@ public class CafeUpdateFragment extends Fragment {
                             else {
                                 if(Integer.parseInt(String.valueOf(etNewTablesState.getText())) > 0) {
                                     Integer cafeTables = Integer.parseInt(String.valueOf(etNewTablesState.getText()));
-                                    cafeTablesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeTables());
+                                    cafeTablesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeTables());
                                     cafeTablesRef.setValue(cafeTables);
 
                                     etCurrentTablesState.setText(String.valueOf(cafeTables));
@@ -1186,18 +1188,6 @@ public class CafeUpdateFragment extends Fragment {
         tablesUpdateDialog.show();
     }
 
-    private void setProgressDialog(String title) {
-        progressDialog.setTitle(title);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-    }
-
-    private void closeProgressDialog() {
-        if(progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
     private boolean areImagesSame(ImageView firstImage, ImageView secondImage) {
         Bitmap bitmap1 = ((BitmapDrawable) firstImage.getDrawable()).getBitmap();
         Bitmap bitmap2 = ((BitmapDrawable) secondImage.getDrawable()).getBitmap();
@@ -1209,6 +1199,18 @@ public class CafeUpdateFragment extends Fragment {
         formatter.setMinimumFractionDigits(2);
         formatter.setMaximumFractionDigits(2);
         return formatter.format(number);
+    }
+
+    private void setProgressDialog(String title) {
+        progressDialog.setTitle(title);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+    }
+
+    private void closeProgressDialog() {
+        if(progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     private void askCameraPermission() {

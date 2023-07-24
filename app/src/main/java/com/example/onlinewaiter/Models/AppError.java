@@ -1,16 +1,8 @@
 package com.example.onlinewaiter.Models;
 
-import androidx.lifecycle.ViewModelProvider;
-
-import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
-import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 public class AppError {
     String cafeId, phoneNumber, errorTitle, errorMessage, dateTime;
@@ -66,7 +58,7 @@ public class AppError {
 
     public void sendError(AppError appError) {
         FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
-        DatabaseReference appErrorRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppErrors());
+        DatabaseReference appErrorRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getAppErrors());
         String dbKey = appErrorRef.push().getKey();
         appErrorRef.child(dbKey).setValue(appError);
     }

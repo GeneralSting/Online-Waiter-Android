@@ -182,7 +182,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void getCafeInfo(NavigationView navigationView) {
-        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafe());
+        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafe());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -252,7 +252,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void collectCafeCountry() {
-        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCountry());
+        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCountry());
         cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
@@ -279,7 +279,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void collectCountryStandards(String countryCode) {
-        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCountry(countryCode));
+        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRegisteredCountry(countryCode));
         refRegisteredCountry.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot registeredCountrySnapshot) {
@@ -347,7 +347,7 @@ public class EmployeeActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafe());
+        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafe());
         cafeChildsEventListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -356,17 +356,17 @@ public class EmployeeActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCategoriesChild())) {
+                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeCategoriesChild())) {
                     checkDrinkDeletion();
                     checkSearchedDrinkDeletion();
                 }
-                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeNameChild()))) {
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeNameChild()))) {
                     tvCafeName.setText(cafeSnapshot.getValue(String.class));
                 }
-                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeTablesChild()))) {
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeTablesChild()))) {
                     orderViewModel.setCafeTablesNumber(cafeSnapshot.getValue(Integer.class));
                 }
-                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getRefCafeCountryChild()))) {
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeCountryChild()))) {
                     cafeUpdateViewModel.setCafeCountry(cafeSnapshot.getValue(String.class));
                 }
             }
@@ -398,7 +398,7 @@ public class EmployeeActivity extends AppCompatActivity {
             }
         });
 
-        cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
+        cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrders());
         cafeCurrentOrdersListener = cafeCurrentOrdersRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -460,14 +460,14 @@ public class EmployeeActivity extends AppCompatActivity {
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             for(String key : orderDrinks.keySet()) {
                 if(!deletedDrinkFounded[0]) {
-                    cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+                    cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
                     cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
                             boolean drinkDeleted = true;
                             boolean searchedDrinkDeleted = true;
                             for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
-                                for(DataSnapshot drinkSnapshot: categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild()).getChildren()) {
+                                for(DataSnapshot drinkSnapshot: categorySnapshot.child(firebaseRefPaths.getCategoryDrinksChild()).getChildren()) {
                                     if(Objects.equals(drinkSnapshot.getKey(), key)) {
                                         drinkDeleted = false;
                                     }
@@ -524,13 +524,13 @@ public class EmployeeActivity extends AppCompatActivity {
         if(menuViewModel.getSearchedDrinks().getValue() != null && !menuViewModel.getSearchedDrinks().getValue().isEmpty()) {
             drinksSearched[0] = true;
             for(String key : menuViewModel.getSearchedDrinks().getValue().keySet()) {
-                cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+                cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
                 cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
                         boolean drinkDeleted = true;
                         for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
-                            for (DataSnapshot drinkSnapshot : categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild()).getChildren()) {
+                            for (DataSnapshot drinkSnapshot : categorySnapshot.child(firebaseRefPaths.getCategoryDrinksChild()).getChildren()) {
                                 if(Objects.equals(drinkSnapshot.getKey(), key)) {
                                     drinkDeleted = false;
                                 }
@@ -625,12 +625,12 @@ public class EmployeeActivity extends AppCompatActivity {
 
     private void menuDrinksQuery(String query) {
         HashMap<String, CategoryDrink> searchedDrinks = new HashMap<>();
-        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCategories());
+        DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeCategoriesSnapshot) {
                 for(DataSnapshot categorySnapshot : cafeCategoriesSnapshot.getChildren()) {
-                    DataSnapshot drinksSnapshot = categorySnapshot.child(firebaseRefPaths.getRefCategoryDrinksChild());
+                    DataSnapshot drinksSnapshot = categorySnapshot.child(firebaseRefPaths.getCategoryDrinksChild());
                     for(DataSnapshot drinkSnapshot : drinksSnapshot.getChildren()) {
                         CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
                         if(categoryDrink.getCategoryDrinkName() != null
@@ -717,11 +717,11 @@ public class EmployeeActivity extends AppCompatActivity {
                     break;
                 case 1:
                     cafeUpdateViewModel.setCafeUpdateDisplayChange(true);
-                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(0);
+                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_NON_DISPLAYED);
                     break;
                 case 2:
                     cafeUpdateViewModel.setCafeUpdateDisplayChange(true);
-                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(1);
+                    cafeUpdateViewModel.setCafeUpdateRvDisplayed(AppConstValue.recyclerViewDisplayed.UPDATE_CATEGORIES_DISPLAYED);
                     break;
             }
         }

@@ -24,6 +24,5 @@ public class OrderDrinkViewHolder  extends RecyclerView.ViewHolder {
         ivOrderDrinkImage = (ImageView) itemView.findViewById(R.id.ivOrderDrinkImage);
         btnOrderDrinkAdd = (Button) itemView.findViewById(R.id.btnOrderDrinkAdd);
         btnOrderDrinkRemove = (Button) itemView.findViewById(R.id.btnOrderDrinkRemove);
-
     }
 }

@@ -18,7 +18,6 @@ import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
-import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
 import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
@@ -27,7 +26,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -136,11 +134,10 @@ public class OwnerActivity extends AppCompatActivity {
     }
 
     private void collectCafeCountry() {
-        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafeCountry(mainViewModel.getOwnerCafeId().getValue()));
+        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCountryOwner(mainViewModel.getOwnerCafeId().getValue()));
         cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
-                ownerViewModel.setCafeCountry(countrySnapshot.getValue(String.class));
                 collectCountryStandards(countrySnapshot.getValue(String.class));
             }
 
@@ -163,7 +160,7 @@ public class OwnerActivity extends AppCompatActivity {
     }
 
     private void collectCountryStandards(String countryCode) {
-        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRefRegisteredCountry(countryCode));
+        DatabaseReference refRegisteredCountry = firebaseDatabase.getReference(firebaseRefPaths.getRegisteredCountry(countryCode));
         refRegisteredCountry.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot registeredCountrySnapshot) {
@@ -183,9 +180,7 @@ public class OwnerActivity extends AppCompatActivity {
                     return;
                 }
                 RegisteredCountry registeredCountry = registeredCountrySnapshot.getValue(RegisteredCountry.class);
-                ownerViewModel.setCafeCurrency(registeredCountry.getCurrency());
-                ownerViewModel.setCafeDateTimeFormat(registeredCountry.getDateTimeFormat());
-                ownerViewModel.setCafeDecimalSeperator(registeredCountry.getDecimalSeperator());
+                ownerViewModel.setCafeCountryStandards(registeredCountry);
             }
 
             @Override
@@ -207,7 +202,7 @@ public class OwnerActivity extends AppCompatActivity {
     }
 
     private void setCafeListener() {
-        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafe(mainViewModel.getOwnerCafeId().getValue()));
+        cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeOwner(mainViewModel.getOwnerCafeId().getValue()));
         cafeChildListener = cafeRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -216,8 +211,8 @@ public class OwnerActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeCurrentOrdersChild()) ||
-                        Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getRefCafeBillsChild())) {
+                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeCurrentOrdersChild()) ||
+                        Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeBillsChild())) {
                 }
                 else {
                     mainViewModel.setUpdateInfo(updateCafeInfo);

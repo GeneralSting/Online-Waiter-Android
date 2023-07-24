@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,32 +62,30 @@ import java.util.Objects;
 
 public class PendingOrdersFragment extends Fragment {
     //fragments views
-    RecyclerView rvCafeCurrentOrders;
-    SwitchCompat scCafeCurrentOrders;
+    private RecyclerView rvCafeCurrentOrders;
+    private SwitchCompat scCafeCurrentOrders;
 
     //global objects/variables
     private FragmentPendingOrdersBinding binding;
-    final int order_pending = AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING;
-    final int order_ready = AppConstValue.orderStatusConstValue.ORDER_STATUS_READY;
-    final int order_declined = AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED;
-    final int order_removal_request = AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-    SimpleDateFormat simpleDateLocaleFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
+    private final int order_pending = AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING;
+    private final int order_ready = AppConstValue.orderStatusConstValue.ORDER_STATUS_READY;
+    private final int order_declined = AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED;
+    private final int order_removal_request = AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private SimpleDateFormat simpleDateFormatLocale;
     private AppError appError;
-    MenuViewModel menuViewModel;
+    private MenuViewModel menuViewModel;
     private EmployeeViewModel employeeViewModel;
-    RecyclerView.LayoutManager rvCurrentOrdersLayoutManager;
-    ToastMessage toastMessage;
-    Boolean allOrders = false;
-    DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-    DecimalFormat cafeDecimalFormat;
+    private PendingOrdersViewModel pendingOrdersViewModel;
+    private ToastMessage toastMessage;
+    private DecimalFormat cafeDecimalFormat;
 
 
     //firebase
-    FirebaseRefPaths firebaseRefPaths;
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference cafeCurrentOrdersRef, currentOrderDrinksRef, cafeBillsRef;
-    FirebaseRecyclerAdapter<CafeCurrentOrder, CurrentOrderViewHolder> adapterCurrentOrders;
+    private FirebaseRefPaths firebaseRefPaths;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference cafeBillsRef;
+    private FirebaseRecyclerAdapter<CafeCurrentOrder, CurrentOrderViewHolder> adapterCurrentOrders;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -95,54 +94,64 @@ public class PendingOrdersFragment extends Fragment {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
+        pendingOrdersViewModel = new ViewModelProvider(requireActivity()).get(PendingOrdersViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
         cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
+        simpleDateFormatLocale = new SimpleDateFormat(employeeViewModel.getCafeDateTimeFormat().getValue(), Locale.getDefault());
         toastMessage = new ToastMessage(requireActivity());
-        PendingOrdersViewModel pendingOrdersViewModel = new ViewModelProvider(requireActivity()).get(PendingOrdersViewModel.class);
 
         scCafeCurrentOrders = (SwitchCompat) binding.scCafeCurrentOrders;
+        rvCafeCurrentOrders = (RecyclerView) binding.rvCafeCurrentOrders;
+        RecyclerView.LayoutManager rvCurrentOrdersLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        rvCafeCurrentOrders.setLayoutManager(rvCurrentOrdersLayoutManager);
+
+        ordersSwitch();
+        searchedOrdersObserver();
+        populateOrdersRv(Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE));
+
+        return root;
+    }
+
+    private void ordersSwitch() {
         scCafeCurrentOrders.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(pendingOrdersViewModel.getSearchedOrder().getValue() != null) {
                     populateOrdersRv(pendingOrdersViewModel.getSearchedOrder().getValue());
-
                 }
             }
         });
+    }
 
-        rvCafeCurrentOrders = (RecyclerView) binding.rvCafeCurrentOrders;
-        rvCurrentOrdersLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        rvCafeCurrentOrders.setLayoutManager(rvCurrentOrdersLayoutManager);
-
+    private void searchedOrdersObserver() {
         final Observer<Integer> observingSearchedDrinks = new Observer<Integer>() {
             @Override
             public void onChanged(Integer searchedOrder) {
-                stopAdapterListening();
+                //not necessary
+                //stopAdapterListening();
                 populateOrdersRv(searchedOrder);
             }
         };
         pendingOrdersViewModel.getSearchedOrder().observe(requireActivity(), observingSearchedDrinks);
-
-        populateOrdersRv(Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE));
-        return root;
     }
 
     private void populateOrdersRv(Integer searchedOrder) {
-        allOrders = scCafeCurrentOrders.isChecked();
+        final int[] proba = {0};
+        boolean allOrders = scCafeCurrentOrders.isChecked();
 
-        cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrders());
+        DatabaseReference cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrders());
         Query query = null;
         if(searchedOrder != Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE)) {
-            query = cafeCurrentOrdersRef.orderByChild(firebaseRefPaths.getRefCurrentOrderTableNumberChild()).equalTo(searchedOrder);
+            query = cafeCurrentOrdersRef.orderByChild(firebaseRefPaths.getCurrentOrderTableNumberChild()).equalTo(searchedOrder);
         }
         else if(allOrders) {
             query = cafeCurrentOrdersRef;
         }
         else {
-            query = cafeCurrentOrdersRef.orderByChild(firebaseRefPaths.getRefCurrentOrderDelivererChild()).equalTo(menuViewModel.getPhoneNumber().getValue());
+            query = cafeCurrentOrdersRef.orderByChild(firebaseRefPaths.getCurrentOrderDelivererChild()).equalTo(menuViewModel.getPhoneNumber().getValue());
         }
         FirebaseRecyclerOptions<CafeCurrentOrder> currentOrdersOptions = new FirebaseRecyclerOptions
                 .Builder<CafeCurrentOrder>()
@@ -151,13 +160,15 @@ public class PendingOrdersFragment extends Fragment {
         adapterCurrentOrders = new FirebaseRecyclerAdapter<CafeCurrentOrder, CurrentOrderViewHolder>(currentOrdersOptions) {
             @Override
             protected void onBindViewHolder(@NonNull CurrentOrderViewHolder holder, int position, @NonNull CafeCurrentOrder model) {
-                DatabaseReference cafeCurrentOrderRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeCurrentOrder(getRef(position).getKey()));
+                DatabaseReference cafeCurrentOrderRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrder(getRef(position).getKey()));
                 cafeCurrentOrderRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot currentOrderSnapshot) {
                         if(!currentOrderSnapshot.exists()) {
                             return;
                         }
+                        Log.d("PROBA123", String.valueOf(proba[0]));
+                        proba[0]++;
                         CafeCurrentOrder cafeCurrentOrder = currentOrderSnapshot.getValue(CafeCurrentOrder.class);
 
                         holder.tvCafeCurrentOrderTable.setText(String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
@@ -172,7 +183,7 @@ public class PendingOrdersFragment extends Fragment {
                                 holder.btnCurrentOrderAction.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        cafeCurrentOrderRef.child(firebaseRefPaths.getRefCurrentOrderStatusChild()).setValue(
+                                        cafeCurrentOrderRef.child(firebaseRefPaths.getCurrentOrderStatusChild()).setValue(
                                                 AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST
                                         );
                                     }
@@ -253,7 +264,7 @@ public class PendingOrdersFragment extends Fragment {
                                                 btnOrderPaymentConfirm.setOnClickListener(new View.OnClickListener() {
                                                     @Override
                                                     public void onClick(View view) {
-                                                        String paymentDateTime = simpleDateLocaleFormat.format(new Date());
+                                                        String paymentDateTime = simpleDateFormatLocale.format(new Date());
                                                         CafeBill cafeBill = new CafeBill(
                                                                 cafeCurrentOrder.getCurrentOrderDatetime(),
                                                                 paymentDateTime,
@@ -264,7 +275,7 @@ public class PendingOrdersFragment extends Fragment {
                                                                 cafeCurrentOrder.getCurrentOrderTableNumber(),
                                                                 cafeCurrentOrder.getCurrentOrderDrinks()
                                                         );
-                                                        cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCafeBills()).child(Objects.requireNonNull(currentOrderSnapshot.getKey()));
+                                                        cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBills()).child(Objects.requireNonNull(currentOrderSnapshot.getKey()));
                                                         cafeBillsRef.setValue(cafeBill);
                                                         cafeCurrentOrderRef.removeValue();
 
@@ -342,7 +353,7 @@ public class PendingOrdersFragment extends Fragment {
                                 holder.btnCurrentOrderAction.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        cafeCurrentOrderRef.child(firebaseRefPaths.getRefCurrentOrderStatusChild()).setValue(
+                                        cafeCurrentOrderRef.child(firebaseRefPaths.getCurrentOrderStatusChild()).setValue(
                                                 AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
                                         );
                                     }
@@ -422,7 +433,7 @@ public class PendingOrdersFragment extends Fragment {
                 break;
             }
         }
-        currentOrderDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getRefCurrentOrderDrinks(currentOrderId));
+        DatabaseReference currentOrderDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCurrentOrderDrinks(currentOrderId));
         currentOrderDrinksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot orderDrinksSnapshot) {

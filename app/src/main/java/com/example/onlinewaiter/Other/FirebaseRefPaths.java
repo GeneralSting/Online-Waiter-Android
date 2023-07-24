@@ -15,36 +15,38 @@ public class FirebaseRefPaths {
 
 
     /*cafes*/
+    //paths
     private final String refCafes = "cafes/";
     private final String refCafeCategories = "/cafeDrinksCategories/";
     private final String refCategoryDrinks = "/categoryDrinks/";
     private final String refCafeBills = "/cafeBills/";
-    private final String refCafeBillsChild = "cafeBills";
     private final String refCafeCurrentOrders = "/cafeCurrentOrders/";
-    private final String refCafeCurrentOrdersChild = "cafeCurrentOrders";
     private final String refCafeCategoryName = "/cafeCategoryName/";
-    private final String refSingleCafeCategoryName = "cafeCategoryName";
     private final String refCafeCategoryDescription = "/cafeCategoryDescription/";
-    private final String refSingleCafeCategoryDescription = "cafeCategoryDescription";
     private final String refCafeCategoryImage = "/cafeCategoryImage/";
-    private final String refSingleCafeCategoryImage = "cafeCategoryImage";
     private final String refCategoryDrinkImage = "/categoryDrinkImage";
+    private final String refCafeTables = "/cafeTables/";
+    private final String refCurrentOrderDrinks = "/currentOrderDrinks/";
+    private final String refCafeCountry = "/cafeCountry";
+
+    //child
+    private final String refCafeCategoryDescriptionChild = "cafeCategoryDescription";
+    private final String refCafeCategoryImageChild = "cafeCategoryImage";
+    private final String refCafeCategoryNameChild = "cafeCategoryName";
+    private final String refCafeBillsChild = "cafeBills";
+    private final String refCafeCurrentOrdersChild = "cafeCurrentOrders";
     private final String refCafeCategoriesChild = "cafeDrinksCategories";
     private final String refCafeTablesChild = "cafeTables";
-    private final String refCafeTables = "/cafeTables/";
     private final String refCategoryDrinksChild = "categoryDrinks";
     private final String refCategoryDrinkNameChild = "categoryDrinkName";
-    private final String refCurrentOrderDrinks = "/currentOrderDrinks/";
     private final String refCurrentOrderDelivererChild = "currentOrderDelivererEmployee";
     private final String refCurrentOrderStatusChild = "currentOrderStatus";
     private final String refCurrentOrderMessageChild = "currentOrderMessage";
     private final String refCafeNameChild = "cafeName";
     private final String refCurrentOrderTableNumberChild = "currentOrderTableNumber";
     private final String refCafeCountryChild = "cafeCountry";
-    private final String refCafeCountry = "/cafeCountry";
 
     /*countriesNumber*/
-
 
 
     /*drinksCategories*/
@@ -59,14 +61,12 @@ public class FirebaseRefPaths {
 
 
     /*registeredNumbers*/
+    //paths
     private final String refRegisteredNumbers = "registeredNumbers/";
-    private final String refRegisteredNumberWaiter = "waiter";
-    private final String refRegisteredNumberOwner = "owner";
-    private final String refRegisteredNumberAllowedChild = "allowed";
     private final String refRegisteredNumberAllowed = "/allowed/";
+
+    //child
     private final String refRegisteredNumberRoleChild = "role";
-
-
 
     /*firebase storage*/
     private final String storageCategoryDrinksNoImage = "https://firebasestorage.googleapis.com/v0/b/online-waiter-db1c0.appspot.com/o/appImages%2Fstandard%2Fno_image.jpg?alt=media&token=34103017-4678-451f-acb2-6247186c6d07";
@@ -77,7 +77,6 @@ public class FirebaseRefPaths {
     /*Property*/
     ViewModelStoreOwner viewModelStoreOwner;
     private MenuViewModel menuViewModel;
-
 
     public FirebaseRefPaths() {
 
@@ -90,219 +89,180 @@ public class FirebaseRefPaths {
 
     /*Methods*/
     /*appError*/
-    public String getRefAppErrors() {
+    public String getAppErrors() {
         return refAppErrors;
     }
 
     /*appInfo*/
-    public String getRefAppInfo() {
+    public String getAppInfo() {
         return refAppInfo;
     }
 
     /*cafes*/
-    public String getRefCafes() {
+    public String getCafes() {
         return refCafes;
     }
 
-    public String getRefCafe() {
-        return getRefCafes() + menuViewModel.getCafeId().getValue();
+    public String getCafe() {
+        return getCafes() + menuViewModel.getCafeId().getValue();
     }
 
-    public String getOwnerRefCafe(String cafeId) {
-        return getRefCafes() + cafeId;
+    public String getCafeOwner(String cafeId) {
+        return getCafes() + cafeId;
     }
 
-    public String getOwnerRefCafeCountry(String cafeId) {
-        return getOwnerRefCafe(cafeId) + refCafeCountry;
+    public String getCafeCountryOwner(String cafeId) {
+        return getCafeOwner(cafeId) + refCafeCountry;
     }
-    public String getOwnerRefCafeBills(String cafeId) {
-        return getOwnerRefCafe(cafeId) + refCafeBills;
+    public String getCafeBillsOwner(String cafeId) {
+        return getCafeOwner(cafeId) + refCafeBills;
     }
 
-    public String getRefCafeNameChild() {
+    public String getCafeNameChild() {
         return refCafeNameChild;
     }
 
-    public String getRefCafeCategories() {
-        return getRefCafe() + refCafeCategories;
+    public String getCafeCategories() {
+        return getCafe() + refCafeCategories;
     }
 
-    public String getRefCafeCategory(String cafeCategoryId) {
-        return getRefCafeCategories() + cafeCategoryId;
+    public String getCafeCategory(String cafeCategoryId) {
+        return getCafeCategories() + cafeCategoryId;
     }
 
-    public String getRefCafeCategoryName(String cafeCategoryId) {
-        return getRefCafeCategory(cafeCategoryId) + refCafeCategoryName;
+    public String getCafeCategoryName(String cafeCategoryId) {
+        return getCafeCategory(cafeCategoryId) + refCafeCategoryName;
     }
 
-    public String getRefCafeCategoryDescription(String cafeCategoryId) {
-        return getRefCafeCategory(cafeCategoryId) + refCafeCategoryDescription;
+    public String getCategoryDrinks(String cafeCategoryId) {
+        return getCafeCategory(cafeCategoryId) + refCategoryDrinks;
     }
 
-    public String getRefCafeCategoryImage(String cafeCategoryId) {
-        return getRefCafeCategory(cafeCategoryId) + refCafeCategoryImage;
-    }
-
-    public String getRefCategoryDrinks(String cafeCategoryId) {
-        return getRefCafeCategory(cafeCategoryId) + refCategoryDrinks;
-    }
-
-    public String getRefCategoryDrink(String cafeCategoryId, String categoryDrinkId) {
-        return getRefCategoryDrinks(cafeCategoryId) + categoryDrinkId;
+    public String getCategoryDrink(String cafeCategoryId, String categoryDrinkId) {
+        return getCategoryDrinks(cafeCategoryId) + categoryDrinkId;
     }
 
     public String getCategoryDrinkImage(String cafeCategoryId, String categoryDrinkId) {
-        return getRefCategoryDrink(cafeCategoryId, categoryDrinkId) + refCategoryDrinkImage;
+        return getCategoryDrink(cafeCategoryId, categoryDrinkId) + refCategoryDrinkImage;
     }
 
-    public String getRefSingleCafeCategoryName() {
-        return refSingleCafeCategoryName;
+    public String getCafeCategoryNameChild() {
+        return refCafeCategoryNameChild;
     }
 
-    public String getRefSingleCafeCategoryImage() {
-        return refSingleCafeCategoryImage;
+    public String getCafeCategoryImageChild() {
+        return refCafeCategoryImageChild;
     }
 
-    public String getRefSingleCafeCategoryDescription() {
-        return refSingleCafeCategoryDescription;
-    }
-
-    public String getRefCafeCategoriesChild() {
+    public String getCafeCategoriesChild() {
         return refCafeCategoriesChild;
     }
 
-    public String getRefCafeTablesChild() {
+    public String getCafeTablesChild() {
         return refCafeTablesChild;
     }
 
-    public String getRefCafeCurrentOrders() {
-        return getRefCafe() + refCafeCurrentOrders;
+    public String getCafeCurrentOrders() {
+        return getCafe() + refCafeCurrentOrders;
     }
 
-    public String getRefCafeCurrentOrder(String currentOrderId) {
-        return getRefCafeCurrentOrders() + currentOrderId;
+    public String getCafeCurrentOrder(String currentOrderId) {
+        return getCafeCurrentOrders() + currentOrderId;
     }
 
-    public String getRefCurrentOrderDrinks(String currentOrderId) {
-        return getRefCafeCurrentOrder(currentOrderId) + refCurrentOrderDrinks;
+    public String getCurrentOrderDrinks(String currentOrderId) {
+        return getCafeCurrentOrder(currentOrderId) + refCurrentOrderDrinks;
     }
 
-    public String getRefCurrentOrderDelivererChild() {
+    public String getCurrentOrderDelivererChild() {
         return refCurrentOrderDelivererChild;
     }
 
-    public String getRefCurrentOrderStatusChild() {
+    public String getCurrentOrderStatusChild() {
         return refCurrentOrderStatusChild;
     }
 
-    public String getRefCurrentOrderMessageChild() {
-        return refCurrentOrderMessageChild;
+    public String getCafeBills() {
+        return getCafe() + refCafeBills;
     }
 
-    public String getRefCafeBills() {
-        return getRefCafe() + refCafeBills;
+    public String getCafeTables() {
+        return getCafe() + refCafeTables;
     }
 
-    public String getRefCafeTables() {
-        return getRefCafe() + refCafeTables;
-    }
-
-    public String getRefCategoryDrinksChild() {
+    public String getCategoryDrinksChild() {
         return refCategoryDrinksChild;
     }
 
-    public String getRefCafeCurrentOrdersChild() {
+    public String getCafeCurrentOrdersChild() {
         return refCafeCurrentOrdersChild;
     }
 
-    public String getRefCafeBillsChild() {
+    public String getCafeBillsChild() {
         return refCafeBillsChild;
     }
 
-    public String getRefCategoryDrinkNameChild() {
-        return refCategoryDrinkNameChild;
-    }
 
-    public String getRefCurrentOrderTableNumberChild() {
+    public String getCurrentOrderTableNumberChild() {
         return refCurrentOrderTableNumberChild;
     }
 
-    public String getRefCafeCountryChild() {
+    public String getCafeCountryChild() {
         return refCafeCountryChild;
     }
 
-    public String getRefCafeCountry() {
-        return getRefCafe() + refCafeCountry;
+    public String getCafeCountry() {
+        return getCafe() + refCafeCountry;
     }
 
     /*countriesNumber*/
 
 
     /*drinksCategories*/
-    public String getRefDrinksCategories() {
+    public String getDrinksCategories() {
         return refDrinksCategories;
     }
 
-    public String getRefDrinksCategory(String drinksCategoryId) {
-        return getRefDrinksCategories() + drinksCategoryId;
+    public String getDrinksCategory(String drinksCategoryId) {
+        return getDrinksCategories() + drinksCategoryId;
     }
 
-    public String getRefDrinksCategoriesChild(String drinksCategoryId) {
+    public String getDrinksCategoriesChild(String drinksCategoryId) {
         return drinksCategoryId;
     }
 
 
     /* registeredCountries */
-    public String getRefRegisteredCountries() {
+    public String getRegisteredCountries() {
         return refRegisteredCountries;
     }
 
-    public String getRefRegisteredCountry(String registeredCountry) {
-        return getRefRegisteredCountries() + registeredCountry;
-    }
-
-    public String getRefRCCurrency(String registeredCountry) {
-        return getRefRegisteredCountry(registeredCountry) + refRCCurrency;
-    }
-
-    public String getRefRCDateTime(String registeredCountry) {
-        return getRefRegisteredCountry(registeredCountry) + refRCDateTimeFormat;
-    }
-    public String getRefRCDecimalSeperator(String registeredCountry) {
-        return getRefRegisteredCountry(registeredCountry) + refRCDecimalSeperator;
+    public String getRegisteredCountry(String registeredCountry) {
+        return getRegisteredCountries() + registeredCountry;
     }
 
     /*registeredNumbers*/
-    public String getRefRegisteredNumbers() {
+    public String getRegisteredNumbers() {
         return refRegisteredNumbers;
     }
 
-    public String getRefRegisteredCafe(String registeredCafeId) {
-        return getRefRegisteredNumbers() + registeredCafeId;
+    public String getRegisteredCafe(String registeredCafeId) {
+        return getRegisteredNumbers() + registeredCafeId;
     }
 
-    public String getRefRegisteredNumber(String registeredCafeId, String registeredNumberId) {
-        return getRefRegisteredCafe(registeredCafeId) + AppConstValue.characterConstValue.FIREBASE_SLASH + registeredNumberId;
+    public String getRegisteredNumber(String registeredCafeId, String registeredNumberId) {
+        return getRegisteredCafe(registeredCafeId) + AppConstValue.characterConstValue.FIREBASE_SLASH + registeredNumberId;
     }
 
-
-    public String getRefRegisteredNumberWaiter() {
-        return refRegisteredNumberWaiter;
+    public String getRegisteredNumberAllowed(String registeredCafeId, String registeredNumberId) {
+        return getRegisteredNumber(registeredCafeId, registeredNumberId) + refRegisteredNumberAllowed;
     }
 
-    public String getRefRegisteredNumberOwner() {
-        return refRegisteredNumberOwner;
-    }
-
-    public String getRefRegisteredNumberAllowed(String registeredCafeId, String registeredNumberId) {
-        return getRefRegisteredNumber(registeredCafeId, registeredNumberId) + refRegisteredNumberAllowed;
-    }
-
-    public String getRefRegisteredNumberChild(String registeredNumberChild) {
+    public String getRegisteredNumberChild(String registeredNumberChild) {
         return registeredNumberChild;
     }
 
-    public String getRefRegisteredNumberRoleChild() {
+    public String getRegisteredNumberRoleChild() {
         return refRegisteredNumberRoleChild;
     }
 

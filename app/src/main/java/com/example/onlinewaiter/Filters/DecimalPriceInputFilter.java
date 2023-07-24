@@ -3,8 +3,10 @@ package com.example.onlinewaiter.Filters;
 import android.text.InputFilter;
 import android.text.Spanned;
 
+import com.example.onlinewaiter.Other.AppConstValue;
+
 public class DecimalPriceInputFilter implements InputFilter {
-    private final String DOT = ".";
+    private final String DOT = AppConstValue.variableConstValue.DOT;
 
     private final int mMaxIntegerDigitsLength;
     private final int mMaxDigitsAfterLength;
@@ -28,7 +30,7 @@ public class DecimalPriceInputFilter implements InputFilter {
             try {
                 enteredValue = Double.parseDouble(onlyDigitsText);
             } catch (NumberFormatException e) {
-                return "";
+                return AppConstValue.variableConstValue.EMPTY_VALUE;
             }
             return checkMaxValueRule(enteredValue, onlyDigitsText);
         }
@@ -36,7 +38,7 @@ public class DecimalPriceInputFilter implements InputFilter {
 
     private CharSequence checkMaxValueRule(double enteredValue, String onlyDigitsText) {
         if (enteredValue > mMax) {
-            return "";
+            return AppConstValue.variableConstValue.EMPTY_VALUE;
         } else {
             return handleInputRules(onlyDigitsText);
         }
@@ -57,24 +59,25 @@ public class DecimalPriceInputFilter implements InputFilter {
     private CharSequence checkRuleForDecimalDigits(String onlyDigitsPart) {
         String afterDotPart = onlyDigitsPart.substring(onlyDigitsPart.indexOf(DOT), onlyDigitsPart.length() - 1);
         if (afterDotPart.length() > mMaxDigitsAfterLength) {
-            return "";
+            return AppConstValue.variableConstValue.EMPTY_VALUE;
         }
         return null;
     }
 
     private CharSequence checkRuleForIntegerDigits(int allTextLength) {
         if (allTextLength > mMaxIntegerDigitsLength) {
-            return "";
+            return AppConstValue.variableConstValue.EMPTY_VALUE;
         }
         return null;
     }
 
     private String getOnlyDigitsPart(String text) {
-        return text.replaceAll("[^0-9?!\\.]", "");
+        // regex [^0-9?!\.]
+        return text.replaceAll(AppConstValue.regex.FILTER_ONLY_DIGITS_PART, AppConstValue.variableConstValue.EMPTY_VALUE);
     }
 
     private String getAllText(CharSequence source, Spanned dest, int dstart) {
-        String allText = "";
+        String allText = AppConstValue.variableConstValue.EMPTY_VALUE;
         if (!dest.toString().isEmpty()) {
             if (source.toString().isEmpty()) {
                 allText = deleteCharAtIndex(dest, dstart);

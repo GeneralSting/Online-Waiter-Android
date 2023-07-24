@@ -16,8 +16,8 @@ public class ActionDialog {
     public static void showInfoDialog(Context context, String title, String content) {
         View viewDialog = LayoutInflater.from(context).inflate(R.layout.action_info_dialog, null);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-
         alertDialog.setView(viewDialog);
+
         TextView tvInfoDialogTitle = viewDialog.findViewById(R.id.tvInfoDialogTitle);
         TextView tvInfoDialogContent = viewDialog.findViewById(R.id.tvInfoDialogContent);
         tvInfoDialogTitle.setText(title);

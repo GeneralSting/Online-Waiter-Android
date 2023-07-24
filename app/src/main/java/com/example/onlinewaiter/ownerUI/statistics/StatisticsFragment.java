@@ -581,7 +581,7 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void databaseQuery(int querySize, int queryType) {
-        cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getOwnerRefCafeBills(mainViewModel.getOwnerCafeId().getValue()));
+        cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBillsOwner(mainViewModel.getOwnerCafeId().getValue()));
         Query queryCafeBills = cafeBillsRef.limitToLast(querySize);
         queryCafeBills.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

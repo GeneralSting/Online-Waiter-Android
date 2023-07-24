@@ -16,8 +16,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
+import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -37,6 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -51,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar loginProgressBar;
 
     //global variables/objects
-    private String phoneNumber = AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER;
+    private String phoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
     private String authNumber, verificationId, numberRole, numberCafeId;
     private String sharedPhoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
     private boolean numberFounded, backPressEnabled;
@@ -159,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkNumber() {
-        DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefRegisteredNumbers());
+        DatabaseReference registeredNumbers = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRegisteredNumbers());
         //addListenerForSingleValueEvent -> only once will go through database, we do not need continuously listen here
         registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -172,7 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                             numberRole = registeredNumber.getRole();
                             numberCafeId = cafeRegisteredNumberSnapshot.getKey();
                             phoneNumber = authNumber;
-                            if(registeredNumber.getRole().equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && !registeredNumber.isAllowed()) {
+                            if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.WAITER) && !registeredNumber.isAllowed()) {
                                 toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
                                 loginProgressBar.setVisibility(View.INVISIBLE);
                                 btnSendPhoneNumber.setEnabled(true);
@@ -198,6 +203,18 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(LoginActivity.this);
                 serverAlertDialog.makeAlertDialog();
+
+                AppError appError;
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        AppErrorMessages.Message.CAFE_NOT_FOUND,
+                        phoneNumber,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
             }
         });
     }
@@ -302,7 +319,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.putString(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER, phoneNumber);
                     editor.apply();
                 }
-                if (numberRole.equals(firebaseRefPaths.getRefRegisteredNumberWaiter()) && numberFounded) {
+                if (numberRole.equals(AppConstValue.registeredNumbersRole.WAITER) && numberFounded) {
                     Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                     //flag -> If set, this activity will become the start of a new task on this history stack.
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -313,7 +330,7 @@ public class LoginActivity extends AppCompatActivity {
                     finishAffinity();
                     startActivity(intent);
                 }
-                else if(numberRole.equals(firebaseRefPaths.getRefRegisteredNumberOwner()) && numberFounded) {
+                else if(numberRole.equals(AppConstValue.registeredNumbersRole.OWNER) && numberFounded) {
                     Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
                     //flag -> If set, this activity will become the start of a new task on this history stack.
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

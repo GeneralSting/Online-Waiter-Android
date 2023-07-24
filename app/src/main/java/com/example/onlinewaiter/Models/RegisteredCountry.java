@@ -1,14 +1,16 @@
 package com.example.onlinewaiter.Models;
 
 public class RegisteredCountry {
-    String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag, name, nameLocale;
+    String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag,
+            mailBody, mailBodyInfo, mailSubject, name, nameLocale;
 
     public RegisteredCountry() {
 
     }
 
     public RegisteredCountry(String code, String codeLocale, String countryNumberCode, String currency, String dateFormat,
-                             String dateTimeFormat, String decimalSeperator, String flag, String name, String nameLocale) {
+                             String dateTimeFormat, String decimalSeperator, String flag,
+                             String mailBody, String mailBodyInfo, String mailSubject, String name, String nameLocale) {
         this.code = code;
         this.codeLocale = codeLocale;
         this.countryNumberCode = countryNumberCode;
@@ -17,6 +19,9 @@ public class RegisteredCountry {
         this.dateTimeFormat = dateTimeFormat;
         this.decimalSeperator = decimalSeperator;
         this.flag = flag;
+        this.mailBody = mailBody;
+        this.mailBodyInfo = mailBodyInfo;
+        this.mailSubject = mailSubject;
         this.name = name;
         this.nameLocale = nameLocale;
     }
@@ -83,6 +88,30 @@ public class RegisteredCountry {
 
     public void setFlag(String flag) {
         this.flag = flag;
+    }
+
+    public String getMailBody() {
+        return mailBody;
+    }
+
+    public void setMailBody(String mailBody) {
+        this.mailBody = mailBody;
+    }
+
+    public String getMailBodyInfo() {
+        return mailBodyInfo;
+    }
+
+    public void setMailBodyInfo(String mailBodyInfo) {
+        this.mailBodyInfo = mailBodyInfo;
+    }
+
+    public String getMailSubject() {
+        return mailSubject;
+    }
+
+    public void setMailSubject(String mailSubject) {
+        this.mailSubject = mailSubject;
     }
 
     public String getName() {

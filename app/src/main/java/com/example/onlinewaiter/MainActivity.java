@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -25,7 +24,6 @@ import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.example.onlinewaiter.Other.ToastMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void insertMainPager() {
-        DatabaseReference appInfoRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getRefAppInfo());
+        DatabaseReference appInfoRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getAppInfo());
         appInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

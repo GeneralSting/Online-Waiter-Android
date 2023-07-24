@@ -12,6 +12,7 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
 import com.google.firebase.database.DataSnapshot;
@@ -30,39 +31,39 @@ import java.util.Random;
 import papaya.in.sendmail.SendMail;
 
 public class MailService {
-    private final String mOnlineWaiterMail = "AAppOnlineWaiter@gmail.com";
-    private final String mOnlineWaiterPass = "hgbgjpjnswoubyvy";
-    private String mReceiverSubject, mReceiverBody, mReceiverMail, mReceiverBodyInfo;
-    private final ViewModelStoreOwner mViewModelStoreOwner;
-    MainViewModel mainViewModel;
+    private final String onlineWaiterMail = "AAppOnlineWaiter@gmail.com";
+    private final String onlineWaiterPass = "hgbgjpjnswoubyvy";
+    private final Context context;
+    private final ViewModelStoreOwner viewModelStoreOwner;
+    private final MainViewModel mainViewModel;
 
 
-    public MailService(Context context, ViewModelStoreOwner viewModelStoreOwner ,String receiverSubject, String receiverBody, String receiverBodyInfo) {
-        this.mViewModelStoreOwner = viewModelStoreOwner;
-        mainViewModel = new ViewModelProvider(mViewModelStoreOwner).get(MainViewModel.class);
-        SendMail(context, viewModelStoreOwner, receiverSubject, receiverBodyInfo, receiverBody);
+    public MailService(Context context, ViewModelStoreOwner viewModelStoreOwner) {
+        this.context = context;
+        this.viewModelStoreOwner = viewModelStoreOwner;
+        mainViewModel = new ViewModelProvider(viewModelStoreOwner).get(MainViewModel.class);
     }
 
-    public void SendMail(Context context, ViewModelStoreOwner ViewModelStoreOwner, String receiverSubject, String receiverBodyInfo, String receiverBody) {
+    public void appSendMail() {
         FirebaseRefPaths firebaseRefPaths = new FirebaseRefPaths();
-        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getOwnerRefCafe(mainViewModel.getOwnerCafeId().getValue()));
+        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getCafeOwner(mainViewModel.getOwnerCafeId().getValue()));
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {
-                mReceiverMail = Objects.requireNonNull(cafeSnapshot.getValue(Cafe.class)).getCafeOwnerGmail();
-                mReceiverSubject = receiverSubject;
-                mReceiverBodyInfo = receiverBodyInfo;
+                String receiverMail = Objects.requireNonNull(cafeSnapshot.getValue(Cafe.class)).getCafeOwnerGmail();
                 final int randomCode = new Random().nextInt((AppConstValue.emailConstValue.RANDOM_BOUND - AppConstValue.emailConstValue.RANDOM_ORIGIN) +
                         1) + AppConstValue.emailConstValue.RANDOM_ORIGIN;
-                RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(mViewModelStoreOwner).get(RegisteredNumbersViewModel.class);
+                RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(viewModelStoreOwner).get(RegisteredNumbersViewModel.class);
                 registeredNumbersViewModel.setEmailRandomCode(randomCode);
+                OwnerViewModel ownerViewModel = new ViewModelProvider(viewModelStoreOwner).get(OwnerViewModel.class);
                 Date currentDate = Calendar.getInstance().getTime();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_CRO, Locale.getDefault());
-                mReceiverBody = receiverBody + AppConstValue.characterConstValue.CHARACTER_SPACING +
-                        String.valueOf(randomCode) + "\n" + receiverBodyInfo + AppConstValue.characterConstValue.CHARACTER_SPACING + simpleDateFormat.format(currentDate);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ownerViewModel.getCafeCountryStandards().getValue().getDateTimeFormat(), Locale.getDefault());
+                String receiverBody = ownerViewModel.getCafeCountryStandards().getValue().getMailBody() + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                        String.valueOf(randomCode) + "\n" + ownerViewModel.getCafeCountryStandards().getValue().getMailBodyInfo() +
+                        AppConstValue.characterConstValue.CHARACTER_SPACING + simpleDateFormat.format(currentDate);
 
-                SendMail mail = new SendMail(mOnlineWaiterMail, mOnlineWaiterPass,
-                        mReceiverMail, mReceiverSubject, mReceiverBody);
+                SendMail mail = new SendMail(onlineWaiterMail, onlineWaiterPass,
+                        receiverMail, ownerViewModel.getCafeCountryStandards().getValue().getMailSubject(), receiverBody);
                 mail.execute();
             }
 
