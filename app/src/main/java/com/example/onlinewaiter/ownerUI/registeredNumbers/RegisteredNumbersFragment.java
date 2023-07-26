@@ -33,7 +33,6 @@ import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Services.MailService;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
-import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.RegisteredNumberViewHolder;
 import com.example.onlinewaiter.databinding.FragmentRegisteredNumbersBinding;
@@ -54,25 +53,22 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class RegisteredNumbersFragment extends Fragment {
+    //fragment views
+    private RecyclerView rvRegisteredNumbers;
+    private FloatingActionButton fabRegisterNumber;
+    private SwitchCompat scRegisteredNumber;
 
     //global variables/objects
     private FragmentRegisteredNumbersBinding binding;
     private MainViewModel mainViewModel;
-    private ToastMessage toastMessage;
-    RegisteredNumbersViewModel registeredNumbersViewModel;
-    FirebaseRefPaths firebaseRefPaths;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private RegisteredNumbersViewModel registeredNumbersViewModel;
+    private FirebaseRefPaths firebaseRefPaths;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private AppError appError;
 
-    //fragment views
-    RecyclerView rvRegisteredNumbers;
-    RecyclerView.LayoutManager rvRegisteredNumbersManager;
-    FloatingActionButton fabRegisterNumber;
-    SwitchCompat scRegisteredNumber;
-
     //firebase
-    FirebaseRecyclerAdapter<RegisteredNumber, RegisteredNumberViewHolder> adapterRegisteredNumbers;
-    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private FirebaseRecyclerAdapter<RegisteredNumber, RegisteredNumberViewHolder> adapterRegisteredNumbers;
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,16 +77,16 @@ public class RegisteredNumbersFragment extends Fragment {
         fabRegisterNumber = binding.fabRegisterNumbers;
         rvRegisteredNumbers = binding.rvRegisteredNumbers;
         scRegisteredNumber = binding.scRegisteredNumber;
-        rvRegisteredNumbersManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        RecyclerView.LayoutManager rvRegisteredNumbersManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvRegisteredNumbers.setLayoutManager(rvRegisteredNumbersManager);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-        toastMessage = new ToastMessage(requireActivity());
         registeredNumbersViewModel = new ViewModelProvider(requireActivity()).get(RegisteredNumbersViewModel.class);
         firebaseRefPaths = new FirebaseRefPaths();
 
         switchPressed();
         fabAddAction();
         populateRvRegisteredNumbers(false);
+
         return root;
     }
 
@@ -239,7 +235,7 @@ public class RegisteredNumbersFragment extends Fragment {
                     public void onCancelled(@NonNull DatabaseError error) {
                         ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
                         serverAlertDialog.makeAlertDialog();
-                        simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+                        simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
                         String currentDateTime = simpleDateFormat.format(new Date());
                         appError = new AppError(
                                 mainViewModel.getOwnerCafeId().getValue(),

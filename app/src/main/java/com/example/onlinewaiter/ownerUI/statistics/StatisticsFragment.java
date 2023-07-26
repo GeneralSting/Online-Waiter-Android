@@ -31,6 +31,7 @@ import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentStatisticsBinding;
+import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -57,58 +58,56 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class StatisticsFragment extends Fragment {
+    //fragment views
+    private Button btnStatisticsEmployees, btnStatisticsDrinks, btnStatisticsTables;
+    private PieChart pieChart;
+    private PieData pieData;
+    private TableLayout tlStatisticEmployees, tlStatisticEmployeesTitle;
+    private TextView tvStatisticsSize;
 
     //global variables/objects
     private FragmentStatisticsBinding binding;
-    ToastMessage toastMessage;
-    MainViewModel mainViewModel;
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-    private AppError appError;
-    HashMap<String, Integer> pieChartStatistic;
     final int databaseQuerySize = AppConstValue.variableConstValue.STATISTICS_DEFAULT_QUERY_SIZE;
-    DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
-    boolean showChart;
-    private final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValue.QUERY_TYPE_EMPLOYEES;
-    private final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValue.QUERY_TYPE_DRINKS;
-    private final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValue.QUERY_TYPE_TABLES;
+    private boolean showChart;
+    private HashMap<String, Integer> pieChartStatistic;
+    private ToastMessage toastMessage;
+    private MainViewModel mainViewModel;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
+    private DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
+    private DecimalFormatSymbols decimalFormatSymbols;
+    private AppError appError;
     private StatisticsPieChartColors statisticsPieChartColors;
-
-
-    //fragment views
-    Button btnStatisticsEmployees, btnStatisticsDrinks, btnStatisticsTables;
-    PieChart pieChart;
-    PieData pieData;
-    TableLayout tlStatisticEmployees, tlStatisticEmployeesTitle;
-    TextView tvStatisticsSize;
 
     //firebase
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    DatabaseReference cafeBillsRef;
-    FirebaseRefPaths firebaseRefPaths;
+    private DatabaseReference cafeBillsRef;
+    private FirebaseRefPaths firebaseRefPaths;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentStatisticsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        btnStatisticsEmployees = binding.btnStatisticsEmployees;
+        btnStatisticsDrinks = binding.btnStatisticsDrinks;
+        btnStatisticsTables = binding.btnStatisticsTables;
+
         firebaseRefPaths = new FirebaseRefPaths();
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
         pieChartStatistic = new HashMap<>();
-        decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.getDefault()));
         toastMessage = new ToastMessage(requireActivity());
-
-        btnStatisticsEmployees = binding.btnStatisticsEmployees;
-        btnEmploeesCLickEvent();
-
-        btnStatisticsDrinks = binding.btnStatisticsDrinks;
-        btnDrinkClickEvent();
-
-        btnStatisticsTables = binding.btnStatisticsTables;
-        btnTablesClickEvent();
-
+        OwnerViewModel ownerViewModel = new ViewModelProvider(requireActivity()).get(OwnerViewModel.class);
+        decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(ownerViewModel.getCafeCountryStandards().getValue().getDecimalSeperator()).charAt(0));
+        cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
         statisticsPieChartColors = new StatisticsPieChartColors(requireActivity());
+
+        btnEmploeesCLickEvent();
+        btnDrinkClickEvent();
+        btnTablesClickEvent();
 
         return root;
     }
@@ -581,6 +580,9 @@ public class StatisticsFragment extends Fragment {
     }
 
     private void databaseQuery(int querySize, int queryType) {
+        final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValue.QUERY_TYPE_EMPLOYEES;
+        final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValue.QUERY_TYPE_DRINKS;
+        final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValue.QUERY_TYPE_TABLES;
         cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBillsOwner(mainViewModel.getOwnerCafeId().getValue()));
         Query queryCafeBills = cafeBillsRef.limitToLast(querySize);
         queryCafeBills.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -698,7 +700,7 @@ public class StatisticsFragment extends Fragment {
             pieData.setValueFormatter(new ValueFormatter() {
                 @Override
                 public String getFormattedValue(float value) {
-                    DecimalFormat percentageDecimalFormat = new DecimalFormat("##.##%");
+                    DecimalFormat percentageDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.DECIMAL_PERCENTAGE, decimalFormatSymbols);
                     double percent = (value / statisticsSum);
                     return percentageDecimalFormat.format(percent);
                 }
@@ -746,7 +748,7 @@ public class StatisticsFragment extends Fragment {
             float emplyoeePercent = (float) pieChartStatistic.get(key) / statisticsValuesSum;
             tvStatisticEmployeePhoneNumber.setText(key);
             tvStatisticEmployeeValue.setText(String.valueOf(pieChartStatistic.get(key)));
-            tvStatisticEmployeePercent.setText(decimalFormat.format(emplyoeePercent * 100) + AppConstValue.characterConstValue.PERCENTAGE);
+            tvStatisticEmployeePercent.setText(cafeDecimalFormat.format(emplyoeePercent * 100) + AppConstValue.characterConstValue.PERCENTAGE);
             tlStatisticEmployees.addView(trEmployeeView);
         }
     }
@@ -778,5 +780,9 @@ public class StatisticsFragment extends Fragment {
         }
         return sortedHashMap;
     }
-
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 }

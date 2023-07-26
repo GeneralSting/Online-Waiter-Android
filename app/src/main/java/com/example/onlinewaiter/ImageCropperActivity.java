@@ -68,7 +68,7 @@ public class ImageCropperActivity extends AppCompatActivity {
             if(!cropError.getMessage().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE) && cropError.getMessage() != null) {
                 errorMessage = cropError.getMessage().toString();
             }
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
             MenuViewModel menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(

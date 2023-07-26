@@ -69,7 +69,7 @@ public class MailService {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
                 AppError appError;
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(context);
                 serverAlertDialog.makeAlertDialog();

@@ -82,7 +82,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private FirebaseRefPaths firebaseRefPaths;
     private NotificationManagerCompat notificationManagerCompat;
     private NotificationCompat.Builder builder;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private AppError appError;
     private MenuViewModel menuViewModel;
     private OrderViewModel orderViewModel;

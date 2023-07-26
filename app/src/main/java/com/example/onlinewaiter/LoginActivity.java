@@ -205,7 +205,7 @@ public class LoginActivity extends AppCompatActivity {
                 serverAlertDialog.makeAlertDialog();
 
                 AppError appError;
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
                 String currentDateTime = simpleDateFormat.format(new Date());
                 appError = new AppError(
                         AppErrorMessages.Message.CAFE_NOT_FOUND,

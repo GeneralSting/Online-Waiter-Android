@@ -71,7 +71,7 @@ public class PendingOrdersFragment extends Fragment {
     private final int order_ready = AppConstValue.orderStatusConstValue.ORDER_STATUS_READY;
     private final int order_declined = AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED;
     private final int order_removal_request = AppConstValue.orderStatusConstValue.ORDER_STATUS_REMOVAL_REQUEST;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private SimpleDateFormat simpleDateFormatLocale;
     private AppError appError;
     private MenuViewModel menuViewModel;

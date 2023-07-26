@@ -111,7 +111,7 @@ public class CafeUpdateFragment extends Fragment {
     private ProgressDialog progressDialog;
     private DecimalFormat cafeDecimalFormat;
     private final DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private ActivityResultLauncher<String> launchImageCropper;
 
     //firebase

@@ -55,7 +55,7 @@ public class OwnerActivity extends AppCompatActivity {
     private static long back_pressed;
     MainViewModel mainViewModel;
     private OwnerViewModel ownerViewModel;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private AppError appError;
 
     //firebase

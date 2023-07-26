@@ -62,7 +62,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     private EmployeeViewModel employeeViewModel;
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private AppError appError;
 
     //firebase

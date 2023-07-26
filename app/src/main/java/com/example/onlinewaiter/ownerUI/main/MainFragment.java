@@ -38,22 +38,21 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MainFragment extends Fragment {
-
-    //global variables/objects
-    private FragmentMainBinding binding;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_NORMAL, Locale.CANADA);
-    private AppError appError;
-    private MainViewModel mainViewModel;
-    ToastMessage toastMessage;
-
-
     //fragment views
     private TextView tvMainCafeName, tvMainTables, tvMainEmployees, tvMainCategories, tvMainDrinks;
     private CardView cvMainTables, cvMainEmployees, cvMainCategories, cvMainDrinks;
-    TableLayout tlOwnerMainEmployees;
+    private TableLayout tlOwnerMainEmployees;
+
+
+    //global variables/objects
+    private FragmentMainBinding binding;
+    private MainViewModel mainViewModel;
+    private ToastMessage toastMessage;
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
+    private AppError appError;
+
 
     //firebase
-    private DatabaseReference cafeRef;
     private FirebaseRefPaths firebaseRefPaths;
 
 
@@ -61,6 +60,8 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentMainBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths();
@@ -75,6 +76,13 @@ public class MainFragment extends Fragment {
         cvMainDrinks = binding.cvOwnerMainDrinks;
         tlOwnerMainEmployees = binding.tlOwnerMainEmployees;
 
+        cvClickMessage();
+        mainViewModelObservers();
+
+        return root;
+    }
+
+    private void cvClickMessage() {
         cvMainTables.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,9 +110,9 @@ public class MainFragment extends Fragment {
                 toastMessage.showToast(getResources().getString(R.string.main_cv_drinks), 0);
             }
         });
+    }
 
-        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
-
+    private void mainViewModelObservers() {
         final Observer<String> ObservingCafeId = new Observer<String>() {
             @Override
             public void onChanged(String ownerCafeId) {
@@ -121,12 +129,11 @@ public class MainFragment extends Fragment {
             }
         };
         mainViewModel.getUpdateInfo().observe(requireActivity(), ObservingCafeInfo);
-
-        return root;
     }
 
     private void cafeDetails(String cafeId) {
-        cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getCafeOwner(cafeId));
+        //firebase
+        DatabaseReference cafeRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getCafeOwner(cafeId));
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {

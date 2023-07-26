@@ -25,6 +25,7 @@ public class AppConstValue {
         public static final String PRICE_DECIMAL_FORMAT_NO_ZERO = "#.00";
         public static final String PRICE_DECIMAL_COMMA_NO_ZERO = ",00";
         public static final String PRICE_DECIMAL_DOT_NO_ZERO = ".00";
+        public static final String DECIMAL_PERCENTAGE = "##.##%";
     }
 
     public static class notificationConstValue {
@@ -71,7 +72,7 @@ public class AppConstValue {
     }
 
     public static class dateConstValue {
-        public static final String DATE_TIME_FORMAT_NORMAL = "yyyy_MM_dd_hh_mm_ss";
+        public static final String DATE_TIME_FORMAT_DEFAULT = "yyyy_MM_dd_hh_mm_ss";
         public static final String DATE_TIME_FORMAT_CRO = "d. M. yyyy. HH:mm:ss";
     }
 
