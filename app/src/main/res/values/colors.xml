@@ -16,7 +16,7 @@
     <color name="pewter_blue">#92ABB1</color>
     <color name="tumbleweed">#CFAF96</color>
     <color name="tuscany">#B19892</color>
-    <color name="drink_card_view">#ED92ABB1</color>
+    <color name="drink_card_view">#EDcfdadc</color>
     <color name="cart_drink_card_view">#EDCFAF96</color>
 
     <!--Other standard colors-->

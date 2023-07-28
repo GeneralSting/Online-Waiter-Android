@@ -7,12 +7,12 @@
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    app:cardMaxElevation="2dp"
-    app:cardBackgroundColor="@color/drink_card_view">
+    app:cardMaxElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/drink_card_view">
 
         <ImageView
             android:id="@+id/ivMenuDrinkItem"
@@ -61,6 +61,16 @@
             app:layout_constraintBottom_toBottomOf="@+id/ivMenuDrinkItem"
             app:layout_constraintStart_toStartOf="@+id/vlgMenuDrinkItemFirstSection" />
 
+        <TextView
+            android:id="@+id/tvMenuDrinkQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textSize="20sp"
+            android:maxLength="3"
+            app:layout_constraintBottom_toBottomOf="@+id/ivMenuDrinkItem"
+            app:layout_constraintEnd_toStartOf="@+id/vglMenuDrinkItemSecondSection" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/vlgMenuDrinkItemFirstSection"
             android:layout_width="wrap_content"
@@ -84,15 +94,12 @@
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="50dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="8dp"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="@+id/ivMenuDrinkItem"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/vglMenuDrinkItemSecondSection"
             app:layout_constraintTop_toTopOf="@+id/ivMenuDrinkItem">
-
 
             <Button
                 android:id="@+id/btnMenuDrinkItemAdd"
@@ -110,8 +117,8 @@
                 android:id="@+id/tvMenuDrinkItemAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
                 android:gravity="center"
                 android:text="@string/drink_amount_placeholder"
                 android:textSize="20sp" />

@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class AppError {
-    String cafeId, phoneNumber, errorTitle, errorMessage, dateTime;
+    private String cafeId, phoneNumber, errorTitle, errorMessage, dateTime;
 
     public AppError() {}
 
@@ -54,6 +54,14 @@ public class AppError {
 
     public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getErrorTitle() {
+        return errorTitle;
+    }
+
+    public void setErrorTitle(String errorTitle) {
+        this.errorTitle = errorTitle;
     }
 
     public void sendError(AppError appError) {

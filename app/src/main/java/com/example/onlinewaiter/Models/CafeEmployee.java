@@ -3,7 +3,7 @@ package com.example.onlinewaiter.Models;
 import java.util.Date;
 
 public class CafeEmployee {
-    String employeeId, employeeName, employeeLastname, employeeGmail, employeeGender, employeeBirthDate;
+    private String employeeId, employeeName, employeeLastname, employeeGmail, employeeGender, employeeBirthDate;
 
     public CafeEmployee() {}
 

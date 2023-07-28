@@ -1,8 +1,8 @@
 package com.example.onlinewaiter.Models;
 
 public class RegisteredNumber {
-    String number, role;
-    boolean allowed;
+    private String number, role;
+    private boolean allowed;
 
     public RegisteredNumber() {}
 

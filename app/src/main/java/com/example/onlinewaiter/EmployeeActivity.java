@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -459,21 +460,13 @@ public class EmployeeActivity extends AppCompatActivity {
         final boolean[] deletedDrinkFounded = {false};
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             for(String key : orderDrinks.keySet()) {
+                CafeBillDrink cafeBillDrink = orderDrinks.get(key);
                 if(!deletedDrinkFounded[0]) {
-                    cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategories());
+                    cafeDrinksCategoriesRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeBillDrink.getCategoryId(), key));
                     cafeDrinksCategoriesRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot cafeDrinksCategoriesSnapshot) {
-                            boolean drinkDeleted = true;
-                            boolean searchedDrinkDeleted = true;
-                            for(DataSnapshot categorySnapshot : cafeDrinksCategoriesSnapshot.getChildren()) {
-                                for(DataSnapshot drinkSnapshot: categorySnapshot.child(firebaseRefPaths.getCategoryDrinksChild()).getChildren()) {
-                                    if(Objects.equals(drinkSnapshot.getKey(), key)) {
-                                        drinkDeleted = false;
-                                    }
-                                }
-                            }
-                            if(drinkDeleted) {
+                        public void onDataChange(@NonNull DataSnapshot categoryDrinkSnapshot) {
+                            if(!categoryDrinkSnapshot.exists()) {
                                 deletedDrinkFounded[0] = true;
                                 if(orderDrinks.get(key) != null) {
                                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
@@ -492,6 +485,38 @@ public class EmployeeActivity extends AppCompatActivity {
                                     else {
                                         orderViewModel.setCheckDrinksOrder(orderViewModel.getCheckDrinksOrder().getValue() + 1);
                                     }
+                                }
+                            }
+                            else if(cafeBillDrink.getDrinkAmount() > categoryDrinkSnapshot.getValue(CategoryDrink.class).getCategoryDrinkQuantity()) {
+                                CategoryDrink categoryDrink = categoryDrinkSnapshot.getValue(CategoryDrink.class);
+                                if(categoryDrinkSnapshot.getValue(CategoryDrink.class).getCategoryDrinkQuantity() == 0) {
+                                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
+                                            getResources().getString(R.string.act_employee_drink_deleted_title),
+                                            getResources().getString(R.string.act_employee_drink_no_quantity_body),
+                                            getResources().getDrawable(R.drawable.modal_no_quantity));
+                                    customAlertDialog.makeAlertDialog();
+                                    HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
+                                    updatedDrinksInOrder.remove(key);
+                                    orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                                }
+                                else {
+                                    CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
+                                            getResources().getString(R.string.act_employee_drink_quantity_change_title),
+                                            getResources().getString(R.string.act_employee_drink_quantity_change_body),
+                                            getResources().getDrawable(R.drawable.modal_unavailable_quantity));
+                                    customAlertDialog.makeAlertDialog();
+                                    HashMap<String, CafeBillDrink> updatedDrinksInOrder = orderViewModel.getDrinksInOrder().getValue();
+                                    updatedDrinksInOrder.get(key).setDrinkAmount(categoryDrink.getCategoryDrinkQuantity());
+                                    orderViewModel.setDrinksInOrder(updatedDrinksInOrder);
+                                }
+                                if(cafeBillDrink.getDrinkQuantity() != categoryDrink.getCategoryDrinkQuantity()) {
+                                    cafeBillDrink.setDrinkQuantity(categoryDrink.getCategoryDrinkQuantity());
+                                }
+                                if(orderViewModel.getCheckDrinksOrder().getValue() == null) {
+                                    orderViewModel.setCheckDrinksOrder(1);
+                                }
+                                else {
+                                    orderViewModel.setCheckDrinksOrder(orderViewModel.getCheckDrinksOrder().getValue() + 1);
                                 }
                             }
                         }
@@ -513,13 +538,14 @@ public class EmployeeActivity extends AppCompatActivity {
                         }
                     });
                 }
+                else {
+                    break;
+                }
             }
         }
     }
 
     private void checkSearchedDrinkDeletion() {
-
-        HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
         final boolean[] drinksSearched = {false};
         if(menuViewModel.getSearchedDrinks().getValue() != null && !menuViewModel.getSearchedDrinks().getValue().isEmpty()) {
             drinksSearched[0] = true;
@@ -635,7 +661,14 @@ public class EmployeeActivity extends AppCompatActivity {
                         CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
                         if(categoryDrink.getCategoryDrinkName() != null
                                 && categoryDrink.getCategoryDrinkName().toLowerCase().contains(query.toLowerCase())) {
-                            searchedDrinks.put(drinkSnapshot.getKey(), categoryDrink);
+                            CategoryDrink drinkWithCategoryId = new CategoryDrink(
+                                    categorySnapshot.getKey(),
+                                    categoryDrink.getCategoryDrinkDescription(),
+                                    categoryDrink.getCategoryDrinkImage(),
+                                    categoryDrink.getCategoryDrinkName(),
+                                    categoryDrink.getCategoryDrinkPrice(),
+                                    categoryDrink.getCategoryDrinkQuantity());
+                            searchedDrinks.put(drinkSnapshot.getKey(), drinkWithCategoryId);
                         }
                     }
                 }

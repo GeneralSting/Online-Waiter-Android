@@ -60,6 +60,7 @@ public class AppConstValue {
         public static final String FAB_DRINKS_ACTION_TEXT = "Action";
         public static final float FLOAT_PRICE_ZERO = 0f;
         public static final int DRINK_PRICE_ROUND_DECIMAL_PLACE = 2;
+        public static final String DRINK_QUANTITY_OVER_HUNDRED = "99+";
     }
 
     public static class permissionConstValue {
@@ -73,7 +74,6 @@ public class AppConstValue {
 
     public static class dateConstValue {
         public static final String DATE_TIME_FORMAT_DEFAULT = "yyyy_MM_dd_hh_mm_ss";
-        public static final String DATE_TIME_FORMAT_CRO = "d. M. yyyy. HH:mm:ss";
     }
 
     public static class orderStatusConstValue {

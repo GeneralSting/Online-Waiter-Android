@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
+import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -29,6 +31,7 @@ import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.R;
@@ -97,7 +100,6 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         rvOrderDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
 
         disableOrderConfirm();
-
         orderDrinks = orderViewModel.getDrinksInOrder().getValue();
         if(orderDrinks != null && !orderDrinks.isEmpty()) {
             modifiedOrderDrinks = new HashMap<String, CafeBillDrink>();
@@ -131,12 +133,14 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     else {
                         CategoryDrink categoryDrink = drinkSnapshot.getValue(CategoryDrink.class);
                         CafeBillDrink newCafeBillDrink = new CafeBillDrink(
-                                cafeBillDrink.getDrinkId(),
+                                key,
+                                cafeBillDrink.getCategoryId(),
                                 categoryDrink.getCategoryDrinkName(),
                                 categoryDrink.getCategoryDrinkImage(),
                                 categoryDrink.getCategoryDrinkPrice(),
                                 ((Float) categoryDrink.getCategoryDrinkPrice() * cafeBillDrink.getDrinkAmount()),
-                                cafeBillDrink.getDrinkAmount()
+                                cafeBillDrink.getDrinkAmount(),
+                                cafeBillDrink.getDrinkQuantity()
                         );
                         modifiedOrderDrinks.put(newCafeBillDrink.getDrinkId(), newCafeBillDrink);
                     }
@@ -287,6 +291,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void saveOrder(int tableNumber, boolean myOrder) {
+        updateDrinksQuantity();
         DatabaseReference newCafeBillRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrders());
         SimpleDateFormat simpleDateFormatLocale = new SimpleDateFormat(employeeViewModel.getCafeDateTimeFormat().getValue(), Locale.getDefault());
         String currentDateTime = simpleDateFormatLocale.format(new Date());
@@ -318,6 +323,54 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         String dbKey = newCafeBillRef.push().getKey();
         removeOrderDrinks();
         newCafeBillRef.child(dbKey).setValue(cafeCurrentOrder);
+    }
+
+    private void updateDrinksQuantity() {
+        for(String key : orderDrinks.keySet()) {
+            CafeBillDrink cafeBillDrink = orderDrinks.get(key);
+            DatabaseReference categroyDrinkQuantity = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinkQuantity(
+                    cafeBillDrink.getCategoryId(), cafeBillDrink.getDrinkId()));
+            categroyDrinkQuantity.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot drinkQuantitySnapshot) {
+                    int newQuantity = drinkQuantitySnapshot.getValue(Integer.class) - cafeBillDrink.getDrinkAmount();
+                    if(newQuantity < 0) {
+                        newQuantity = 0;
+                        CustomAlertDialog customAlertDialog = new CustomAlertDialog(requireActivity(),
+                                getResources().getString(R.string.act_employee_drink_negative_quantity_title),
+                                getResources().getString(R.string.act_employee_drink_negative_quantity_body),
+                                getResources().getDrawable(R.drawable.modal_no_quantity));
+                        customAlertDialog.makeAlertDialog();
+
+                        String currentDateTime = simpleDateFormat.format(new Date());
+                        appError = new AppError(
+                                menuViewModel.getCafeId().getValue(),
+                                menuViewModel.getPhoneNumber().getValue(),
+                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessages.ErrorsMessage.DRINK_QUANTITY_UNDER_ZERO,
+                                currentDateTime
+                        );
+                        appError.sendError(appError);
+                    }
+                    categroyDrinkQuantity.setValue(newQuantity);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                    serverAlertDialog.makeAlertDialog();
+                    String currentDateTime = simpleDateFormat.format(new Date());
+                    appError = new AppError(
+                            menuViewModel.getCafeId().getValue(),
+                            menuViewModel.getPhoneNumber().getValue(),
+                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                            error.getMessage().toString(),
+                            currentDateTime
+                    );
+                    appError.sendError(appError);
+                }
+            });
+        }
     }
 
     @Override

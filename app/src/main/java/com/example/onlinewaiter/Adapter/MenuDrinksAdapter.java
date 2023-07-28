@@ -15,6 +15,7 @@ import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuDrinkViewHolder;
 import com.example.onlinewaiter.ViewHolder.OrderDrinkViewHolder;
@@ -51,16 +52,20 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull MenuDrinkViewHolder holder, int position) {
+        ToastMessage toastMessage = new ToastMessage(context);
         DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         int counter = 0;
         for(String searchedDrinkKey : searchedDrinks.keySet()) {
             if(holder.getAbsoluteAdapterPosition() == counter) {
                 CategoryDrink categoryDrink = searchedDrinks.get(searchedDrinkKey);
+                final int[] drinkAmountCounter = {0};
+
                 holder.tvMenuDrinkName.setText(categoryDrink.getCategoryDrinkName());
                 holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
                 holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + cafeCurrency);
-                final int[] drinkAmountCounter = {0};
                 holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
+                holder.tvMenuDrinkQuantity.setText(categoryDrink.getShortenQunatity());
+                holder.tvMenuDrinkQuantity.setTextColor(categoryDrink.getAvailabilityWarning(context));
                 Glide.with(context).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 
                 String drinkInOrderKey = AppConstValue.variableConstValue.EMPTY_VALUE;
@@ -80,11 +85,13 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
                 if(drinkInOrderKey.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                     cafeBillDrink = new CafeBillDrink(
                             searchedDrinkKey,
+                            categoryDrink.getCategoryId(),
                             categoryDrink.getCategoryDrinkName(),
                             categoryDrink.getCategoryDrinkImage(),
                             categoryDrink.getCategoryDrinkPrice(),
                             categoryDrink.getCategoryDrinkPrice(),
-                            drinkAmountCounter[0]
+                            drinkAmountCounter[0],
+                            categoryDrink.getCategoryDrinkQuantity()
                             );
                 }
                 else {
@@ -94,12 +101,17 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
                 holder.btnMenuDrinkAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        drinkAmountCounter[0]++;
-                        holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
-                        cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount() + 1));
-                        cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
-                        orderDrinks.put(searchedDrinkKey, cafeBillDrink);
-                        callBackOrder.updateOrderDrinks(orderDrinks);
+                        if((drinkAmountCounter[0] >= categoryDrink.getCategoryDrinkQuantity())) {
+                            toastMessage.showToast(context.getResources().getString(R.string.main_drink_unavailable), 0);
+                        }
+                        else {
+                            drinkAmountCounter[0]++;
+                            holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
+                            cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount() + 1));
+                            cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
+                            orderDrinks.put(searchedDrinkKey, cafeBillDrink);
+                            callBackOrder.updateOrderDrinks(orderDrinks);
+                        }
                     }
                 });
 

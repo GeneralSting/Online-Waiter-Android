@@ -1,7 +1,7 @@
 package com.example.onlinewaiter.Models;
 
 public class RegisteredCountry {
-    String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag,
+    private String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag,
             mailBody, mailBodyInfo, mailSubject, name, nameLocale;
 
     public RegisteredCountry() {

@@ -359,7 +359,8 @@ public class CafeUpdateFragment extends Fragment {
                                             holder.etUpdateDrinkDescription.getText().toString(),
                                             categoryDrink.getCategoryDrinkImage(),
                                             holder.etUpdateDrinkName.getText().toString(),
-                                            Float.parseFloat(defaultDecimalDrinkPrice)
+                                            Float.parseFloat(defaultDecimalDrinkPrice),
+                                            0
                                     );
 
 
@@ -681,7 +682,8 @@ public class CafeUpdateFragment extends Fragment {
                                         etNewDrinkDescription.getText().toString(),
                                         AppConstValue.variableConstValue.EMPTY_VALUE,
                                         etNewDrinkName.getText().toString(),
-                                        Float.parseFloat(etNewDrinkPrice.getText().toString()));
+                                        Float.parseFloat(etNewDrinkPrice.getText().toString()),
+                                        0);
                                 if(newDrinkImageSelected) {
                                     uploadNewDrinkImage(categoryId, newCategoryDrink);
                                 }

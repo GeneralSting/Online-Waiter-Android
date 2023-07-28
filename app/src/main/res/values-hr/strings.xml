@@ -46,9 +46,14 @@
     <string name="act_employee_order_fab_txt">Broj pića u trenutnoj narudžbi:</string>
     <string name="act_employee_empty_order_fab_txt">Narudžba je prazna</string>
     <string name="act_employee_drink_deleted_title">Obrisano piće:</string>
-    <string name="act_employee_drink_deleted_body">Piće se nalazilo u vašoj trenutnoj naruđžbi, obrisano je iz vaše naruđžbe</string>
+    <string name="act_employee_drink_deleted_body">Piće se nalazilo u vašoj trenutnoj naruđžbi, obrisano je iz vaše naruđžbe!</string>
     <string name="act_employee_search_query_menu">Naziv pića…</string>
     <string name="act_employee_search_query_orders">Broj stola…</string>
+    <string name="act_employee_drink_no_quantity_body">Piće se nalazilo u vašoj trenutnoj naruđžbi, nema dostupne količine!</string>
+    <string name="act_employee_drink_quantity_change_title">Nedovoljna količina za piće:</string>
+    <string name="act_employee_drink_quantity_change_body">Nema dovoljne količine za piće u trenutnoj narudžbi, postavljena je preostala količina</string>
+    <string name="act_employee_drink_negative_quantity_title">Negativna količina:</string>
+    <string name="act_employee_drink_negative_quantity_body">Nova količina je bila negativna. Aplikacija je postavila stanje na nulu (0), molimo provjerite dostupnost.</string>
 
     <!--Employee activity menu fragment-->
     <string name="menu_drink_name_placeholder">Naziv Pića</string>
@@ -161,6 +166,8 @@
     <string name="main_cv_employees">Zaposlenih u kafiću</string>
     <string name="main_cv_categories">Kategorija u meniju kafića</string>
     <string name="main_cv_drinks">Ukupno pića u meniju kafića</string>
+    <string name="main_drink_unavailable">Količinski nedostupno</string>
+
 
     <!--Owner Activity statistics fragment-->
     <string name="statistics_tv_title">Statistika</string>

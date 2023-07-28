@@ -15,6 +15,7 @@ public class AppErrorMessages {
     public static class ErrorsMessage {
         public static final String FIREBASE_PATH_REGISTERED_COUNTRY = "Path for registered country code not found, country standards are not collected";
         public static final String FIREBASE_PATH_REGISTERED_COUNTRY_OWNER = "Owner's side, path for registered country code not found, country standards are not collected";
+        public static final String DRINK_QUANTITY_UNDER_ZERO = "Employee finished order, new drink quantity is negative number";
     }
 }
 

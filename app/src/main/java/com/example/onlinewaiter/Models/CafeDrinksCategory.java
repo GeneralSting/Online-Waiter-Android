@@ -3,8 +3,8 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeDrinksCategory {
-    String cafeCategoryDescription, cafeCategoryImage, cafeCategoryName;
-    HashMap<String, CategoryDrink> categoryDrinks;
+    private String cafeCategoryDescription, cafeCategoryImage, cafeCategoryName;
+    private HashMap<String, CategoryDrink> categoryDrinks;
 
     public CafeDrinksCategory() {}
 

@@ -1,7 +1,7 @@
 package com.example.onlinewaiter.Models;
 
 public class CountryNumber {
-    String countryName, countryFlag, countryNameLocal, countryNumberCode;
+    private String countryName, countryFlag, countryNameLocal, countryNumberCode;
 
     public CountryNumber() {}
 

@@ -47,6 +47,11 @@
     <string name="act_employee_drink_deleted_body">This drink was in your current order, it is deleted and removed from order</string>
     <string name="act_employee_search_query_menu">Drink name…</string>
     <string name="act_employee_search_query_orders">Table number…</string>
+    <string name="act_employee_drink_no_quantity_body">This drink was in your current order, the drink has no available quantity</string>
+    <string name="act_employee_drink_quantity_change_title">Quantity change for drink:</string>
+    <string name="act_employee_drink_quantity_change_body">Drink in current order does not have required quantity, the remaining amount is set to drink</string>
+    <string name="act_employee_drink_negative_quantity_title">Negative quantity:</string>
+    <string name="act_employee_drink_negative_quantity_body">Drink quantity was negative. App set quantity to zero (0), please check drink availability</string>
 
 
     <!--Employe activity menu fragment-->
@@ -160,6 +165,7 @@
     <string name="main_cv_employees">Employees working in your cafe</string>
     <string name="main_cv_categories">Categories in your cafe menu</string>
     <string name="main_cv_drinks">Total drinks in your cafe menu</string>
+    <string name="main_drink_unavailable">Unavailable quantity</string>
 
 
     <!--Owner Activity statistics fragment-->

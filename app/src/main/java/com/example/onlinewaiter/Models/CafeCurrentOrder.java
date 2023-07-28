@@ -3,9 +3,9 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeCurrentOrder {
-    String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage;
-    int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
-    HashMap<String, CafeBillDrink> currentOrderDrinks;
+    private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage;
+    private int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
+    private HashMap<String, CafeBillDrink> currentOrderDrinks;
 
     public CafeCurrentOrder() {}
 

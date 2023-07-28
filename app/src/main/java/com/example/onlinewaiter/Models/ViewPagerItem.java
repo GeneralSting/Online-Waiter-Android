@@ -1,8 +1,8 @@
 package com.example.onlinewaiter.Models;
 
 public class ViewPagerItem {
-    String imageId, header, description;
-    boolean showScrollIcon;
+    private String imageId, header, description;
+    private boolean showScrollIcon;
 
     public ViewPagerItem() {}
 

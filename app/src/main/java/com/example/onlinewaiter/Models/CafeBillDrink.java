@@ -1,22 +1,23 @@
 package com.example.onlinewaiter.Models;
 
 public class CafeBillDrink {
-    String drinkId, drinkName, drinkImage, categoryId;
-    float drinkPrice, drinkTotalPrice;
-    int drinkAmount;
+    private String drinkId, drinkName, drinkImage, categoryId;
+    private float drinkPrice, drinkTotalPrice;
+    private int drinkAmount, drinkQuantity;
 
     public CafeBillDrink() {}
 
-    public CafeBillDrink(String drinkId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount) {
+    public CafeBillDrink(String drinkId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount, int drinkQuantity) {
         this.drinkId = drinkId;
         this.drinkName = drinkName;
         this.drinkImage = drinkImage;
         this.drinkPrice = drinkPrice;
         this.drinkTotalPrice = drinkTotalPrice;
         this.drinkAmount = drinkAmount;
+        this.drinkQuantity = drinkQuantity;
     }
 
-    public CafeBillDrink(String drinkId, String categoryId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount) {
+    public CafeBillDrink(String drinkId, String categoryId, String drinkName, String drinkImage, float drinkPrice, float drinkTotalPrice, int drinkAmount, int drinkQuantity) {
         this.drinkId = drinkId;
         this.categoryId = categoryId;
         this.drinkName = drinkName;
@@ -24,6 +25,7 @@ public class CafeBillDrink {
         this.drinkPrice = drinkPrice;
         this.drinkTotalPrice = drinkTotalPrice;
         this.drinkAmount = drinkAmount;
+        this.drinkQuantity = drinkQuantity;
     }
 
     public String getDrinkId() {
@@ -80,5 +82,13 @@ public class CafeBillDrink {
 
     public void setCategoryId(String categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public int getDrinkQuantity() {
+        return drinkQuantity;
+    }
+
+    public void setDrinkQuantity(int drinkQuantity) {
+        this.drinkQuantity = drinkQuantity;
     }
 }

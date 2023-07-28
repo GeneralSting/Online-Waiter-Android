@@ -1,6 +1,7 @@
 package com.example.onlinewaiter.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.OrderDrinkViewHolder;
 
@@ -44,9 +46,9 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
         int counter = 0;
         DecimalFormat decimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
         HashMap<String, CafeBillDrink> newOrderDrinks = new HashMap<>();
-        for(Map.Entry<String, CafeBillDrink> entry : orderDrinks.entrySet()) {
+        for(String key : orderDrinks.keySet()) {
             if(holder.getAbsoluteAdapterPosition() == counter) {
-                CafeBillDrink cafeBillDrink = entry.getValue();
+                CafeBillDrink cafeBillDrink = orderDrinks.get(key);
                 holder.tvOrderDrinkName.setText(cafeBillDrink.getDrinkName());
                 holder.tvOrderDrinkPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkPrice()) + cafeCurrency);
                 holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
@@ -56,12 +58,18 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
                 holder.btnOrderDrinkAdd.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount() + 1));
-                        cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
-                        holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
-                        holder.tvOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
-                        orderDrinks.put(cafeBillDrink.getDrinkId(), cafeBillDrink);
-                        callBackOrder.updateOrderDrinks(orderDrinks);
+                        if(cafeBillDrink.getDrinkAmount() < cafeBillDrink.getDrinkQuantity()) {
+                            cafeBillDrink.setDrinkAmount((cafeBillDrink.getDrinkAmount() + 1));
+                            cafeBillDrink.setDrinkTotalPrice((Float) (cafeBillDrink.getDrinkPrice() * cafeBillDrink.getDrinkAmount()));
+                            holder.tvOrderDrinkTotalPrice.setText(decimalFormat.format(cafeBillDrink.getDrinkTotalPrice()) + cafeCurrency);
+                            holder.tvOrderDrinkAmount.setText(String.valueOf(cafeBillDrink.getDrinkAmount()));
+                            orderDrinks.put(cafeBillDrink.getDrinkId(), cafeBillDrink);
+                            callBackOrder.updateOrderDrinks(orderDrinks);
+                        }
+                        else {
+                            ToastMessage toastMessage = new ToastMessage(context);
+                            toastMessage.showToast(context.getResources().getString(R.string.main_drink_unavailable), 0);
+                        }
                     }
                 });
 

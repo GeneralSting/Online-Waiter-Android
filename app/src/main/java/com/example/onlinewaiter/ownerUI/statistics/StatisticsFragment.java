@@ -83,7 +83,6 @@ public class StatisticsFragment extends Fragment {
 
     //firebase
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference cafeBillsRef;
     private FirebaseRefPaths firebaseRefPaths;
 
     @Override
@@ -146,7 +145,7 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
+
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
 
@@ -161,15 +160,7 @@ public class StatisticsFragment extends Fragment {
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
-
                         databaseQuery(databaseQuerySize, 0);
-
-                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                statisticsDialog.dismiss();
-                            }
-                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -302,7 +293,6 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -318,15 +308,7 @@ public class StatisticsFragment extends Fragment {
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
-
                         databaseQuery(databaseQuerySize, 1);
-
-                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                statisticsDialog.dismiss();
-                            }
-                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -459,7 +441,6 @@ public class StatisticsFragment extends Fragment {
 
                 EditText etStatisticQuerySize = (EditText) statisticsView.findViewById(R.id.etStatisticQuerySize);
                 ImageView ivStatisticQuerySize = (ImageView) statisticsView.findViewById(R.id.ivStatisticQuerySize);
-                //ImageButton ibCloseOwnerStatistic = (ImageButton) statisticsView.findViewById(R.id.ibCloseOwnerStatistic);
 
                 tlStatisticEmployees = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployees);
                 tlStatisticEmployeesTitle = (TableLayout) statisticsView.findViewById(R.id.tlOwnerStatisticEmployeesTitle);
@@ -475,15 +456,7 @@ public class StatisticsFragment extends Fragment {
                 statisticsDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                     @Override
                     public void onShow(DialogInterface dialogInterface) {
-
                         databaseQuery(databaseQuerySize, 2);
-
-                        /*ibCloseOwnerStatistic.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                statisticsDialog.dismiss();
-                            }
-                        });*/
                         btnDialogStatisticsNumbers.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -583,7 +556,7 @@ public class StatisticsFragment extends Fragment {
         final int QUERY_TYPE_EMPLOYEES = AppConstValue.statisticsConstValue.QUERY_TYPE_EMPLOYEES;
         final int QUERY_TYPE_DRINKS = AppConstValue.statisticsConstValue.QUERY_TYPE_DRINKS;
         final int QUERY_TYPE_TABLES = AppConstValue.statisticsConstValue.QUERY_TYPE_TABLES;
-        cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBillsOwner(mainViewModel.getOwnerCafeId().getValue()));
+        DatabaseReference cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBillsOwner(mainViewModel.getOwnerCafeId().getValue()));
         Query queryCafeBills = cafeBillsRef.limitToLast(querySize);
         queryCafeBills.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

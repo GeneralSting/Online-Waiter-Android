@@ -1,7 +1,7 @@
 package com.example.onlinewaiter.Models;
 
 public class AppInfo {
-    String appNews, appPurpose, appUserPurpose, appVersion, appNewsImage, appPurposeImage, appUserPurposeImage;
+    private String appNews, appPurpose, appUserPurpose, appVersion, appNewsImage, appPurposeImage, appUserPurposeImage;
 
     //for firebase
     public AppInfo() {}
