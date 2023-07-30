@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
+import com.example.onlinewaiter.Interfaces.DrinkShortenQuantity;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
@@ -32,15 +33,17 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
     private HashMap<String, CafeBillDrink> orderDrinks;
     private final String cafeCurrency;
     private final CallBackOrder callBackOrder;
+    private final DrinkShortenQuantity drinkShortenQuantity;
 
 
     public MenuDrinksAdapter (Context context, HashMap<String, CategoryDrink> searchedDrinks, HashMap<String, CafeBillDrink> orderDrinks,
-                              String cafeCurrency, CallBackOrder callBackOrder) {
+                              String cafeCurrency, CallBackOrder callBackOrder, DrinkShortenQuantity drinkShortenQuantity) {
         this.context = context;
         this.searchedDrinks = searchedDrinks;
         this.orderDrinks = orderDrinks;
         this.cafeCurrency = cafeCurrency;
         this.callBackOrder = callBackOrder;
+        this.drinkShortenQuantity = drinkShortenQuantity;
     }
 
     @NonNull
@@ -64,7 +67,7 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
                 holder.tvMenuDrinkDescription.setText(categoryDrink.getCategoryDrinkDescription());
                 holder.tvMenuDrinkPrice.setText(decimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + cafeCurrency);
                 holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
-                holder.tvMenuDrinkQuantity.setText(categoryDrink.getShortenQunatity());
+                holder.tvMenuDrinkQuantity.setText(drinkShortenQuantity.getShortenQuantity(categoryDrink.getCategoryDrinkQuantity()));
                 holder.tvMenuDrinkQuantity.setTextColor(categoryDrink.getAvailabilityWarning(context));
                 Glide.with(context).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 

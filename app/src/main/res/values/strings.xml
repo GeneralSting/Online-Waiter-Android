@@ -91,12 +91,15 @@
     <string name="cafe_update_drink_name_condition_failed">Drink name 1–25 characters</string>
     <string name="cafe_update_drink_description_condition_failed">Drink description 1–60 characters</string>
     <string name="cafe_update_drink_price_condition_failed">Drink price 0.00–999999.99</string>
+    <string name="cafe_update_drink_quantity_condition_failed">Drink quantity 0–999999999</string>
     <string name="cafe_update_drink_price_input_failed">Incorrect price input</string>
+    <string name="cafe_update_drink_quantity_input_failed">Drink quantity not filled</string>
     <string name="cafe_update_drink_info_uploading">Updating drink information…</string>
     <string name="cafe_update_drink_deletion">Deleting drink…</string>
     <string name="cafe_update_new_drink_dialog_title">New drink for category:</string>
     <string name="cafe_update_drink_price_incorrect">Incorrect price input</string>
     <string name="cafe_update_new_drink_price_hint">2.00</string>
+    <string name="cafe_update_new_drink_quantity_hint">Quantity</string>
     <string name="cafe_update_new_drink_successfully_added">Successfully added new drink</string>
     <string name="cafe_update_drink_update_successful">Drink update successful</string>
     <string name="cafe_update_drink_info_update_successful">Menu informations updated successfully</string>

@@ -79,12 +79,6 @@ public class CategoryDrink {
         this.categoryDrinkQuantity = categoryDrinkQuantity;
     }
 
-    public String getShortenQunatity() {
-        if(this.categoryDrinkQuantity > 99) {
-            return AppConstValue.variableConstValue.DRINK_QUANTITY_OVER_HUNDRED;
-        }
-        return String.valueOf(categoryDrinkQuantity);
-    }
 
     public int getAvailabilityWarning(Context context) {
         if(this.categoryDrinkQuantity == 0) {

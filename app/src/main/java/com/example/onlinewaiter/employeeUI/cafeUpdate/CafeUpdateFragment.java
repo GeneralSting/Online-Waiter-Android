@@ -18,6 +18,7 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -101,17 +102,20 @@ public class CafeUpdateFragment extends Fragment {
 
     //global variables/objects
     private FragmentCafeUpdateBinding binding;
-    private boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
+    private boolean checkNewDrinkName, checkNewDrinkDescription, checkNewDrinkPrice, checkNewDrinkQuantity, newDrinkPriceSecondConfirm, newDrinkImageSecondConfirm,
             newDrinkImageSelected, addingNewDrink;
     private String cafeCountryCode = AppConstValue.variableConstValue.DEFAULT_CAFE_COUNTRY_CODE;
     private ToastMessage toastMessage;
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     private CafeUpdateViewModel cafeUpdateViewModel;
+    private EmployeeViewModel employeeViewModel;
     private ProgressDialog progressDialog;
-    private DecimalFormat cafeDecimalFormat;
+    private DecimalFormat defaultDecimalFormat;
+    private DecimalFormat decimalFormatLocale;
     private final DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
+    private final DecimalFormatSymbols decimalFormatSymbolsLocale = new DecimalFormatSymbols();
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.getDefault());
     private ActivityResultLauncher<String> launchImageCropper;
 
     //firebase
@@ -134,14 +138,16 @@ public class CafeUpdateFragment extends Fragment {
 
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
-        EmployeeViewModel employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
+        employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(requireActivity()).get(CafeUpdateViewModel.class);
         cafeCountryCode = cafeUpdateViewModel.getCafeCountry().getValue();
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
         progressDialog = new ProgressDialog(getActivity());
+        decimalFormatSymbols.setDecimalSeparator(AppConstValue.variableConstValue.CHAR_DOT);
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(employeeViewModel.getCafeDecimalSeperator().getValue()).charAt(0));
-        cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
+        defaultDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
+        decimalFormatLocale = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbolsLocale);
         addingNewDrink = false;
 
         linearLayoutContainer = binding.llCafeUpdateContainer;
@@ -338,35 +344,39 @@ public class CafeUpdateFragment extends Fragment {
                                     AppConstValue.decimalPriceInputFilter.MAX_DIGITS_BEFORE_DOT,
                                     AppConstValue.decimalPriceInputFilter.MAX_DIGITS_AFTER_DOT,
                                     AppConstValue.decimalPriceInputFilter.MAX_VALUE)});
-                            holder.etUpdateDrinkPrice.setText(cafeDecimalFormat.format(categoryDrink.getCategoryDrinkPrice()));
+                            holder.etUpdateDrinkPrice.setText(decimalFormatLocale.format(categoryDrink.getCategoryDrinkPrice()));
+                            holder.tvDrinkPriceCurrency.setText(employeeViewModel.getCafeCurrency().getValue());
+                            holder.etUpdateDrinkQuantity.setText(String.valueOf(categoryDrink.getCategoryDrinkQuantity()));
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrink);
                             Glide.with(requireActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivUpdateDrinkComparison);
                             holder.btnUpdateDrinkAccept.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     boolean imageSame = areImagesSame(holder.ivUpdateDrinkComparison, holder.ivUpdateDrink);
-
-                                    if(holder.etUpdateDrinkPrice.getText().toString().equals(AppConstValue.variableConstValue.DOT) ||
-                                            holder.etUpdateDrinkPrice.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
-                                        holder.etUpdateDrinkPrice.setText(AppConstValue.variableConstValue.ZERO_VALUE);
-                                    }
+                                    boolean isPriceEmpty = false;
 
                                     String defaultDecimalDrinkPrice = holder.etUpdateDrinkPrice.getText().toString().replaceAll(
                                             AppConstValue.regex.NON_NUMERIC_CHARACHTERS,
                                             AppConstValue.variableConstValue.DEFAULT_DECIMAL_SEPERATOR);
 
-                                    CategoryDrink updatedCategoryDrink = new CategoryDrink(
-                                            holder.etUpdateDrinkDescription.getText().toString(),
-                                            categoryDrink.getCategoryDrinkImage(),
-                                            holder.etUpdateDrinkName.getText().toString(),
-                                            Float.parseFloat(defaultDecimalDrinkPrice),
-                                            0
-                                    );
+                                    try {
+                                        Float.parseFloat(defaultDecimalDrinkPrice);
+                                    } catch (Exception e) {
+                                        isPriceEmpty = true;
+                                    }
 
-
-                                    if(categoryDrink.getCategoryDrinkName().equals(updatedCategoryDrink.getCategoryDrinkName()) &&
-                                    categoryDrink.getCategoryDrinkDescription().equals(updatedCategoryDrink.getCategoryDrinkDescription()) &&
-                                    priceToTextConverter(categoryDrink.getCategoryDrinkPrice()).equals(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()))) {
+                                    if(holder.etUpdateDrinkName.getText().toString().equals(categoryDrink.getCategoryDrinkName()) &&
+                                    holder.etUpdateDrinkDescription.getText().toString().equals(categoryDrink.getCategoryDrinkDescription()) &&
+                                    !isPriceEmpty &&
+                                    defaultDecimalFormat.format(Float.parseFloat(defaultDecimalDrinkPrice)).equals(defaultDecimalFormat.format(categoryDrink.getCategoryDrinkPrice())) &&
+                                    Integer.parseInt(holder.etUpdateDrinkQuantity.getText().toString()) == categoryDrink.getCategoryDrinkQuantity()) {
+                                        CategoryDrink updatedCategoryDrink = new CategoryDrink(
+                                                holder.etUpdateDrinkDescription.getText().toString(),
+                                                categoryDrink.getCategoryDrinkImage(),
+                                                holder.etUpdateDrinkName.getText().toString(),
+                                                Float.parseFloat(defaultDecimalDrinkPrice),
+                                                Integer.parseInt(holder.etUpdateDrinkQuantity.getText().toString())
+                                        );
                                         if(!imageSame) {
                                             updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
                                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_img_update_successful), 0);
@@ -377,14 +387,34 @@ public class CafeUpdateFragment extends Fragment {
                                     }
                                     else {
                                         if(!imageSame) {
-                                            if(updateDrinkCheck(updatedCategoryDrink)) {
+                                            if(updateDrinkCheck(holder.etUpdateDrinkName.getText().toString(),
+                                                    holder.etUpdateDrinkDescription.getText().toString(),
+                                                    holder.etUpdateDrinkPrice.getText().toString(),
+                                                    holder.etUpdateDrinkQuantity.getText().toString())) {
+                                                CategoryDrink updatedCategoryDrink = new CategoryDrink(
+                                                        holder.etUpdateDrinkDescription.getText().toString(),
+                                                        categoryDrink.getCategoryDrinkImage(),
+                                                        holder.etUpdateDrinkName.getText().toString(),
+                                                        Float.parseFloat(defaultDecimalDrinkPrice),
+                                                        Integer.parseInt(holder.etUpdateDrinkQuantity.getText().toString())
+                                                );
                                                 updateDrinkInfo(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink);
                                                 updateDrinkImage(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink, holder.ivUpdateDrink);
                                                 toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_update_successful), 0);
                                             }
                                         }
                                         else {
-                                            if(updateDrinkCheck(updatedCategoryDrink)) {
+                                            if(updateDrinkCheck(holder.etUpdateDrinkName.getText().toString(),
+                                                    holder.etUpdateDrinkDescription.getText().toString(),
+                                                    holder.etUpdateDrinkPrice.getText().toString(),
+                                                    holder.etUpdateDrinkQuantity.getText().toString())) {
+                                                CategoryDrink updatedCategoryDrink = new CategoryDrink(
+                                                        holder.etUpdateDrinkDescription.getText().toString(),
+                                                        categoryDrink.getCategoryDrinkImage(),
+                                                        holder.etUpdateDrinkName.getText().toString(),
+                                                        Float.parseFloat(defaultDecimalDrinkPrice),
+                                                        Integer.parseInt(holder.etUpdateDrinkQuantity.getText().toString())
+                                                );
                                                 updateDrinkInfo(cafeCategoryId, categoryDrinkSnapshot.getKey(), updatedCategoryDrink);
                                                 toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_info_update_successful), 0);
                                             }
@@ -437,6 +467,207 @@ public class CafeUpdateFragment extends Fragment {
         };
         rvCafeUpdateCategoryDrinks.setAdapter(adapterCategoryDrinks);
         adapterCategoryDrinks.startListening();
+    }
+
+    private boolean updateDrinkCheck(String updatedName, String updatedDescription, String updatedPrice,  String updatedQuantity) {
+        if(updatedName.length() > 25 || updatedName.length() < 1) {
+            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_name_condition_failed), 0);
+            return false;
+        }
+        if(updatedDescription.length() > 60 || updatedDescription.length() < 1) {
+            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_description_condition_failed), 0);
+            return false;
+        }
+
+        if(updatedPrice.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_condition_failed), 0);
+            return false;
+        }
+        if(updatedPrice.equals(AppConstValue.variableConstValue.DOT) ||
+                updatedPrice.equals(AppConstValue.variableConstValue.DOT_ZERO)) {
+            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_input_failed), 0);
+            return false;
+        }
+
+        if(updatedQuantity.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_quantity_input_failed), 0);
+            return false;
+        }
+
+        return true;
+    }
+
+    private void updateDrinkInfo(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink) {
+        setProgressDialog(getResources().getString(R.string.cafe_update_drink_info_uploading));
+        categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
+        categoryDrinkRef.setValue(updatedCategoryDrink);
+        closeProgressDialog();
+    }
+
+    private void removeDrink(String cafeCategoryId, String categoryDrinkId, CategoryDrink categoryDrink) {
+        boolean drinkInCurrentOrder = false;
+        HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
+        if(orderDrinks != null && !orderDrinks.isEmpty()) {
+            for (String key : orderDrinks.keySet()) {
+                if(key.equals(categoryDrinkId)) {
+                    drinkInCurrentOrder = true;
+                }
+            }
+        }
+
+        View removeDrinkView = getLayoutInflater().inflate(R.layout.dialog_remove_drink, null);
+        TextView tvRemoveDrinkName = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkName);
+        TextView tvRemoveDrinkCategory = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkCategory);
+        ImageView ivRemoveDrink = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrink);
+        Button btnRemoveDrinkAccept = (Button) removeDrinkView.findViewById(R.id.btnRemoveDrinkAccept);
+        ImageButton ibCloseRemoveDrink = (ImageButton) removeDrinkView.findViewById(R.id.ibCloseRemoveDrink);
+
+        if(drinkInCurrentOrder) {
+            TextView tvRemoveDrinkTitle = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkTitle);
+            LinearLayoutCompat llRemoveDrinkContainer = (LinearLayoutCompat) removeDrinkView.findViewById(R.id.llRemoveDrinkContainer);
+            int containerPL = llRemoveDrinkContainer.getPaddingLeft();
+            int containerPT = llRemoveDrinkContainer.getPaddingTop();
+            int containerPR = llRemoveDrinkContainer.getPaddingRight();
+            int containerPB = llRemoveDrinkContainer.getPaddingBottom();
+            llRemoveDrinkContainer.setBackgroundResource(R.drawable.action_dialog_danger_bg);
+            llRemoveDrinkContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
+
+            ImageView ivRemoveDrinkIcon = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrinkIcon);
+            int iconPL = ivRemoveDrinkIcon.getPaddingLeft();
+            int iconPT = ivRemoveDrinkIcon.getPaddingTop();
+            int iconPR = ivRemoveDrinkIcon.getPaddingRight();
+            int iconPB = ivRemoveDrinkIcon.getPaddingBottom();
+            ivRemoveDrinkIcon.setBackgroundResource(R.drawable.action_dialog_danger_bg);
+            ivRemoveDrinkIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
+
+            tvRemoveDrinkTitle.setText(getResources().getString(R.string.cafe_update_drink_remove_dialog_order_title));
+        }
+
+        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategoryName(cafeCategoryId));
+        removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot categoryNameSnapshot) {
+                tvRemoveDrinkCategory.setText(Objects.requireNonNull(categoryNameSnapshot.getValue()).toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                closeProgressDialog();
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+
+
+        AlertDialog dialogRemoveDrink;
+        dialogRemoveDrink = new AlertDialog.Builder(getActivity())
+                .setView(removeDrinkView)
+                .create();
+        dialogRemoveDrink.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        tvRemoveDrinkName.setText(categoryDrink.getCategoryDrinkName());
+        Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(ivRemoveDrink);
+
+        boolean finalDrinkInCurrentOrder = drinkInCurrentOrder;
+        dialogRemoveDrink.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                ibCloseRemoveDrink.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialogRemoveDrink.dismiss();
+                    }
+                });
+
+                btnRemoveDrinkAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setProgressDialog(getResources().getString(R.string.cafe_update_drink_deletion));
+                        if(finalDrinkInCurrentOrder) {
+                            orderDrinks.remove(categoryDrinkId);
+                            orderViewModel.setDrinksInOrder(orderDrinks);
+                        }
+
+                        if(!categoryDrink.getCategoryDrinkImage().equals(firebaseRefPaths.getStorageCategoryDrinksNoImage())) {
+                            storageDeleteImageRef = firebaseStorage.getReferenceFromUrl(categoryDrink.getCategoryDrinkImage());
+                            storageDeleteImageRef.delete();
+                        }
+                        checkDeletedDrinkCategory(cafeCategoryId, categoryDrinkId);
+                        dialogRemoveDrink.dismiss();
+                        closeProgressDialog();
+                    }
+                });
+            }
+        });
+        dialogRemoveDrink.show();
+    }
+
+    private void checkDeletedDrinkCategory(String cafeCategoryId, String categoryDrinkId) {
+        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
+        removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()) {
+                    deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(cafeCategoryId));
+                    deleteCafeCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if(!snapshot.exists() || snapshot.getChildrenCount() == 1) {
+                                firebaseDatabase.getReference(firebaseRefPaths.getCafeCategory(cafeCategoryId)).removeValue();
+                            }
+                            else {
+                                removeDrinkRef.removeValue();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            closeProgressDialog();
+                            ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                            serverAlertDialog.makeAlertDialog();
+
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    menuViewModel.getCafeId().getValue(),
+                                    menuViewModel.getPhoneNumber().getValue(),
+                                    AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
+                                    error.getMessage().toString(),
+                                    currentDateTime
+                            );
+                            appError.sendError(appError);
+                        }
+                    });
+                }
+                else {
+                    toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_already_deleted), 0);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
+                serverAlertDialog.makeAlertDialog();
+
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
     }
 
     private void bottomImagePicker() {
@@ -528,13 +759,14 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private void createNewDrink(String categoryId, String categoryName) {
-        checkNewDrinkName = checkNewDrinkDescription = checkNewDrinkPrice = false;
+        checkNewDrinkName = checkNewDrinkDescription = checkNewDrinkPrice = checkNewDrinkQuantity = false;
         newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = newDrinkImageSelected = true;
 
         View newDrinkView = getLayoutInflater().inflate(R.layout.dialog_new_drink, null);
         EditText etNewDrinkName = newDrinkView.findViewById(R.id.etNewDrinkName);
         EditText etNewDrinkDescription = newDrinkView.findViewById(R.id.etNewDrinkDescription);
         EditText etNewDrinkPrice = newDrinkView.findViewById(R.id.etNewDrinkPrice);
+        EditText etNewDrinkQuantity = newDrinkView.findViewById(R.id.etNewDrinkQuantity);
         etGlobalNewDrinkPrice = etNewDrinkPrice;
         TextView tvNewDrinkTitle = newDrinkView.findViewById(R.id.tvNewDrinkTitle);
         etNewDrinkPrice.setFilters(new InputFilter[] {new DecimalPriceInputFilter(6, 2, 1000000)});
@@ -623,7 +855,7 @@ public class CafeUpdateFragment extends Fragment {
                                 etNewDrinkPrice.getText().length() == 1 &&
                                         etNewDrinkPrice.getText().charAt(0) == AppConstValue.variableConstValue.CHAR_DOT) {
                             toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_incorrect), 0);
-                            etNewDrinkPrice.setText("");
+                            etNewDrinkPrice.setText(AppConstValue.variableConstValue.EMPTY_VALUE);
                         }
                         if(etNewDrinkPrice.getText().length() >= 9) {
                             checkNewDrinkPrice = true;
@@ -635,6 +867,34 @@ public class CafeUpdateFragment extends Fragment {
                             checkNewDrinkPrice = false;
                         }
                     }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+
+                etNewDrinkQuantity.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        newDrinkPriceSecondConfirm = newDrinkImageSecondConfirm = true;
+                        etNewDrinkPrice.setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, 0, 0);
+                        ivImageNotAdded.setVisibility(View.GONE);
+                        if(etNewDrinkQuantity.getText().length() >= 9) {
+                            checkNewDrinkQuantity = true;
+                            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_quantity_condition_failed), 0);
+                            etNewDrinkQuantity.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.red_negative)));
+                        }
+                        else if(checkNewDrinkQuantity) {
+                            etNewDrinkQuantity.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.tumbleweed)));
+                            checkNewDrinkQuantity = false;
+                        }
+                    }
+
                     @Override
                     public void afterTextChanged(Editable editable) {
 
@@ -683,7 +943,8 @@ public class CafeUpdateFragment extends Fragment {
                                         AppConstValue.variableConstValue.EMPTY_VALUE,
                                         etNewDrinkName.getText().toString(),
                                         Float.parseFloat(etNewDrinkPrice.getText().toString()),
-                                        0);
+                                        Integer.parseInt(etNewDrinkQuantity.getText().toString())
+                                );
                                 if(newDrinkImageSelected) {
                                     uploadNewDrinkImage(categoryId, newCategoryDrink);
                                 }
@@ -912,208 +1173,6 @@ public class CafeUpdateFragment extends Fragment {
         });
     }
 
-    private boolean updateDrinkCheck(CategoryDrink updatedCategoryDrink) {
-        if(updatedCategoryDrink.getCategoryDrinkName().length() > 25 || updatedCategoryDrink.getCategoryDrinkName().length() < 1) {
-            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_name_condition_failed), 0);
-            return false;
-        }
-        if(updatedCategoryDrink.getCategoryDrinkDescription().length() > 60 || updatedCategoryDrink.getCategoryDrinkDescription().length() < 1) {
-            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_description_condition_failed), 0);
-            return false;
-        }
-        //here is max length 10 because france locale text number looks like: 123 456,89 -> additional space
-        if(priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()).length() > 10 ||
-                priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice()).length() < 1) {
-            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_condition_failed), 0);
-            return false;
-        }
-        String updatedDrinkTextPrice = priceToTextConverter(updatedCategoryDrink.getCategoryDrinkPrice());
-        if (updatedDrinkTextPrice.length() == 2 && updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_ZERO_VALUE &&
-                (updatedDrinkTextPrice.charAt(1) == AppConstValue.variableConstValue.CHAR_COMMA ||
-                updatedDrinkTextPrice.charAt(1) == AppConstValue.variableConstValue.CHAR_DOT)) {
-            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_input_failed), 0);
-            return false;
-        }
-        if(updatedDrinkTextPrice.length() == 1 && updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_DOT
-                || updatedDrinkTextPrice.charAt(0) == AppConstValue.variableConstValue.CHAR_COMMA) {
-            toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_price_input_failed), 0);
-        }
-        return true;
-    }
-
-    private void updateDrinkInfo(String cafeCategoryId, String categoryDrinkId, CategoryDrink updatedCategoryDrink) {
-        setProgressDialog(getResources().getString(R.string.cafe_update_drink_info_uploading));
-        categoryDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
-        categoryDrinkRef.setValue(updatedCategoryDrink);
-        closeProgressDialog();
-    }
-
-    private void removeDrink(String cafeCategoryId, String categoryDrinkId, CategoryDrink categoryDrink) {
-        boolean drinkInCurrentOrder = false;
-        HashMap<String, CafeBillDrink> orderDrinks = orderViewModel.getDrinksInOrder().getValue();
-        if(orderDrinks != null && !orderDrinks.isEmpty()) {
-            for (String key : orderDrinks.keySet()) {
-                if(key.equals(categoryDrinkId)) {
-                    drinkInCurrentOrder = true;
-                }
-            }
-        }
-
-        View removeDrinkView = getLayoutInflater().inflate(R.layout.dialog_remove_drink, null);
-        TextView tvRemoveDrinkName = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkName);
-        TextView tvRemoveDrinkCategory = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkCategory);
-        ImageView ivRemoveDrink = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrink);
-        Button btnRemoveDrinkAccept = (Button) removeDrinkView.findViewById(R.id.btnRemoveDrinkAccept);
-        ImageButton ibCloseRemoveDrink = (ImageButton) removeDrinkView.findViewById(R.id.ibCloseRemoveDrink);
-
-        if(drinkInCurrentOrder) {
-            TextView tvRemoveDrinkTitle = (TextView) removeDrinkView.findViewById(R.id.tvRemoveDrinkTitle);
-            LinearLayoutCompat llRemoveDrinkContainer = (LinearLayoutCompat) removeDrinkView.findViewById(R.id.llRemoveDrinkContainer);
-            int containerPL = llRemoveDrinkContainer.getPaddingLeft();
-            int containerPT = llRemoveDrinkContainer.getPaddingTop();
-            int containerPR = llRemoveDrinkContainer.getPaddingRight();
-            int containerPB = llRemoveDrinkContainer.getPaddingBottom();
-            llRemoveDrinkContainer.setBackgroundResource(R.drawable.action_dialog_danger_bg);
-            llRemoveDrinkContainer.setPadding(containerPL, containerPT, containerPR, containerPB);
-
-            ImageView ivRemoveDrinkIcon = (ImageView) removeDrinkView.findViewById(R.id.ivRemoveDrinkIcon);
-            int iconPL = ivRemoveDrinkIcon.getPaddingLeft();
-            int iconPT = ivRemoveDrinkIcon.getPaddingTop();
-            int iconPR = ivRemoveDrinkIcon.getPaddingRight();
-            int iconPB = ivRemoveDrinkIcon.getPaddingBottom();
-            ivRemoveDrinkIcon.setBackgroundResource(R.drawable.action_dialog_danger_bg);
-            ivRemoveDrinkIcon.setPadding(iconPL, iconPT, iconPR, iconPB);
-
-            tvRemoveDrinkTitle.setText(getResources().getString(R.string.cafe_update_drink_remove_dialog_order_title));
-        }
-
-        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCategoryName(cafeCategoryId));
-        removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot categoryNameSnapshot) {
-                tvRemoveDrinkCategory.setText(Objects.requireNonNull(categoryNameSnapshot.getValue()).toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                closeProgressDialog();
-                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
-                serverAlertDialog.makeAlertDialog();
-
-                String currentDateTime = simpleDateFormat.format(new Date());
-                appError = new AppError(
-                        menuViewModel.getCafeId().getValue(),
-                        menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
-                        error.getMessage().toString(),
-                        currentDateTime
-                );
-                appError.sendError(appError);
-            }
-        });
-
-
-        AlertDialog dialogRemoveDrink;
-        dialogRemoveDrink = new AlertDialog.Builder(getActivity())
-                .setView(removeDrinkView)
-                .create();
-        dialogRemoveDrink.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        tvRemoveDrinkName.setText(categoryDrink.getCategoryDrinkName());
-        Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(ivRemoveDrink);
-
-        boolean finalDrinkInCurrentOrder = drinkInCurrentOrder;
-        dialogRemoveDrink.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-
-                ibCloseRemoveDrink.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialogRemoveDrink.dismiss();
-                    }
-                });
-
-                btnRemoveDrinkAccept.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        setProgressDialog(getResources().getString(R.string.cafe_update_drink_deletion));
-                        if(finalDrinkInCurrentOrder) {
-                            orderDrinks.remove(categoryDrinkId);
-                            orderViewModel.setDrinksInOrder(orderDrinks);
-                        }
-
-                        if(!categoryDrink.getCategoryDrinkImage().equals(firebaseRefPaths.getStorageCategoryDrinksNoImage())) {
-                            storageDeleteImageRef = firebaseStorage.getReferenceFromUrl(categoryDrink.getCategoryDrinkImage());
-                            storageDeleteImageRef.delete();
-                        }
-                        checkDeletedDrinkCategory(cafeCategoryId, categoryDrinkId);
-                        dialogRemoveDrink.dismiss();
-                        closeProgressDialog();
-                    }
-                });
-            }
-        });
-        dialogRemoveDrink.show();
-    }
-
-    private void checkDeletedDrinkCategory(String cafeCategoryId, String categoryDrinkId) {
-        removeDrinkRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrink(cafeCategoryId, categoryDrinkId));
-        removeDrinkRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
-                    deleteCafeCategoryRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(cafeCategoryId));
-                    deleteCafeCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(!snapshot.exists() || snapshot.getChildrenCount() == 1) {
-                                firebaseDatabase.getReference(firebaseRefPaths.getCafeCategory(cafeCategoryId)).removeValue();
-                            }
-                            else {
-                                removeDrinkRef.removeValue();
-                            }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            closeProgressDialog();
-                            ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
-                            serverAlertDialog.makeAlertDialog();
-
-                            String currentDateTime = simpleDateFormat.format(new Date());
-                            appError = new AppError(
-                                    menuViewModel.getCafeId().getValue(),
-                                    menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
-                                    error.getMessage().toString(),
-                                    currentDateTime
-                            );
-                            appError.sendError(appError);
-                        }
-                    });
-                }
-                else {
-                    toastMessage.showToast(getResources().getString(R.string.cafe_update_drink_already_deleted), 0);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(getActivity());
-                serverAlertDialog.makeAlertDialog();
-
-                String currentDateTime = simpleDateFormat.format(new Date());
-                appError = new AppError(
-                        menuViewModel.getCafeId().getValue(),
-                        menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.DOWNLOAD_IMAGE_URI_FAILED,
-                        error.getMessage().toString(),
-                        currentDateTime
-                );
-                appError.sendError(appError);
-            }
-        });
-    }
-
     private void updateTables() {
         View tablesStateView = getLayoutInflater().inflate(R.layout.dialog_update_tables, null);
         EditText etCurrentTablesState = (EditText) tablesStateView.findViewById(R.id.etTablesCurrentState);
@@ -1197,7 +1256,7 @@ public class CafeUpdateFragment extends Fragment {
     }
 
     private String priceToTextConverter(float number) {
-        NumberFormat formatter = NumberFormat.getInstance(Locale.FRANCE);
+        NumberFormat formatter = NumberFormat.getInstance(Locale.getDefault());
         formatter.setMinimumFractionDigits(2);
         formatter.setMaximumFractionDigits(2);
         return formatter.format(number);

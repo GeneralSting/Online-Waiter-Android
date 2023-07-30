@@ -42,6 +42,7 @@ public class AppConstValue {
         public static final String COMMA = ",";
         public static final char CHAR_DOT = '.';
         public static final char CHAR_COMMA = ',';
+        public static final String DOT_ZERO = ".0";
         public static final String ZERO_VALUE = "0";
         public static final char CHAR_ZERO_VALUE = '0';
         public static final int EXIT_TIME_DELAY = 2000;

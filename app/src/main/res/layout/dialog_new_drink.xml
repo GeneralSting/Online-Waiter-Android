@@ -53,7 +53,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="200dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
                 app:cardMaxElevation="8dp"
@@ -93,10 +93,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginEnd="2dp"
+                        android:layout_marginEnd="16dp"
                         android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="@+id/ivNewDrink"
-                        app:layout_constraintEnd_toStartOf="@+id/vglNewDrinkSecondSection"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/vglNewDrinkFirstSection"
                         app:layout_constraintTop_toTopOf="@+id/ivNewDrink">
 
@@ -106,28 +106,29 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
-                            android:maxLength="25"
-                            android:inputType="textMultiLine|textCapSentences"
-                            android:hint="@string/menu_drink_name_placeholder"
-                            android:textColor="@color/white"
                             android:backgroundTint="@color/tumbleweed"
+                            android:hint="@string/menu_drink_name_placeholder"
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:maxLength="25"
+                            android:textColor="@color/white"
                             android:textSize="16sp" />
 
                         <EditText
                             android:id="@+id/etNewDrinkDescription"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLength="60"
-                            android:inputType="textMultiLine|textCapSentences"
                             android:backgroundTint="@color/tumbleweed"
                             android:hint="@string/menu_drink_description_placeholder"
-                            android:textSize="14sp" />
+                            android:inputType="textMultiLine|textCapSentences"
+                            android:maxLines="3"
+                            android:maxLength="60"
+                            android:textSize="16sp" />
 
-                        <androidx.appcompat.widget.LinearLayoutCompat
+                        <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/linearLayoutCompat2"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
+                            android:weightSum="5"
                             app:layout_constraintBottom_toBottomOf="@+id/ivNewDrink"
                             app:layout_constraintEnd_toStartOf="@+id/vglNewDrinkSecondSection"
                             app:layout_constraintStart_toStartOf="@+id/vglNewDrinkFirstSection">
@@ -136,22 +137,42 @@
                                 android:id="@+id/etNewDrinkPrice"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:maxLength="9"
-                                android:hint="@string/cafe_update_new_drink_price_hint"
                                 android:backgroundTint="@color/tumbleweed"
-                                android:inputType="numberDecimal"
                                 android:drawablePadding="4dp"
-                                android:textSize="16sp" />
+                                android:hint="@string/cafe_update_new_drink_price_hint"
+                                android:inputType="numberDecimal"
+                                android:maxLength="9"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
+                                android:id="@+id/textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="2dp"
+                                android:layout_marginStart="4dp"
                                 android:hint="@string/country_currency"
-                                android:textSize="20sp" />
+                                android:textSize="20sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/etNewDrinkPrice"
+                                app:layout_constraintTop_toTopOf="parent" />
 
+                            <EditText
+                                android:id="@+id/etNewDrinkQuantity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:backgroundTint="@color/tumbleweed"
+                                android:hint="@string/cafe_update_new_drink_quantity_hint"
+                                android:inputType="numberSigned"
+                                android:maxLength="9"
+                                android:textSize="16sp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -176,50 +197,6 @@
                         android:orientation="horizontal"
                         app:layout_constraintGuide_percent="0.3" />
 
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center"
-                        android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="@+id/ivNewDrink"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="@+id/vglNewDrinkSecondSection"
-                        app:layout_constraintTop_toTopOf="@+id/ivNewDrink">
-
-
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="@color/green_positive"
-                            android:includeFontPadding="false"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:text="@string/drink_btn_add_placeholder"
-                            android:textAlignment="center"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:gravity="center"
-                            android:text="@string/drink_amount_placeholder"
-                            android:textSize="20sp" />
-
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="@color/red_negative"
-                            android:includeFontPadding="false"
-                            android:minWidth="0dp"
-                            android:minHeight="0dp"
-                            android:text="@string/drink_btn_remove_placeholder"
-                            android:textAlignment="center"
-                            android:textSize="16sp" />
-
-                    </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

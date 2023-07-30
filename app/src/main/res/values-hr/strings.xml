@@ -92,12 +92,15 @@
     <string name="cafe_update_drink_name_condition_failed">Ime pića 1–25 znakova</string>
     <string name="cafe_update_drink_description_condition_failed">Opis pića 1–60 znakova</string>
     <string name="cafe_update_drink_price_condition_failed">Cijena pića 0.00–999999.99</string>
+    <string name="cafe_update_drink_quantity_condition_failed">Količina pića 0–999999999</string>
     <string name="cafe_update_drink_price_input_failed">Neispravn unos cijene</string>
+    <string name="cafe_update_drink_quantity_input_failed">Unesite količinu pića</string>
     <string name="cafe_update_drink_info_uploading">Ažuriranje informacija pića…</string>
     <string name="cafe_update_drink_deletion">Brisanje pića…</string>
     <string name="cafe_update_new_drink_dialog_title">Novo piće u kategoriju:</string>
     <string name="cafe_update_drink_price_incorrect">Netočan unos cijene</string>
     <string name="cafe_update_new_drink_price_hint">2.00</string>
+    <string name="cafe_update_new_drink_quantity_hint">Količina</string>
     <string name="cafe_update_new_drink_successfully_added">Uspješno dodano novo piće</string>
     <string name="cafe_update_drink_update_successful">Uspješno ažuriranje pića</string>
     <string name="cafe_update_drink_info_update_successful">Meni informacije ažurirane</string>

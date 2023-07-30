@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Adapter.MenuDrinksAdapter;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
+import com.example.onlinewaiter.Interfaces.DrinkShortenQuantity;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -26,6 +28,7 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuCategoryViewHolder;
 import com.example.onlinewaiter.ViewHolder.MenuDrinkViewHolder;
@@ -50,7 +53,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MenuFragment extends Fragment implements CallBackOrder {
+public class MenuFragment extends Fragment implements CallBackOrder, DrinkShortenQuantity {
 
     //fragment views
     private RecyclerView rvMenuCategories, rvMenuCategoryDrinks;
@@ -59,6 +62,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     //global variables/objects
     private FragmentMenuBinding binding;
     private boolean emptyOrder;
+    ToastMessage toastMessage;
     private OrderViewModel orderViewModel;
     private MenuViewModel menuViewModel;
     private EmployeeViewModel employeeViewModel;
@@ -78,6 +82,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         View root = binding.getRoot();
 
         firebaseRefPaths = new FirebaseRefPaths(getActivity());
+        toastMessage = new ToastMessage(getActivity());
         employeeViewModel = new ViewModelProvider(requireActivity()).get(EmployeeViewModel.class);
         orderViewModel = new ViewModelProvider(requireActivity()).get(OrderViewModel.class);
         menuViewModel = new ViewModelProvider(requireActivity()).get(MenuViewModel.class);
@@ -140,6 +145,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                     searchedDrinks,
                     orderViewModel.getDrinksInOrder().getValue(),
                     employeeViewModel.getCafeCurrency().getValue(),
+                    this,
                     this);
             rvMenuCategoryDrinks.setAdapter(menuDrinksAdapter);
             menuDrinksAdapter.notifyDataSetChanged();
@@ -214,6 +220,7 @@ public class MenuFragment extends Fragment implements CallBackOrder {
 
     private void insertCategoryDrinks(String clickedCategoryId) {
         menuViewModel.setDisplayingCategories(false);
+
         final HashMap<String, CafeBillDrink>[] orderDrinks = new HashMap[]{new HashMap<>()};
 
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
@@ -238,6 +245,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         CategoryDrink categoryDrink = categoryDrinkSnapshot.getValue(CategoryDrink.class);
                         holder.tvMenuDrinkName.setText(categoryDrink.getCategoryDrinkName());
                         holder.tvMenuDrinkPrice.setText(cafeDecimalFormat.format(categoryDrink.getCategoryDrinkPrice()) + employeeViewModel.getCafeCurrency().getValue());
+                        holder.tvMenuDrinkQuantity.setText(getShortenQuantity(categoryDrink.getCategoryDrinkQuantity()));
+                        holder.tvMenuDrinkQuantity.setTextColor(categoryDrink.getAvailabilityWarning(getActivity()));
                         Glide.with(getActivity()).load(categoryDrink.getCategoryDrinkImage()).into(holder.ivMenuDrink);
 
                         if(categoryDrink.getCategoryDrinkDescription().length() > AppConstValue.variableConstValue.MENU_DRINK_DESCRIPTION_LENGTH) {
@@ -277,30 +286,36 @@ public class MenuFragment extends Fragment implements CallBackOrder {
                         holder.btnMenuDrinkAdd.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                drinkAmountCounter[0]++;
-                                CafeBillDrink addingCafeBillDrink;
-                                if(drinkAmountCounter[0] > 1) {
-                                    addingCafeBillDrink = orderDrinks[0].get(categoryDrinkSnapshot.getKey());
-                                    addingCafeBillDrink.setDrinkAmount(drinkAmountCounter[0]);
-                                    addingCafeBillDrink.setDrinkTotalPrice(
-                                        roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]),
-                                        AppConstValue.variableConstValue.DRINK_PRICE_ROUND_DECIMAL_PLACE));
-                                    orderDrinks[0].put(categoryDrinkSnapshot.getKey(), addingCafeBillDrink);
+                                if((drinkAmountCounter[0] >= categoryDrink.getCategoryDrinkQuantity())) {
+                                    toastMessage.showToast(getResources().getString(R.string.main_drink_unavailable), 0);
                                 }
                                 else {
-                                    addingCafeBillDrink = new CafeBillDrink(
-                                            categoryDrinkSnapshot.getKey(),
-                                            clickedCategoryId,
-                                            categoryDrink.getCategoryDrinkName(),
-                                            categoryDrink.getCategoryDrinkImage(),
-                                            categoryDrink.getCategoryDrinkPrice(),
-                                            categoryDrink.getCategoryDrinkPrice(),
-                                            drinkAmountCounter[0]
-                                    );
-                                    orderDrinks[0].put(addingCafeBillDrink.getDrinkId(), addingCafeBillDrink);
+                                    drinkAmountCounter[0]++;
+                                    CafeBillDrink addingCafeBillDrink;
+                                    if(drinkAmountCounter[0] > 1) {
+                                        addingCafeBillDrink = orderDrinks[0].get(categoryDrinkSnapshot.getKey());
+                                        addingCafeBillDrink.setDrinkAmount(drinkAmountCounter[0]);
+                                        addingCafeBillDrink.setDrinkTotalPrice(
+                                                roundDecimal((float) (addingCafeBillDrink.getDrinkPrice() * drinkAmountCounter[0]),
+                                                        AppConstValue.variableConstValue.DRINK_PRICE_ROUND_DECIMAL_PLACE));
+                                        orderDrinks[0].put(categoryDrinkSnapshot.getKey(), addingCafeBillDrink);
+                                    }
+                                    else {
+                                        addingCafeBillDrink = new CafeBillDrink(
+                                                categoryDrinkSnapshot.getKey(),
+                                                clickedCategoryId,
+                                                categoryDrink.getCategoryDrinkName(),
+                                                categoryDrink.getCategoryDrinkImage(),
+                                                categoryDrink.getCategoryDrinkPrice(),
+                                                categoryDrink.getCategoryDrinkPrice(),
+                                                drinkAmountCounter[0],
+                                                categoryDrink.getCategoryDrinkQuantity()
+                                        );
+                                        orderDrinks[0].put(addingCafeBillDrink.getDrinkId(), addingCafeBillDrink);
+                                    }
+                                    orderViewModel.setDrinksInOrder(orderDrinks[0]);
+                                    holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
                                 }
-                                orderViewModel.setDrinksInOrder(orderDrinks[0]);
-                                holder.tvMenuDrinkAmount.setText(String.valueOf(drinkAmountCounter[0]));
                             }
                         });
 
@@ -358,6 +373,8 @@ public class MenuFragment extends Fragment implements CallBackOrder {
         adapterDrinks.startListening();
     }
 
+
+
     //for setting 2 decimals for Float numbers
     public static float roundDecimal(float d, int decimalPlace) {
         BigDecimal bd = new BigDecimal(Float.toString(d));
@@ -369,6 +386,13 @@ public class MenuFragment extends Fragment implements CallBackOrder {
     public void updateOrderDrinks(HashMap<String, CafeBillDrink> currentOrderDrinks) {
         orderViewModel.setDrinksInOrder(currentOrderDrinks);
     }
+
+    @Override
+    public String getShortenQuantity(int quantity) {
+        if(quantity > 99) {
+            return AppConstValue.variableConstValue.DRINK_QUANTITY_OVER_HUNDRED;
+        }
+        return String.valueOf(quantity);    }
 
     @Override
     public void onDestroyView() {
