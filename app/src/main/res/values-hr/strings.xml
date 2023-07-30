@@ -73,6 +73,7 @@
     <string name="order_dialog_complete_btn">Potvrdi narudžbu</string>
     <string name="order_dialog_title">Narudžba za stol: </string>
     <string name="order_dialog_cb_order">Narudžba za moj broj</string>
+    <string name="order_table_number_empty">Unesite broj stola narudžbe</string>
 
 
     <!--Employee activity cafe update fragment-->

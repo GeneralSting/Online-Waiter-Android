@@ -5,12 +5,14 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
 import com.example.onlinewaiter.EmployeeActivity;
+import com.example.onlinewaiter.Filters.InputMinMaxFilter;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -34,6 +37,7 @@ import com.example.onlinewaiter.Other.AppErrorMessages;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
+import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentOrderBinding;
 import com.example.onlinewaiter.employeeUI.GlobalViewModel.EmployeeViewModel;
@@ -47,10 +51,18 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class OrderFragment extends Fragment implements CallBackOrder {
 
@@ -169,8 +181,22 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void displayOrderDrinks() {
         if(isAdded()) {
+            List<Map.Entry<String, CafeBillDrink>> entryList = new ArrayList<>(modifiedOrderDrinks.entrySet());
+            entryList.sort(new Comparator<Map.Entry<String, CafeBillDrink>>() {
+                @Override
+                public int compare(Map.Entry<String, CafeBillDrink> firstEntry, Map.Entry<String, CafeBillDrink> secondEntry) {
+                    String firstDrinkName = firstEntry.getValue().getDrinkName();
+                    String secondDrinkName = secondEntry.getValue().getDrinkName();
+                    return firstDrinkName.compareTo(secondDrinkName);
+                }
+            });
+            LinkedHashMap<String, CafeBillDrink> sortedDrinks = new LinkedHashMap<>();
+            for (Map.Entry<String, CafeBillDrink> entry : entryList) {
+                sortedDrinks.put(entry.getKey(), entry.getValue());
+            }
+
             updateOrderSummary(modifiedOrderDrinks);
-            OrderDrinksAdapter orderDrinksAdapter = new OrderDrinksAdapter(getContext(), modifiedOrderDrinks, employeeViewModel.getCafeCurrency().getValue(), this);
+            OrderDrinksAdapter orderDrinksAdapter = new OrderDrinksAdapter(getContext(), sortedDrinks, employeeViewModel.getCafeCurrency().getValue(), this);
             rvOrderDrinks.setAdapter(orderDrinksAdapter);
             orderDrinksAdapter.notifyDataSetChanged();
             btnOrderAccept.setEnabled(true);
@@ -259,8 +285,20 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         View completeOrderView = getLayoutInflater().inflate(R.layout.order_completion_dialog, null);
         ImageButton ibCloseDialog = completeOrderView.findViewById(R.id.ibCloseOrderCompletion);
         NumberPicker npTableNumber = completeOrderView.findViewById(R.id.npOrderDialogTableNumber);
-        npTableNumber.setMinValue(1);
-        npTableNumber.setMaxValue(orderViewModel.getCafeTablesNumber().getValue());
+        EditText etTableNumber = completeOrderView.findViewById(R.id.etOrderDialogTableNumber);
+        if(orderViewModel.getCafeTablesNumber().getValue() > 20) {
+            npTableNumber.setVisibility(View.GONE);
+            etTableNumber.setHint(getResources().getString(R.string.order_table_number_hint) + String.valueOf(orderViewModel.getCafeTablesNumber().getValue()));
+            etTableNumber.setFilters(new InputFilter[]{new InputMinMaxFilter(
+                    String.valueOf(AppConstValue.variableConstValue.MIN_TABLE_NUMBER),
+                    String.valueOf(orderViewModel.getCafeTablesNumber().getValue()
+            ))});
+        }
+        else {
+            etTableNumber.setVisibility(View.GONE);
+            npTableNumber.setMinValue(1);
+            npTableNumber.setMaxValue(orderViewModel.getCafeTablesNumber().getValue());
+        }
         Button btnOrderAccept = completeOrderView.findViewById(R.id.btnOrderDialogAccept);
         CheckBox cbMyOrder = completeOrderView.findViewById(R.id.cbMyOrder);
         dialog = new AlertDialog.Builder(getActivity())
@@ -274,8 +312,20 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                 btnOrderAccept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        saveOrder(npTableNumber.getValue(), cbMyOrder.isChecked());
-                        dialog.dismiss();
+                        if(orderViewModel.getCafeTablesNumber().getValue() > 20) {
+                            if(etTableNumber.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                ToastMessage toastMessage = new ToastMessage(getActivity());
+                                toastMessage.showToast(getResources().getString(R.string.order_table_number_empty), 0);
+                            }
+                            else {
+                                saveOrder(Integer.parseInt(etTableNumber.getText().toString()), cbMyOrder.isChecked());
+                                dialog.dismiss();
+                            }
+                        }
+                        else {
+                            saveOrder(npTableNumber.getValue(), cbMyOrder.isChecked());
+                            dialog.dismiss();
+                        }
                     }
                 });
 

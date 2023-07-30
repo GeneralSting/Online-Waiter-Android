@@ -41,6 +41,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
@@ -228,9 +229,10 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
         DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
 
         DatabaseReference menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(clickedCategoryId));
+        Query drinksByName = menuCategoryDrinksRef.orderByChild(firebaseRefPaths.getCategoryDrinkNameChild());
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions
                 .Builder<CategoryDrink>()
-                .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
+                .setQuery(drinksByName, CategoryDrink.class)
                 .build();
         adapterDrinks = new FirebaseRecyclerAdapter<CategoryDrink, MenuDrinkViewHolder>(options) {
             @Override

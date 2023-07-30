@@ -31,6 +31,7 @@ public class FirebaseRefPaths {
     private final String refCategoryDrinkQuantity = "/categoryDrinkQuantity";
 
     //child
+    private final String refCategoryDrinkNameChild = "categoryDrinkName";
     private final String refCafeCategoryDescriptionChild = "cafeCategoryDescription";
     private final String refCafeCategoryImageChild = "cafeCategoryImage";
     private final String refCafeCategoryNameChild = "cafeCategoryName";
@@ -39,7 +40,6 @@ public class FirebaseRefPaths {
     private final String refCafeCategoriesChild = "cafeDrinksCategories";
     private final String refCafeTablesChild = "cafeTables";
     private final String refCategoryDrinksChild = "categoryDrinks";
-    private final String refCategoryDrinkNameChild = "categoryDrinkName";
     private final String refCurrentOrderDelivererChild = "currentOrderDelivererEmployee";
     private final String refCurrentOrderStatusChild = "currentOrderStatus";
     private final String refCurrentOrderMessageChild = "currentOrderMessage";
@@ -141,6 +141,10 @@ public class FirebaseRefPaths {
 
     public String getCategoryDrink(String cafeCategoryId, String categoryDrinkId) {
         return getCategoryDrinks(cafeCategoryId) + categoryDrinkId;
+    }
+
+    public String getCategoryDrinkNameChild() {
+        return refCategoryDrinkNameChild;
     }
 
     public String getCategoryDrinkQuantity(String cafeCategoryId, String categoryDrinkId) {

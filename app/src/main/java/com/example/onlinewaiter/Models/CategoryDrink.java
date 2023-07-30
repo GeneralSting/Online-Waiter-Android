@@ -79,7 +79,6 @@ public class CategoryDrink {
         this.categoryDrinkQuantity = categoryDrinkQuantity;
     }
 
-
     public int getAvailabilityWarning(Context context) {
         if(this.categoryDrinkQuantity == 0) {
             return context.getResources().getColor(R.color.red_negative);

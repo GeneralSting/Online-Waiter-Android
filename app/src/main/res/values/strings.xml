@@ -72,6 +72,8 @@
     <string name="order_dialog_complete_btn">Make Order</string>
     <string name="order_dialog_title">Order for table: </string>
     <string name="order_dialog_cb_order">Order for my number</string>
+    <string name="order_table_number_empty">Enter order\'s table number</string>
+    <string name="order_table_number_hint" translatable="false">1-</string>
 
 
     <!--Employee activity cafe update fragment-->

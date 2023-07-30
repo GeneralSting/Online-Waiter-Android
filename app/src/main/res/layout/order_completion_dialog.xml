@@ -69,6 +69,24 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <EditText
+                android:id="@+id/etOrderDialogTableNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minWidth="64dp"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColorHint="@color/grey"
+                android:inputType="numberSigned"
+                android:maxLength="4"
+                android:textColor="@color/black"
+                android:backgroundTint="@color/tumbleweed"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <CheckBox
                 android:id="@+id/cbMyOrder"
                 android:layout_width="0dp"

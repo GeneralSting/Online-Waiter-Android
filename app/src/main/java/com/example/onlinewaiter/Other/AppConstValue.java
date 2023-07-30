@@ -62,6 +62,7 @@ public class AppConstValue {
         public static final float FLOAT_PRICE_ZERO = 0f;
         public static final int DRINK_PRICE_ROUND_DECIMAL_PLACE = 2;
         public static final String DRINK_QUANTITY_OVER_HUNDRED = "99+";
+        public static final int MIN_TABLE_NUMBER = 1;
     }
 
     public static class permissionConstValue {
