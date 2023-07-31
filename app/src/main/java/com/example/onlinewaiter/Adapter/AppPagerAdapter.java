@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Models.ViewPagerItem;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.ViewMargins;
+import com.example.onlinewaiter.Functions.ViewMargins;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.ViewPagerItemHolder;
 

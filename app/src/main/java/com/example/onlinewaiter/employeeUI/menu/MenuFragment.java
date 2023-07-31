@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.onlinewaiter.Adapter.MenuDrinksAdapter;
+import com.example.onlinewaiter.Functions.SortHashMap;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Interfaces.DrinkShortenQuantity;
 import com.example.onlinewaiter.Interfaces.ItemClickListener;
@@ -143,7 +144,7 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
     private void insertSearchedDrinks(HashMap<String, CategoryDrink> searchedDrinks) {
         if(isAdded()) {
             MenuDrinksAdapter menuDrinksAdapter = new MenuDrinksAdapter(getContext(),
-                    searchedDrinks,
+                    SortHashMap.sortCategoryDrinksMap(searchedDrinks),
                     orderViewModel.getDrinksInOrder().getValue(),
                     employeeViewModel.getCafeCurrency().getValue(),
                     this,

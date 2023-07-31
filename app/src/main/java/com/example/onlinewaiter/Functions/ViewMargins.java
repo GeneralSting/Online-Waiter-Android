@@ -1,4 +1,4 @@
-package com.example.onlinewaiter.Other;
+package com.example.onlinewaiter.Functions;
 
 import android.view.View;
 import android.view.ViewGroup;

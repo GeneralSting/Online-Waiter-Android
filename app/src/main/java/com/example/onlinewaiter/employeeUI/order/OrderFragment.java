@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
 import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Filters.InputMinMaxFilter;
+import com.example.onlinewaiter.Functions.SortHashMap;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -181,22 +182,9 @@ public class OrderFragment extends Fragment implements CallBackOrder {
 
     private void displayOrderDrinks() {
         if(isAdded()) {
-            List<Map.Entry<String, CafeBillDrink>> entryList = new ArrayList<>(modifiedOrderDrinks.entrySet());
-            entryList.sort(new Comparator<Map.Entry<String, CafeBillDrink>>() {
-                @Override
-                public int compare(Map.Entry<String, CafeBillDrink> firstEntry, Map.Entry<String, CafeBillDrink> secondEntry) {
-                    String firstDrinkName = firstEntry.getValue().getDrinkName();
-                    String secondDrinkName = secondEntry.getValue().getDrinkName();
-                    return firstDrinkName.compareTo(secondDrinkName);
-                }
-            });
-            LinkedHashMap<String, CafeBillDrink> sortedDrinks = new LinkedHashMap<>();
-            for (Map.Entry<String, CafeBillDrink> entry : entryList) {
-                sortedDrinks.put(entry.getKey(), entry.getValue());
-            }
-
             updateOrderSummary(modifiedOrderDrinks);
-            OrderDrinksAdapter orderDrinksAdapter = new OrderDrinksAdapter(getContext(), sortedDrinks, employeeViewModel.getCafeCurrency().getValue(), this);
+            OrderDrinksAdapter orderDrinksAdapter = new OrderDrinksAdapter(
+                    getContext(), SortHashMap.sortCafeBillsMap(modifiedOrderDrinks), employeeViewModel.getCafeCurrency().getValue(), this);
             rvOrderDrinks.setAdapter(orderDrinksAdapter);
             orderDrinksAdapter.notifyDataSetChanged();
             btnOrderAccept.setEnabled(true);
