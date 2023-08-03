@@ -74,8 +74,8 @@ public class OwnerActivity extends AppCompatActivity {
         toastMessage = new ToastMessage(this);
         firebaseRefPaths = new FirebaseRefPaths(this);
         Bundle bundle = getIntent().getExtras();
-        ownerNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
-        ownerCafeId = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID);
+        ownerNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
+        ownerCafeId = bundle.getString(AppConstValue.bundleConstValue.LOGIN_CAFE_ID);
         if(Objects.equals(ownerNumber, AppConstValue.variableConstValue.EMPTY_VALUE) ||
                 Objects.equals(ownerCafeId, AppConstValue.variableConstValue.EMPTY_VALUE)) {
             logout();

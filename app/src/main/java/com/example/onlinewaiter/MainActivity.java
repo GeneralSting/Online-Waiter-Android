@@ -63,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Intent intent = getIntent();
+        if(intent.hasExtra(AppConstValue.bundleConstValue.LOGOUT_NUMBER_CHANGE)) {
+            CustomAlertDialog customAlertDialog = new CustomAlertDialog(MainActivity.this,
+                    getResources().getString(R.string.act_main_dialog_number_changed_header),
+                    getResources().getString(R.string.act_main_dialog_number_changed_body),
+                    getResources().getDrawable(R.drawable.modal_no_number));
+            customAlertDialog.makeAlertDialog();
+        }
+
         vpMainPager = findViewById(R.id.vpMainDialogPager);
         btnLogin = findViewById(R.id.btnMainLogin);
 
@@ -116,10 +125,10 @@ public class MainActivity extends AppCompatActivity {
         }
         //global variables/objects
         if(telephonyManager.getLine1Number() == null) {
-            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE);
+            intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE);
         }
         else {
-            intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, telephonyManager.getLine1Number());
+            intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, telephonyManager.getLine1Number());
         }
         startActivity(intent);
     }

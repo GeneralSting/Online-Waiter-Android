@@ -121,7 +121,7 @@ public class RegisteredNumbersFragment extends Fragment {
                         btnRegisterNumber.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                String phoneNumberValidator = "^[+]?[(]?[0-9]{3}[)]?[-\\s.]?[0-9]{3}[-\\s.]?[0-9]{4,6}$";
+                                String phoneNumberValidator = AppConstValue.regex.PHONE_NUMBER_VALIDATOR;
                                 if ((etRegisterNumber.getText().toString().matches(phoneNumberValidator))) {
                                     RegisteredNumber registeredNumber = new RegisteredNumber(
                                             AppConstValue.registeredNumbersRole.WAITER,

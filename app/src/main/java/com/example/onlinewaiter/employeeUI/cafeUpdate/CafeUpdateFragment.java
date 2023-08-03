@@ -18,7 +18,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +73,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -178,7 +178,7 @@ public class CafeUpdateFragment extends Fragment {
             public void onActivityResult(Uri resultUri) {
                 Intent imageCropeprIntent = new Intent(getActivity(), ImageCropperActivity.class);
                 if(resultUri != null) {
-                    imageCropeprIntent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA, resultUri.toString());
+                    imageCropeprIntent.putExtra(AppConstValue.bundleConstValue.CROPPER_IMAGE_DATA, resultUri.toString());
                     startActivityForResult(imageCropeprIntent, AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE);
                 }
             }
@@ -322,8 +322,9 @@ public class CafeUpdateFragment extends Fragment {
         rvCafeUpdateCategories.setVisibility(View.GONE);
         rvCafeUpdateCategoryDrinks.setVisibility(View.VISIBLE);
         menuCategoryDrinksRef = firebaseDatabase.getReference(firebaseRefPaths.getCategoryDrinks(cafeCategoryId));
+        Query drinksByName = menuCategoryDrinksRef.orderByChild(firebaseRefPaths.getCategoryDrinkNameChild());
         FirebaseRecyclerOptions<CategoryDrink> options = new FirebaseRecyclerOptions.Builder<CategoryDrink>()
-                .setQuery(menuCategoryDrinksRef, CategoryDrink.class)
+                .setQuery(drinksByName, CategoryDrink.class)
                 .build();
         adapterCategoryDrinks = new FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder>(options) {
             @Override
@@ -1314,7 +1315,7 @@ public class CafeUpdateFragment extends Fragment {
         switch (requestCode) {
             case AppConstValue.permissionConstValue.GALLERY_REQUEST_CODE:
                 if(resultCode == AppConstValue.permissionConstValue.GALLERY_RESULT_CODE) {
-                    String result = data.getStringExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_RESULT);
+                    String result = data.getStringExtra(AppConstValue.bundleConstValue.CROPPER_IMAGE_RESULT);
                     Uri resultUri = null;
                     if(result != null) {
                         resultUri = Uri.parse(result);

@@ -37,7 +37,7 @@ public class ImageCropperActivity extends AppCompatActivity {
     private void readIntent() {
         Intent intent = getIntent();
         if(intent.getExtras() != null) {
-            String result = intent.getStringExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_DATA);
+            String result = intent.getStringExtra(AppConstValue.bundleConstValue.CROPPER_IMAGE_DATA);
             fileUri = Uri.parse(result);
         }
     }
@@ -59,7 +59,7 @@ public class ImageCropperActivity extends AppCompatActivity {
         if(resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
             final Uri resultUri = UCrop.getOutput(data);
             Intent returnIntent = new Intent();
-            returnIntent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CROPPER_IMAGE_RESULT, resultUri + AppConstValue.variableConstValue.EMPTY_VALUE);
+            returnIntent.putExtra(AppConstValue.bundleConstValue.CROPPER_IMAGE_RESULT, resultUri + AppConstValue.variableConstValue.EMPTY_VALUE);
             setResult(AppConstValue.permissionConstValue.GALLERY_RESULT_CODE, returnIntent);
         }
         else if(resultCode == UCrop.RESULT_ERROR) {

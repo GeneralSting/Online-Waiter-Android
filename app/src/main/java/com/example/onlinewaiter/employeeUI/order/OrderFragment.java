@@ -270,6 +270,15 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void finishOrder() {
+        if(Boolean.TRUE.equals(orderViewModel.getRegisteredNumberWeb().getValue())) {
+            orderDialogWeb();
+        }
+        else {
+            orderDialogNoWeb();
+        }
+    }
+
+    private void orderDialogWeb() {
         View completeOrderView = getLayoutInflater().inflate(R.layout.order_completion_dialog, null);
         ImageButton ibCloseDialog = completeOrderView.findViewById(R.id.ibCloseOrderCompletion);
         NumberPicker npTableNumber = completeOrderView.findViewById(R.id.npOrderDialogTableNumber);
@@ -280,7 +289,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
             etTableNumber.setFilters(new InputFilter[]{new InputMinMaxFilter(
                     String.valueOf(AppConstValue.variableConstValue.MIN_TABLE_NUMBER),
                     String.valueOf(orderViewModel.getCafeTablesNumber().getValue()
-            ))});
+                    ))});
         }
         else {
             etTableNumber.setVisibility(View.GONE);
@@ -312,6 +321,64 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                         }
                         else {
                             saveOrder(npTableNumber.getValue(), cbMyOrder.isChecked());
+                            dialog.dismiss();
+                        }
+                    }
+                });
+
+                ibCloseDialog.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
+        dialog.show();
+    }
+
+    private void orderDialogNoWeb() {
+        View completeOrderView = getLayoutInflater().inflate(R.layout.dialog_order_completion_no_web, null);
+        ImageButton ibCloseDialog = completeOrderView.findViewById(R.id.ibCloseNoWebOrder);
+        NumberPicker npTableNumber = completeOrderView.findViewById(R.id.npNoWebTableNumber);
+        EditText etTableNumber = completeOrderView.findViewById(R.id.etNoWebTableNumber);
+        if(orderViewModel.getCafeTablesNumber().getValue() > 20) {
+            npTableNumber.setVisibility(View.GONE);
+            etTableNumber.setHint(getResources().getString(R.string.order_table_number_hint) + String.valueOf(orderViewModel.getCafeTablesNumber().getValue()));
+            etTableNumber.setFilters(new InputFilter[]{new InputMinMaxFilter(
+                    String.valueOf(AppConstValue.variableConstValue.MIN_TABLE_NUMBER),
+                    String.valueOf(orderViewModel.getCafeTablesNumber().getValue()
+                    ))});
+        }
+        else {
+            etTableNumber.setVisibility(View.GONE);
+            npTableNumber.setMinValue(1);
+            npTableNumber.setMaxValue(orderViewModel.getCafeTablesNumber().getValue());
+        }
+        Button btnOrderAccept = completeOrderView.findViewById(R.id.btnNoWebOrderAccept);
+        dialog = new AlertDialog.Builder(getActivity())
+                .setView(completeOrderView)
+                .create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                btnOrderAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(orderViewModel.getCafeTablesNumber().getValue() > 20) {
+                            if(etTableNumber.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
+                                ToastMessage toastMessage = new ToastMessage(getActivity());
+                                toastMessage.showToast(getResources().getString(R.string.order_table_number_empty), 0);
+                            }
+                            else {
+                                saveOrder(Integer.parseInt(etTableNumber.getText().toString()), false);
+                                dialog.dismiss();
+                            }
+                        }
+                        else {
+                            saveOrder(npTableNumber.getValue(), false);
                             dialog.dismiss();
                         }
                     }

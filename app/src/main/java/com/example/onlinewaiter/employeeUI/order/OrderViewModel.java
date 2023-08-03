@@ -38,4 +38,12 @@ public class OrderViewModel extends ViewModel {
         checkDrinksOrder.setValue(value);
     }
 
+    private final MutableLiveData<Boolean> registeredNumberWeb = new MutableLiveData<>();
+    public LiveData<Boolean> getRegisteredNumberWeb() {
+        return registeredNumberWeb;
+    }
+    public void setRegisteredNumberWeb(Boolean value) {
+        registeredNumberWeb.setValue(value);
+    }
+
 }

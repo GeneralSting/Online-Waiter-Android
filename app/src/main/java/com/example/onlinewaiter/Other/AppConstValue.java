@@ -2,10 +2,12 @@ package com.example.onlinewaiter.Other;
 
 public class AppConstValue {
     public static class bundleConstValue {
-        public static final String BUNDLE_CAFE_ID = "cafeId";
-        public static final String BUNDLE_PHONE_NUMBER = "phoneNumber";
-        public static final String BUNDLE_CROPPER_IMAGE_DATA = "imageCropperData";
-        public static final String BUNDLE_CROPPER_IMAGE_RESULT = "imageCropperResult";
+        public static final String LOGIN_CAFE_ID = "cafeId";
+        public static final String LOGIN_PHONE_NUMBER = "phoneNumber";
+        public static final String REGISTERED_NUMBER_WEB = "registeredNumberWeb";
+        public static final String LOGOUT_NUMBER_CHANGE = "alertNumberChange";
+        public static final String CROPPER_IMAGE_DATA = "imageCropperData";
+        public static final String CROPPER_IMAGE_RESULT = "imageCropperResult";
     }
 
     public static class sharedPreferencesValue {
@@ -63,6 +65,7 @@ public class AppConstValue {
         public static final int DRINK_PRICE_ROUND_DECIMAL_PLACE = 2;
         public static final String DRINK_QUANTITY_OVER_HUNDRED = "99+";
         public static final int MIN_TABLE_NUMBER = 1;
+        public static final String LOGOUT_NUMBER_CHANGE = "LOGOUT_NUMBER_CHANGE";
     }
 
     public static class permissionConstValue {

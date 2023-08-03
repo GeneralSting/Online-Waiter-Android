@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
     private String sharedPhoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
     private boolean numberFounded, backPressEnabled;
     boolean saveSharedPhoneNumber = false;
+    int registeredNumberWeb;
     private SharedPreferences sharedPreferences;
     private ToastMessage toastMessage;
     private SmsBroadcastReceiver smsBroadcastReceiver;
@@ -97,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     private void setPhoneNumber() {
         sharedPreferences = getSharedPreferences(AppConstValue.sharedPreferencesValue.PREFERENCE_PHONE_NUMBER, MODE_PRIVATE);
         Bundle bundle = getIntent().getExtras();
-        if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
+        if (Objects.equals(bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER), AppConstValue.variableConstValue.EMPTY_VALUE)) {
             saveSharedPhoneNumber = true;
             if (sharedPreferences.contains(AppConstValue.sharedPreferencesValue.SHARED_PHONE_NUMBER)) {
                 sharedPhoneNumber = sharedPreferences.getString(
@@ -138,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                     toastMessage.showToast(getResources().getString(R.string.act_login_successful_taken_number), 0);
                 }
             });
-            phoneNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
+            phoneNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
             etPhoneNumber.setText(phoneNumber);
         }
     }
@@ -176,6 +177,7 @@ public class LoginActivity extends AppCompatActivity {
                             RegisteredNumber registeredNumber = registeredNumberSnapshot.getValue(RegisteredNumber.class);
                             numberRole = registeredNumber.getRole();
                             numberCafeId = cafeRegisteredNumberSnapshot.getKey();
+                            registeredNumberWeb = registeredNumber.getWebAppRegistered();
                             phoneNumber = authNumber;
                             if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.WAITER) && !registeredNumber.isAllowed()) {
                                 toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
@@ -323,8 +325,9 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, EmployeeActivity.class);
                     //flag -> If set, this activity will become the start of a new task on this history stack.
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
-                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, numberCafeId);
+                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, phoneNumber);
+                    intent.putExtra(AppConstValue.bundleConstValue.REGISTERED_NUMBER_WEB, registeredNumberWeb);
                     //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                     //afinitet, srodstvo
                     finishAffinity();
@@ -334,8 +337,8 @@ public class LoginActivity extends AppCompatActivity {
                     Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
                     //flag -> If set, this activity will become the start of a new task on this history stack.
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, numberCafeId);
-                    intent.putExtra(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, phoneNumber);
+                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, numberCafeId);
+                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, phoneNumber);
                     //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                     //afinitet, srodstvo
                     finishAffinity();

@@ -68,6 +68,8 @@ public class FirebaseRefPaths {
 
     //child
     private final String refRegisteredNumberRoleChild = "role";
+    private final String refRegisteredNumberAllowedChild = "allowed";
+    private final String refRegisteredNumberWebChild = "webAppRegistered";
 
     /*firebase storage*/
     private final String storageCategoryDrinksNoImage = "https://firebasestorage.googleapis.com/v0/b/online-waiter-db1c0.appspot.com/o/appImages%2Fstandard%2Fno_image.jpg?alt=media&token=34103017-4678-451f-acb2-6247186c6d07";
@@ -273,6 +275,14 @@ public class FirebaseRefPaths {
 
     public String getRegisteredNumberRoleChild() {
         return refRegisteredNumberRoleChild;
+    }
+
+    public String getRegisteredNumberAllowedChild() {
+        return refRegisteredNumberAllowedChild;
+    }
+
+    public String getRegisteredNumberWebChild() {
+        return refRegisteredNumberWebChild;
     }
 
 

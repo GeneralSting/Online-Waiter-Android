@@ -3,6 +3,7 @@ package com.example.onlinewaiter.Models;
 public class RegisteredNumber {
     private String number, role;
     private boolean allowed;
+    private int webAppRegistered;
 
     public RegisteredNumber() {}
 
@@ -10,14 +11,15 @@ public class RegisteredNumber {
         this.role = role;
     }
 
-    public RegisteredNumber(String number, String role) {
-        this.number = number;
-        this.role = role;
-    }
-
     public RegisteredNumber(String role, boolean allowed) {
         this.role = role;
         this.allowed = allowed;
+    }
+
+    public RegisteredNumber(String role, boolean allowed, int webAppRegistered) {
+        this.role = role;
+        this.allowed = allowed;
+        this.webAppRegistered = webAppRegistered;
     }
 
     public String getNumber() {
@@ -42,5 +44,13 @@ public class RegisteredNumber {
 
     public void setAllowed(boolean allowed) {
         this.allowed = allowed;
+    }
+
+    public int getWebAppRegistered() {
+        return webAppRegistered;
+    }
+
+    public void setWebAppRegistered(int webAppRegistered) {
+        this.webAppRegistered = webAppRegistered;
     }
 }

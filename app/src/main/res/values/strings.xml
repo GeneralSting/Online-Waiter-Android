@@ -13,6 +13,8 @@
     <string name="act_main_dialog_permissions_warning_header">Alert message!</string>
     <string name="act_main_dialog_permissions_denied_header">Permissions denied!</string>
     <string name="act_main_dialog_permissions_denied_body">You will not be asked again for permissions but we can not allow you to go any further with this app!</string>
+    <string name="act_main_dialog_number_changed_header">You are logout.</string>
+    <string name="act_main_dialog_number_changed_body">Owner has changed option to log in with the phone number you used to log in with</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Verify OTP</string>
@@ -74,6 +76,7 @@
     <string name="order_dialog_cb_order">Order for my number</string>
     <string name="order_table_number_empty">Enter order\'s table number</string>
     <string name="order_table_number_hint" translatable="false">1-</string>
+    <string name="order_web_no_registered">Web app not logged in!</string>
 
 
     <!--Employee activity cafe update fragment-->

@@ -92,8 +92,8 @@ public class EmployeeActivity extends AppCompatActivity {
     private static long back_pressed;
 
     //firebase
-    private ChildEventListener cafeChildsEventListener, cafeCurrentOrdersListener;
-    DatabaseReference cafeRef, cafeCurrentOrdersRef;
+    private ChildEventListener cafeChildsEventListener, cafeCurrentOrdersListener, registeredNumberListener;
+    DatabaseReference cafeRef, cafeCurrentOrdersRef, registeredNumberRef;
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference cafeDrinksCategoriesRef;
 
@@ -104,25 +104,26 @@ public class EmployeeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         Bundle bundle = getIntent().getExtras();
-        String employeeCafeId = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID);
-        String phoneNumber = bundle.getString(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER);
+        String employeeCafeId = bundle.getString(AppConstValue.bundleConstValue.LOGIN_CAFE_ID);
+        String phoneNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
+        int registeredNumberWeb = bundle.getInt(AppConstValue.bundleConstValue.REGISTERED_NUMBER_WEB);
 
         menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
-
-        //when app is closed in background
-        if ((Objects.equals(AppConstValue.bundleConstValue.BUNDLE_CAFE_ID, AppConstValue.variableConstValue.EMPTY_VALUE) ||
-                Objects.equals(AppConstValue.bundleConstValue.BUNDLE_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE))) {
-            logout();
-        } else {
-            menuViewModel.setCafeId(employeeCafeId);
-            menuViewModel.setPhoneNumber(phoneNumber);
-        }
-
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
         cafeUpdateViewModel = new ViewModelProvider(this).get(CafeUpdateViewModel.class);
         pendingOrdersViewModel = new ViewModelProvider(this).get(PendingOrdersViewModel.class);
         toastMessage = new ToastMessage(this);
         firebaseRefPaths = new FirebaseRefPaths(this);
+
+        //when app is closed in background
+        if ((Objects.equals(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, AppConstValue.variableConstValue.EMPTY_VALUE) ||
+                Objects.equals(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, AppConstValue.variableConstValue.EMPTY_VALUE))) {
+            logout(false);
+        } else {
+            menuViewModel.setCafeId(employeeCafeId);
+            menuViewModel.setPhoneNumber(phoneNumber);
+            orderViewModel.setRegisteredNumberWeb(registeredNumberWeb > 0);
+        }
 
         startService(new Intent(getBaseContext(), OnAppKilledService.class));
         setNavigationDrawer();
@@ -151,7 +152,7 @@ public class EmployeeActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         navigationView.getMenu().findItem(R.id.nav_employee_logout).setOnMenuItemClickListener(menuItem -> {
-            logout();
+            logout(false);
             return true;
         });
 
@@ -354,7 +355,6 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
-
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
                 if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeCategoriesChild())) {
@@ -376,12 +376,10 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onChildRemoved(@NonNull DataSnapshot cafeSnapshot) {
 
             }
-
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
@@ -405,7 +403,6 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
-
             @Override
             public void onChildChanged(@NonNull DataSnapshot orderSnapshot, @Nullable String previousChildName) {
                 CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
@@ -431,12 +428,10 @@ public class EmployeeActivity extends AppCompatActivity {
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
             }
-
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
@@ -451,6 +446,40 @@ public class EmployeeActivity extends AppCompatActivity {
                         currentDateTime
                 );
                 appError.sendError(appError);
+            }
+        });
+
+        registeredNumberRef = firebaseDatabase.getReference(firebaseRefPaths.getRegisteredNumber(menuViewModel.getCafeId().getValue(), menuViewModel.getPhoneNumber().getValue()));
+        registeredNumberListener = registeredNumberRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot registeredNumberSnapshot, @Nullable String previousChildName) {
+                if(Objects.equals(registeredNumberSnapshot.getKey(), firebaseRefPaths.getRegisteredNumberAllowedChild())) {
+                    if(Boolean.FALSE.equals(registeredNumberSnapshot.getValue(boolean.class))) {
+                        logout(true);
+                    }
+                }
+                else if(Objects.equals(registeredNumberSnapshot.getKey(), firebaseRefPaths.getRegisteredNumberWebChild())) {
+                    int webRegisteredNumber = registeredNumberSnapshot.getValue(int.class);
+                    orderViewModel.setRegisteredNumberWeb(webRegisteredNumber > 0);
+                }
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                logout(true);
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
@@ -693,30 +722,29 @@ public class EmployeeActivity extends AppCompatActivity {
         });
     }
 
-    private void removeCafeListener() {
+    private void removeListeners() {
         if (cafeRef != null) {
             cafeRef.removeEventListener(cafeChildsEventListener);
         }
-    }
-
-    private void removeCafeOrdersListener() {
         if (cafeCurrentOrdersRef != null) {
             cafeCurrentOrdersRef.removeEventListener(cafeCurrentOrdersListener);
         }
+        if (registeredNumberRef != null) {
+            registeredNumberRef.removeEventListener(registeredNumberListener);
+        }
     }
 
-    private void logout() {
-        //firebase
+    private void logout(boolean showChangeDialog) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Intent intent = new Intent(EmployeeActivity.this, MainActivity.class);
+        if(showChangeDialog) {
+            intent.putExtra(AppConstValue.bundleConstValue.LOGOUT_NUMBER_CHANGE, AppConstValue.variableConstValue.LOGOUT_NUMBER_CHANGE);
+        }
         if(currentUser != null) {
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
-            finish();
         }
-        if(currentUser == null) {
-            startActivity(new Intent(EmployeeActivity.this, MainActivity.class));
-            finish();
-        }
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -726,7 +754,7 @@ public class EmployeeActivity extends AppCompatActivity {
             if (isCategoriesDisplayed) {
                 if (back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                     super.onBackPressed();
-                    logout();
+                    logout(false);
                 } else {
                     toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
                 }
@@ -741,7 +769,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 case 0:
                     if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                         super.onBackPressed();
-                        logout();
+                        logout(false);
                     }
                     else {
                         toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
@@ -761,7 +789,7 @@ public class EmployeeActivity extends AppCompatActivity {
         else {
             if(back_pressed + AppConstValue.variableConstValue.EXIT_TIME_DELAY > System.currentTimeMillis()) {
                 super.onBackPressed();
-                logout();
+                logout(false);
             }
             else {
                 toastMessage.showToast(getResources().getString(R.string.act_employee_back_button_pressed), 0);
@@ -779,8 +807,7 @@ public class EmployeeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        removeCafeListener();
-        removeCafeOrdersListener();
+        removeListeners();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null) {
             FirebaseAuth.getInstance().signOut();

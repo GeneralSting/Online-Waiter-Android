@@ -14,6 +14,8 @@
     <string name="act_main_dialog_permissions_warning_header">Upozorenje!</string>
     <string name="act_main_dialog_permissions_denied_header">Dopuštenja su odbijena!</string>
     <string name="act_main_dialog_permissions_denied_body">Nećemo Te više pitati za dopuštenja, ali nemaš pristup ostalim mogućnostima ove aplikacije!</string>
+    <string name="act_main_dialog_number_changed_header">Odjavljeni ste.</string>
+    <string name="act_main_dialog_number_changed_body">Vlasnik je promjenio mogućnost prijave brojem mobitela s kojim ste bili prijavljeni</string>
 
     <!--Login activity-->
     <string name="act_login_check_otp_code">Potvrdi PIN</string>
@@ -74,6 +76,7 @@
     <string name="order_dialog_title">Narudžba za stol: </string>
     <string name="order_dialog_cb_order">Narudžba za moj broj</string>
     <string name="order_table_number_empty">Unesite broj stola narudžbe</string>
+    <string name="order_web_no_registered">Nema prijave na web aplikaciju</string>
 
 
     <!--Employee activity cafe update fragment-->
