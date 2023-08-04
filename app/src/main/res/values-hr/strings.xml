@@ -217,8 +217,16 @@
     <string name="registered_numbers_dialog_owner_btn_resend">Ponovno pošalji</string>
     <string name="registered_numbers_wrong_email_code">Netočan kod</string>
     <string name="registered_numbers_register_title">Registracija novog broja</string>
+    <string name="registered_numbers_edit_title">Uredi broj:</string>
     <string name="registered_numbers_sc_text">Moj broj mobitela</string>
     <string name="registered_numbers_btn_next">Dalje</string>
+    <string name="registered_numbers_memory_example">Memorijska riječ(20)</string>
+    <string name="registered_numbers_memory_incorrect">Unesite barem jedan znak</string>
+    <string name="registered_numbers_memory_existing">Postojeća memorijska riječ</string>
+    <string name="registered_numbers_number_existing">Postojeći broj mobitela</string>
+    <string name="registered_numbers_edit_no_change">Nema promjena</string>
+    <string name="registered_numbers_edit_successful">Uspješno ažuriranje</string>
+    <string name="registered_numbers_registered_successfully">Novi broj dodan</string>
 
 
     <!--Owner activity logout fragment-->

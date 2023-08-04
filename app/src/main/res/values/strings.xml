@@ -219,8 +219,16 @@
     <string name="registered_numbers_dialog_second_part" translatable="false">2/2</string>
     <string name="registered_numbers_wrong_email_code">Incorrect code</string>
     <string name="registered_numbers_register_title">Register new number</string>
+    <string name="registered_numbers_edit_title">Edit number:</string>
     <string name="registered_numbers_sc_text">My phone number</string>
     <string name="registered_numbers_btn_next">Next</string>
+    <string name="registered_numbers_memory_example">Memory word(20)</string>
+    <string name="registered_numbers_memory_incorrect">Enter at least one character</string>
+    <string name="registered_numbers_memory_existing">Existing memory word</string>
+    <string name="registered_numbers_number_existing">Existing phone number</string>
+    <string name="registered_numbers_edit_no_change">No changes</string>
+    <string name="registered_numbers_edit_successful">Update successful</string>
+    <string name="registered_numbers_registered_successfully">Added new number</string>
 
 
     <!--Owner activity logout fragment-->

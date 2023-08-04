@@ -66,6 +66,7 @@ public class AppConstValue {
         public static final String DRINK_QUANTITY_OVER_HUNDRED = "99+";
         public static final int MIN_TABLE_NUMBER = 1;
         public static final String LOGOUT_NUMBER_CHANGE = "LOGOUT_NUMBER_CHANGE";
+        public static final int WEB_APP_REGISTERED_DEFAULT = 0;
     }
 
     public static class permissionConstValue {

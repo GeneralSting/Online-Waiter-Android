@@ -1,7 +1,7 @@
 package com.example.onlinewaiter.Models;
 
 public class RegisteredNumber {
-    private String number, role;
+    private String number, role, memoryWord;
     private boolean allowed;
     private int webAppRegistered;
 
@@ -16,8 +16,9 @@ public class RegisteredNumber {
         this.allowed = allowed;
     }
 
-    public RegisteredNumber(String role, boolean allowed, int webAppRegistered) {
+    public RegisteredNumber(String role, String memoryWord, boolean allowed, int webAppRegistered) {
         this.role = role;
+        this.memoryWord = memoryWord;
         this.allowed = allowed;
         this.webAppRegistered = webAppRegistered;
     }
@@ -52,5 +53,13 @@ public class RegisteredNumber {
 
     public void setWebAppRegistered(int webAppRegistered) {
         this.webAppRegistered = webAppRegistered;
+    }
+
+    public String getMemoryWord() {
+        return memoryWord;
+    }
+
+    public void setMemoryWord(String memoryWord) {
+        this.memoryWord = memoryWord;
     }
 }

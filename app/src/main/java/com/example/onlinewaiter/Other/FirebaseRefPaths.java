@@ -257,12 +257,12 @@ public class FirebaseRefPaths {
         return refRegisteredNumbers;
     }
 
-    public String getRegisteredCafe(String registeredCafeId) {
+    public String getCafeRegisteredNumbers(String registeredCafeId) {
         return getRegisteredNumbers() + registeredCafeId;
     }
 
     public String getRegisteredNumber(String registeredCafeId, String registeredNumberId) {
-        return getRegisteredCafe(registeredCafeId) + AppConstValue.characterConstValue.FIREBASE_SLASH + registeredNumberId;
+        return getCafeRegisteredNumbers(registeredCafeId) + AppConstValue.characterConstValue.FIREBASE_SLASH + registeredNumberId;
     }
 
     public String getRegisteredNumberAllowed(String registeredCafeId, String registeredNumberId) {

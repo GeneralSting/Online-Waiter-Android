@@ -12,7 +12,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="25dp"
-        android:background="@drawable/action_dialog"
+        android:background="@drawable/action_dialog_info_bg"
         android:elevation="5dp"
         android:orientation="vertical"
         android:paddingBottom="32dp"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/ibCloseNewNumber"
+            android:id="@+id/ibCloseEditNumber"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/registered_numbers_register_title"
+            android:text="@string/registered_numbers_edit_title"
             android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"/>
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:id="@+id/etRegisterNumber"
+                android:id="@+id/etEditNumber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="64dp"
@@ -74,18 +74,18 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvRegisterNumberIncorrect"
+                android:id="@+id/tvEditNumberIncorrect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/red_negative"
                 android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="@+id/etRegisterNumber"
-                app:layout_constraintStart_toStartOf="@+id/etRegisterNumber"
-                app:layout_constraintTop_toBottomOf="@+id/etRegisterNumber" />
+                app:layout_constraintEnd_toEndOf="@+id/etEditNumber"
+                app:layout_constraintStart_toStartOf="@+id/etEditNumber"
+                app:layout_constraintTop_toBottomOf="@+id/etEditNumber" />
 
             <EditText
-                android:id="@+id/etRegisterNumberMemory"
+                android:id="@+id/etEditNumberMemory"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -96,12 +96,12 @@
                 android:textColor="@color/black"
                 android:textColorHint="@color/grey_transparent"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/etRegisterNumber"
-                app:layout_constraintStart_toStartOf="@+id/etRegisterNumber"
-                app:layout_constraintTop_toBottomOf="@+id/tvRegisterNumberIncorrect" />
+                app:layout_constraintEnd_toEndOf="@+id/etEditNumber"
+                app:layout_constraintStart_toStartOf="@+id/etEditNumber"
+                app:layout_constraintTop_toBottomOf="@+id/tvEditNumberIncorrect" />
 
             <TextView
-                android:id="@+id/tvRegisterNumberMemoryIncorrect"
+                android:id="@+id/tvEditNumberMemoryIncorrect"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
@@ -109,12 +109,12 @@
                 android:textColor="@color/red_negative"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/etRegisterNumberMemory" />
+                app:layout_constraintTop_toBottomOf="@+id/etEditNumberMemory" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:id="@+id/btnRegisterNumber"
+            android:id="@+id/btnEditNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -128,10 +128,10 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:background="@drawable/action_dialog"
-        android:elevation="10dp"
+        android:background="@drawable/action_dialog_info_bg"
+        android:elevation="6dp"
         android:padding="15dp"
-        android:src="@drawable/dialog_create_new"
+        android:src="@drawable/dialog_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

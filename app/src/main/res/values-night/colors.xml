@@ -33,6 +33,7 @@
     <color name="dialog_action_owner_blue">#5A7EA5</color>
     <color name="dialog_action_owner_green">#A55A7E</color>
     <color name="dialog_action_owner_purple">#7EA55A</color>
+    <color name="dialog_action_edit">#2196f3</color>
 
     <!--Other colors-->
     <color name="overlay_background">#7f333639</color>
