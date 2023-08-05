@@ -57,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 
     //global variables/objects
     private String phoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
-    private String authNumber, verificationId, numberRole, numberCafeId;
+    private String authNumber, verificationId, numberRole, numberCafeId, numberMemoryWord;
     private String sharedPhoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
     private boolean numberFounded, backPressEnabled;
     boolean saveSharedPhoneNumber = false;
@@ -178,6 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                             numberRole = registeredNumber.getRole();
                             numberCafeId = cafeRegisteredNumberSnapshot.getKey();
                             registeredNumberWeb = registeredNumber.getWebAppRegistered();
+                            numberMemoryWord = registeredNumber.getMemoryWord();
                             phoneNumber = authNumber;
                             if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.WAITER) && !registeredNumber.isAllowed()) {
                                 toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
@@ -328,6 +329,7 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, numberCafeId);
                     intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, phoneNumber);
                     intent.putExtra(AppConstValue.bundleConstValue.REGISTERED_NUMBER_WEB, registeredNumberWeb);
+                    intent.putExtra(AppConstValue.bundleConstValue.NUMBER_MEMORY_WORD, numberMemoryWord);
                     //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
                     //afinitet, srodstvo
                     finishAffinity();

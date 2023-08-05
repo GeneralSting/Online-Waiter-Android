@@ -73,7 +73,7 @@ public class EmployeeActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityEmployeeBinding binding;
     private NavigationView navigationView;
-    private TextView tvCafeName;
+    private TextView tvCafeName, tvNumberMemoryWord;
 
     //gloabl variables/objects
     private Boolean isCategoriesDisplayed = true;
@@ -106,6 +106,7 @@ public class EmployeeActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         String employeeCafeId = bundle.getString(AppConstValue.bundleConstValue.LOGIN_CAFE_ID);
         String phoneNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
+        String numberMemoryWord = bundle.getString(AppConstValue.bundleConstValue.NUMBER_MEMORY_WORD);
         int registeredNumberWeb = bundle.getInt(AppConstValue.bundleConstValue.REGISTERED_NUMBER_WEB);
 
         menuViewModel = new ViewModelProvider(this).get(MenuViewModel.class);
@@ -123,6 +124,7 @@ public class EmployeeActivity extends AppCompatActivity {
             menuViewModel.setCafeId(employeeCafeId);
             menuViewModel.setPhoneNumber(phoneNumber);
             orderViewModel.setRegisteredNumberWeb(registeredNumberWeb > 0);
+            orderViewModel.setNumberMemoryWord(numberMemoryWord);
         }
 
         startService(new Intent(getBaseContext(), OnAppKilledService.class));
@@ -192,6 +194,8 @@ public class EmployeeActivity extends AppCompatActivity {
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
                 tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNavHeader);
+                tvNumberMemoryWord = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNumberAlias);
+                tvNumberMemoryWord.setText(orderViewModel.getNumberMemoryWord().getValue());
                 if (!cafe.getCafeName().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                     tvCafeName.setText(cafe.getCafeName());
                 }
@@ -466,6 +470,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 else if(Objects.equals(registeredNumberSnapshot.getKey(), firebaseRefPaths.getRegisteredNumberWebChild())) {
                     int webRegisteredNumber = registeredNumberSnapshot.getValue(int.class);
                     orderViewModel.setRegisteredNumberWeb(webRegisteredNumber > 0);
+                }
+                else if(Objects.equals(registeredNumberSnapshot.getKey(), firebaseRefPaths.getRNMemoryWordChild())) {
+                    tvNumberMemoryWord.setText(registeredNumberSnapshot.getValue(String.class));
+                    orderViewModel.setNumberMemoryWord(registeredNumberSnapshot.getValue(String.class));
                 }
             }
 

@@ -46,4 +46,11 @@ public class OrderViewModel extends ViewModel {
         registeredNumberWeb.setValue(value);
     }
 
+    private final MutableLiveData<String> numberMemoryWord = new MutableLiveData<>();
+    public LiveData<String> getNumberMemoryWord() {
+        return numberMemoryWord;
+    }
+    public void setNumberMemoryWord(String value) {
+        numberMemoryWord.setValue(value);
+    }
 }

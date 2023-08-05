@@ -5,6 +5,7 @@ public class AppConstValue {
         public static final String LOGIN_CAFE_ID = "cafeId";
         public static final String LOGIN_PHONE_NUMBER = "phoneNumber";
         public static final String REGISTERED_NUMBER_WEB = "registeredNumberWeb";
+        public static final String NUMBER_MEMORY_WORD = "numberMemoryWord";
         public static final String LOGOUT_NUMBER_CHANGE = "alertNumberChange";
         public static final String CROPPER_IMAGE_DATA = "imageCropperData";
         public static final String CROPPER_IMAGE_RESULT = "imageCropperResult";

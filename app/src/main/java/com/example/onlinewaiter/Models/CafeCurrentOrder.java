@@ -3,17 +3,19 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeCurrentOrder {
-    private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage;
+    private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage, numberMemoryWord;
     private int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
     private HashMap<String, CafeBillDrink> currentOrderDrinks;
 
     public CafeCurrentOrder() {}
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String currentOrderMakerEmployee,
-                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
+                            String currentOrderMakerEmployee, int currentOrderProductAmount, int currentOrderTableNumber,
+                            HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
+        this.numberMemoryWord = numberMemoryWord;
         this.currentOrderMakerEmployee = currentOrderMakerEmployee;
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
@@ -21,12 +23,13 @@ public class CafeCurrentOrder {
         this.currentOrderStatus = currentOrderStatus;
     }
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String currentOrderMakerEmployee,
-                            String currentOrderMessage, int currentOrderProductAmount, int currentOrderTableNumber,
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
+                            String currentOrderMakerEmployee, String currentOrderMessage, int currentOrderProductAmount, int currentOrderTableNumber,
                             HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
+        this.numberMemoryWord = numberMemoryWord;
         this.currentOrderMakerEmployee = currentOrderMakerEmployee;
         this.currentOrderMessage = currentOrderMessage;
         this.currentOrderProductAmount = currentOrderProductAmount;
@@ -35,11 +38,12 @@ public class CafeCurrentOrder {
         this.currentOrderStatus = currentOrderStatus;
     }
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee,
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
                             int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
+        this.numberMemoryWord = numberMemoryWord;
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
@@ -116,5 +120,13 @@ public class CafeCurrentOrder {
 
     public void setCurrentOrderMessage(String cafeCurrentOrderMessage) {
         this.currentOrderMessage = cafeCurrentOrderMessage;
+    }
+
+    public String getNumberMemoryWord() {
+        return numberMemoryWord;
+    }
+
+    public void setNumberMemoryWord(String numberMemoryWord) {
+        this.numberMemoryWord = numberMemoryWord;
     }
 }
