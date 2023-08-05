@@ -3,20 +3,34 @@ package com.example.onlinewaiter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
+import com.example.onlinewaiter.Adapter.OwnerCafeAdapter;
+import com.example.onlinewaiter.Functions.SortHashMap;
+import com.example.onlinewaiter.Interfaces.ItemClickListener;
+import com.example.onlinewaiter.Interfaces.OwnerCafeClick;
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
 import com.example.onlinewaiter.Models.AppError;
+import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessages;
@@ -40,20 +54,24 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements OwnerCafeClick {
 
     //Activity views
     private EditText etPhoneNumber, etRecivedOtp;
     private ImageView ivNumberQuestion;
     private Button btnSendPhoneNumber, btnVerifyOtp;
     private ProgressBar loginProgressBar;
+    AlertDialog dialogOnweCafes;
 
     //global variables/objects
     private String phoneNumber = AppConstValue.variableConstValue.EMPTY_VALUE;
@@ -62,6 +80,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean numberFounded, backPressEnabled;
     boolean saveSharedPhoneNumber = false;
     int registeredNumberWeb;
+    List<String> ownerCafes = new ArrayList<>();
     private SharedPreferences sharedPreferences;
     private ToastMessage toastMessage;
     private SmsBroadcastReceiver smsBroadcastReceiver;
@@ -170,28 +189,44 @@ public class LoginActivity extends AppCompatActivity {
         registeredNumbers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeRegisteredNumbersSnapshot) {
+                int ownerCounter = 0;
+                registeredCafesLoop:
                 for (DataSnapshot cafeRegisteredNumberSnapshot : cafeRegisteredNumbersSnapshot.getChildren()) {
                     for(DataSnapshot registeredNumberSnapshot : cafeRegisteredNumberSnapshot.getChildren()) {
                         if (authNumber.equals(registeredNumberSnapshot.getKey())) {
                             numberFounded = true;
                             RegisteredNumber registeredNumber = registeredNumberSnapshot.getValue(RegisteredNumber.class);
-                            numberRole = registeredNumber.getRole();
-                            numberCafeId = cafeRegisteredNumberSnapshot.getKey();
-                            registeredNumberWeb = registeredNumber.getWebAppRegistered();
-                            numberMemoryWord = registeredNumber.getMemoryWord();
-                            phoneNumber = authNumber;
-                            if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.WAITER) && !registeredNumber.isAllowed()) {
+                            if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.OWNER)) {
+                                if(ownerCounter == 0) {
+                                    numberRole = registeredNumber.getRole();
+                                    phoneNumber = authNumber;
+                                }
+                                ownerCounter++;
+                                ownerCafes.add(cafeRegisteredNumberSnapshot.getKey());
+                                break;
+                            }
+                            else if(registeredNumber.getRole().equals(AppConstValue.registeredNumbersRole.WAITER) && !registeredNumber.isAllowed()) {
                                 toastMessage.showToast(getResources().getString(R.string.act_login_number_not_allowed), 0);
                                 loginProgressBar.setVisibility(View.INVISIBLE);
                                 btnSendPhoneNumber.setEnabled(true);
+                                break registeredCafesLoop;
                             }
                             else {
+                                numberRole = registeredNumber.getRole();
+                                numberCafeId = cafeRegisteredNumberSnapshot.getKey();
+                                registeredNumberWeb = registeredNumber.getWebAppRegistered();
+                                numberMemoryWord = registeredNumber.getMemoryWord();
+                                phoneNumber = authNumber;
                                 sendverificationcode(authNumber);
+                                break registeredCafesLoop;
                             }
                         }
                     }
                 }
-                if (!numberFounded) {
+                if(numberRole.equals(AppConstValue.registeredNumbersRole.OWNER)) {
+                    sendverificationcode(authNumber);
+                }
+                else if (!numberFounded) {
                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(LoginActivity.this,
                             getResources().getString(R.string.act_login_dialog_no_user_header),
                             getResources().getString(R.string.act_login_dialog_no_user_body),
@@ -336,21 +371,103 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else if(numberRole.equals(AppConstValue.registeredNumbersRole.OWNER) && numberFounded) {
-                    Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
-                    //flag -> If set, this activity will become the start of a new task on this history stack.
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, numberCafeId);
-                    intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, phoneNumber);
-                    //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
-                    //afinitet, srodstvo
-                    finishAffinity();
-                    startActivity(intent);
+                    checkOwnershipNumber();
                 }
             }
             else {
                 toastMessage.showToast(getResources().getString(R.string.act_login_wrong_otp), 0);
             }
         });
+    }
+
+    private void checkOwnershipNumber() {
+        if(ownerCafes.size() > 1) {
+           collectOwnerCafes();
+        }
+        else {
+            selectedOwnerCafe(ownerCafes.get(0), false);
+        }
+    }
+
+    private void collectOwnerCafes() {
+        HashMap<String, Cafe> collectedOwnerCafes = new HashMap<>();
+        DatabaseReference cafesRef = FirebaseDatabase.getInstance().getReference(firebaseRefPaths.getCafes());
+        cafesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot cafesSnapshot) {
+                for(DataSnapshot cafeSnapshot : cafesSnapshot.getChildren()) {
+                    for(String ownerCafe : ownerCafes) {
+                        if(ownerCafe.equals(cafeSnapshot.getKey())) {
+                            collectedOwnerCafes.put(ownerCafe, cafeSnapshot.getValue(Cafe.class));
+                            break;
+                        }
+                    }
+                }
+
+                View ownerCafeView = getLayoutInflater().inflate(R.layout.dialog_owner_cafes, null);
+                ImageButton ibCloseOwnerCafes = ownerCafeView.findViewById(R.id.ibCloseOwnerCafes);
+                RecyclerView rvOwnerCafes = ownerCafeView.findViewById(R.id.rvOwnerCafes);
+                rvOwnerCafes.setLayoutManager(new LinearLayoutManager(LoginActivity.this));
+
+                OwnerCafeAdapter ownerCafeAdapter = new OwnerCafeAdapter(collectedOwnerCafes,
+                        LoginActivity.this, LoginActivity.this);
+                rvOwnerCafes.setAdapter(ownerCafeAdapter);
+                ownerCafeAdapter.notifyDataSetChanged();
+
+                dialogOnweCafes = new AlertDialog.Builder(LoginActivity.this)
+                        .setView(ownerCafeView)
+                        .create();
+                dialogOnweCafes.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialogOnweCafes.setCanceledOnTouchOutside(false);
+
+                dialogOnweCafes.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        ibCloseOwnerCafes.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialogOnweCafes.dismiss();
+                            }
+                        });
+                    }
+                });
+                dialogOnweCafes.show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(LoginActivity.this);
+                serverAlertDialog.makeAlertDialog();
+
+                AppError appError;
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        AppErrorMessages.Message.CAFE_NOT_FOUND,
+                        phoneNumber,
+                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        error.getMessage().toString(),
+                        currentDateTime
+                );
+                appError.sendError(appError);
+            }
+        });
+    }
+
+    @Override
+    public void selectedOwnerCafe(String cafeId, boolean closeDialog) {
+        if(closeDialog) {
+            dialogOnweCafes.dismiss();
+        }
+        Intent intent = new Intent(LoginActivity.this, OwnerActivity.class);
+        //flag -> If set, this activity will become the start of a new task on this history stack.
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(AppConstValue.bundleConstValue.LOGIN_CAFE_ID, cafeId);
+        intent.putExtra(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER, phoneNumber);
+        //Finish this activity as well as all activities immediately below it in the current task that have the same affinity.
+        //afinitet, srodstvo
+        finishAffinity();
+        startActivity(intent);
     }
 
     @Override

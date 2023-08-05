@@ -116,4 +116,12 @@ public class Cafe {
     public void setCafeEmployees(HashMap<String, CafeEmployee> cafeEmployees) {
         this.cafeEmployees = cafeEmployees;
     }
+
+    public String getCafeCountry() {
+        return cafeCountry;
+    }
+
+    public void setCafeCountry(String cafeCountry) {
+        this.cafeCountry = cafeCountry;
+    }
 }

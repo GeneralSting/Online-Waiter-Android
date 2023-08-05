@@ -37,6 +37,7 @@
     <string name="act_login_dialog_no_user_body">Broj koji ste unijeli nije sadržan u sustavu te nije moguća prijava s unesenim brojem.</string>
     <string name="act_login_verification_failed">Dogodila se pogreška, pokušajte ponovno</string>
     <string name="act_login_number_not_allowed">Vlasnik kafića je onemogućio prijavu s tim brojem</string>
+    <string name="act_login_select_cafe_title">Odaberite kafić</string>
 
 
     <!--Employee activity-->

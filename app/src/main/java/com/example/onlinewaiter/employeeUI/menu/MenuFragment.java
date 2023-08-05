@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -212,7 +211,7 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
             @Override
             public MenuCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.menu_category_item, parent, false);
+                        .inflate(R.layout.item_menu_category, parent, false);
                 return new MenuCategoryViewHolder(view);
             }
         };
@@ -368,7 +367,7 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
             public MenuDrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater
                         .from(parent.getContext())
-                        .inflate(R.layout.menu_drink_item, parent, false);
+                        .inflate(R.layout.item_menu_drink, parent, false);
                 return new MenuDrinkViewHolder(view);
             }
         };

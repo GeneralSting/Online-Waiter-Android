@@ -386,7 +386,7 @@ public class RegisteredNumbersFragment extends Fragment {
             @Override
             public RegisteredNumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.registered_number_item, parent, false);
+                        .inflate(R.layout.item_registered_number, parent, false);
                 return new RegisteredNumberViewHolder(view);
             }
         };

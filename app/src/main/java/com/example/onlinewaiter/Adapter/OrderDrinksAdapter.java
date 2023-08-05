@@ -1,7 +1,6 @@
 package com.example.onlinewaiter.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.example.onlinewaiter.ViewHolder.OrderDrinkViewHolder;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Map;
 
 public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolder> {
     private final Context context;
@@ -37,7 +35,7 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
     @NonNull
     @Override
     public OrderDrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.order_drink_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_order_drink, parent, false);
         return new OrderDrinkViewHolder(view);
     }
 
@@ -88,8 +86,8 @@ public class OrderDrinksAdapter extends RecyclerView.Adapter<OrderDrinkViewHolde
                             else {
                                 orderDrinks.remove(cafeBillDrink.getDrinkId());
                                 callBackOrder.updateOrderDrinks(orderDrinks);
-                                notifyItemRemoved(position);
-                                notifyItemRangeChanged(position, orderDrinks.size());
+                                notifyItemRemoved(holder.getAbsoluteAdapterPosition());
+                                notifyItemRangeChanged(holder.getAbsoluteAdapterPosition(), orderDrinks.size());
                             }
                         }
                     }

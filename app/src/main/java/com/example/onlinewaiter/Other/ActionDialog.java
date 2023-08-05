@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -14,7 +13,7 @@ import com.example.onlinewaiter.R;
 
 public class ActionDialog {
     public static void showInfoDialog(Context context, String title, String content) {
-        View viewDialog = LayoutInflater.from(context).inflate(R.layout.action_info_dialog, null);
+        View viewDialog = LayoutInflater.from(context).inflate(R.layout.dialog_action_info, null);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setView(viewDialog);
 

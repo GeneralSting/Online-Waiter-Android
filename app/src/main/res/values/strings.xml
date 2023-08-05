@@ -36,6 +36,7 @@
     <string name="act_login_dialog_no_user_body">The number you entered is not included in the system, so it is not possible to log in with the entered number.</string>
     <string name="act_login_verification_failed">An error occurred, please try again</string>
     <string name="act_login_number_not_allowed">Cafe owner disabled login with that number</string>
+    <string name="act_login_select_cafe_title">Select cafe</string>
 
     <!--Employee activity-->
     <string name="act_employee_back_button_pressed">One more time to logout.</string>

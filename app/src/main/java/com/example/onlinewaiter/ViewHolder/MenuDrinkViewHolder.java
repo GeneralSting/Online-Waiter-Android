@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.R;
 
 public class MenuDrinkViewHolder extends RecyclerView.ViewHolder {

@@ -1,13 +1,11 @@
 package com.example.onlinewaiter.Adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -19,13 +17,9 @@ import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.ViewHolder.MenuDrinkViewHolder;
-import com.example.onlinewaiter.ViewHolder.OrderDrinkViewHolder;
-import com.example.onlinewaiter.employeeUI.order.OrderViewModel;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder> {
     private final Context context;
@@ -49,7 +43,7 @@ public class MenuDrinksAdapter extends RecyclerView.Adapter<MenuDrinkViewHolder>
     @NonNull
     @Override
     public MenuDrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.menu_drink_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_menu_drink, parent, false);
         return new MenuDrinkViewHolder(view);
     }
 

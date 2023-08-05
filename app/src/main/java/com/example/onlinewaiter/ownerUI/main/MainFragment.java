@@ -158,7 +158,7 @@ public class MainFragment extends Fragment {
                     tlOwnerMainEmployees.removeView(tlOwnerMainEmployees.getChildAt(tlOwnerMainEmployees.getChildCount() - 1));
                 }
                 for(CafeEmployee cafeEmployee : cafe.getCafeEmployees().values()) {
-                    View trCafeEmployeeView = getLayoutInflater().inflate(R.layout.cafe_employee_row, tlOwnerMainEmployees, false);
+                    View trCafeEmployeeView = getLayoutInflater().inflate(R.layout.row_cafe_employee, tlOwnerMainEmployees, false);
 
                     TextView tvCafeEmployeeName = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeName);
                     tvCafeEmployeeName.setText(cafeEmployee.getEmployeeName());

@@ -33,7 +33,7 @@ public class AppPagerAdapter extends RecyclerView.Adapter<ViewPagerItemHolder> {
     @Override
     public ViewPagerItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewPagerItem = LayoutInflater.from(context)
-                .inflate(R.layout.main_pager_item, parent, false);
+                .inflate(R.layout.item_main_pager, parent, false);
         return new ViewPagerItemHolder(viewPagerItem);
     }
 

@@ -712,7 +712,7 @@ public class StatisticsFragment extends Fragment {
             statisticsValuesSum += pieChartStatistic.get(key);
         }
         for(String key : sortStatisticsEntry(pieChartStatistic, false).keySet()) {
-            View trEmployeeView = getLayoutInflater().inflate(R.layout.owner_statistics_row, tlStatisticEmployees, false);
+            View trEmployeeView = getLayoutInflater().inflate(R.layout.row_owner_statistics, tlStatisticEmployees, false);
 
             TextView tvStatisticEmployeePhoneNumber = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeePhoneNumber);
             TextView tvStatisticEmployeeValue = (TextView) trEmployeeView.findViewById(R.id.tvStatisticEmployeeValue);

@@ -45,7 +45,7 @@ public class CountriesNumbersAdapter extends ArrayAdapter<CountryNumber> {
         CountriesNumberViewHolder countriesNumberViewHolder;
         if(convertView == null) {
             countriesNumberViewHolder = new CountriesNumberViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.country_number_dropdown_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_country_number_dropdown, parent, false);
             CountryNumber countryNumber = getItem(position);
             countriesNumberViewHolder.txtCountryName = (TextView) convertView.findViewById(R.id.txtDropDownItemName);
             countriesNumberViewHolder.txtCountryName.setText(countryNumber.getCountryName());
@@ -66,7 +66,7 @@ public class CountriesNumbersAdapter extends ArrayAdapter<CountryNumber> {
         CountryFlagViewHolder countryFlagViewHolder;
         if(convertView == null) {
             countryFlagViewHolder = new CountryFlagViewHolder();
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.country_number_item, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_country_number, parent, false);
             CountryNumber countryNumber = getItem(position);
             countryFlagViewHolder.ivCountryFlag = (ImageView) convertView.findViewById(R.id.ivLoginCountryFlag);
             Glide.with(parent.getContext()).load(countryNumber.getCountryFlag()).into(countryFlagViewHolder.ivCountryFlag);

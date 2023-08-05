@@ -391,7 +391,7 @@ public class PendingOrdersFragment extends Fragment {
             @Override
             public CurrentOrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.current_order_item, parent, false);
+                        .inflate(R.layout.item_current_order, parent, false);
                 return new CurrentOrderViewHolder(view);
             }
         };
@@ -405,7 +405,7 @@ public class PendingOrdersFragment extends Fragment {
         TableLayout tlCurrentOrderDrinks = currentOrderTableView.findViewById(R.id.tlCurrentOrderDrinks);
         TableRow trCurrenOrderDrinksTitle = currentOrderTableView.findViewById(R.id.trCurrentOrderDrinkTitle);
 
-        View trTotalView = getLayoutInflater().inflate(R.layout.current_order_row, tlCurrentOrderDrinks, false);
+        View trTotalView = getLayoutInflater().inflate(R.layout.row_current_order, tlCurrentOrderDrinks, false);
         TableLayout.LayoutParams trTotalViewParams = new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT);
         trTotalViewParams.setMargins(0, 32, 0, 0);
 
@@ -439,7 +439,7 @@ public class PendingOrdersFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot orderDrinksSnapshot) {
                 for(DataSnapshot orderDrink : orderDrinksSnapshot.getChildren()) {
                     CafeBillDrink cafeBillDrink = orderDrink.getValue(CafeBillDrink.class);
-                    View trDrinkView = getLayoutInflater().inflate(R.layout.current_order_row, tlCurrentOrderDrinks, false);
+                    View trDrinkView = getLayoutInflater().inflate(R.layout.row_current_order, tlCurrentOrderDrinks, false);
 
                     TextView tvCurrentOrderDrinkName = (TextView) trDrinkView.findViewById(R.id.tvCurrentOrderDrinkName);
                     String shortDrinkName = cafeBillDrink.getDrinkName();

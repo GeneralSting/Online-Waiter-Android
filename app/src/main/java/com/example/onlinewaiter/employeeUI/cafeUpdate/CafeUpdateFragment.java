@@ -309,7 +309,7 @@ public class CafeUpdateFragment extends Fragment {
             @Override
             public MenuCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.menu_category_item, parent, false);
+                        .inflate(R.layout.item_menu_category, parent, false);
                 return new MenuCategoryViewHolder(view);
             }
         };
@@ -462,7 +462,7 @@ public class CafeUpdateFragment extends Fragment {
             @Override
             public UpdateDrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.update_drink_item, parent, false);
+                        .inflate(R.layout.item_update_drink, parent, false);
                 return new UpdateDrinkViewHolder(view);
             }
         };
@@ -751,7 +751,7 @@ public class CafeUpdateFragment extends Fragment {
             @Override
             public MenuCategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.menu_category_item, parent, false);
+                        .inflate(R.layout.item_menu_category, parent, false);
                 return new MenuCategoryViewHolder(view);
             }
         };

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
-import com.example.onlinewaiter.EmployeeActivity;
 import com.example.onlinewaiter.Filters.InputMinMaxFilter;
 import com.example.onlinewaiter.Functions.SortHashMap;
 import com.example.onlinewaiter.Interfaces.CallBackOrder;
@@ -52,18 +50,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class OrderFragment extends Fragment implements CallBackOrder {
 
@@ -279,7 +269,7 @@ public class OrderFragment extends Fragment implements CallBackOrder {
     }
 
     private void orderDialogWeb() {
-        View completeOrderView = getLayoutInflater().inflate(R.layout.order_completion_dialog, null);
+        View completeOrderView = getLayoutInflater().inflate(R.layout.dialog_order_completion, null);
         ImageButton ibCloseDialog = completeOrderView.findViewById(R.id.ibCloseOrderCompletion);
         NumberPicker npTableNumber = completeOrderView.findViewById(R.id.npOrderDialogTableNumber);
         EditText etTableNumber = completeOrderView.findViewById(R.id.etOrderDialogTableNumber);
