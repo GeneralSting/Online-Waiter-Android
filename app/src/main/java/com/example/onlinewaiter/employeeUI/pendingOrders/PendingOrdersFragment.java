@@ -62,6 +62,7 @@ import java.util.Objects;
 
 public class PendingOrdersFragment extends Fragment {
     //fragments views
+    private TextView tvSwitchDescription;
     private RecyclerView rvCafeCurrentOrders;
     private SwitchCompat scCafeCurrentOrders;
 
@@ -103,6 +104,7 @@ public class PendingOrdersFragment extends Fragment {
         simpleDateFormatLocale = new SimpleDateFormat(employeeViewModel.getCafeDateTimeFormat().getValue(), Locale.getDefault());
         toastMessage = new ToastMessage(requireActivity());
 
+        tvSwitchDescription = (TextView) binding.tvCCOSwitch;
         scCafeCurrentOrders = (SwitchCompat) binding.scCafeCurrentOrders;
         rvCafeCurrentOrders = (RecyclerView) binding.rvCafeCurrentOrders;
         RecyclerView.LayoutManager rvCurrentOrdersLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
@@ -121,6 +123,12 @@ public class PendingOrdersFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(pendingOrdersViewModel.getSearchedOrder().getValue() != null) {
                     populateOrdersRv(pendingOrdersViewModel.getSearchedOrder().getValue());
+                }
+                if(b) {
+                    tvSwitchDescription.setText(getResources().getString(R.string.pending_orders_switch_all));
+                }
+                else {
+                    tvSwitchDescription.setText(getResources().getString(R.string.pending_orders_switch_mine));
                 }
             }
         });

@@ -135,7 +135,8 @@
     <string name="pending_orders_drink_amount_col">Amount</string>
     <string name="pending_orders_drink_price_col">Price</string>
     <string name="pending_orders_drink_name_total">TOTAL</string>
-    <string name="pending_orders_switch_txt">All orders</string>
+    <string name="pending_orders_switch_all">All orders</string>
+    <string name="pending_orders_switch_mine">My orders</string>
     <string name="pending_orders_order_removal_request">Waiting for order rejection acceptance, table:</string>
     <string name="pending_orders_btn_order_removal_request">Cancel</string>
     <string name="pending_orders_payment_received">Received:</string>
@@ -230,6 +231,8 @@
     <string name="registered_numbers_edit_no_change">No changes</string>
     <string name="registered_numbers_edit_successful">Update successful</string>
     <string name="registered_numbers_registered_successfully">Added new number</string>
+    <string name="registered_numbers_switch_emplyoees">Employees</string>
+    <string name="registered_numbers_switch_owner">Owner</string>
 
 
     <!--Owner activity logout fragment-->

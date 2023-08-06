@@ -24,10 +24,26 @@
         android:id="@+id/scCafeCurrentOrders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/pending_orders_switch_txt"
+        android:layout_marginEnd="32dp"
+        android:scaleX="2"
+        android:scaleY="2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:switchMinWidth="128dp" />
+
+    <TextView
+        android:id="@+id/tvCCOSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="@string/pending_orders_switch_mine"
+        app:layout_constraintBottom_toBottomOf="@+id/scCafeCurrentOrders"
+        app:layout_constraintEnd_toEndOf="@+id/scCafeCurrentOrders"
+        app:layout_constraintStart_toStartOf="@+id/scCafeCurrentOrders"
+        app:layout_constraintTop_toTopOf="@+id/scCafeCurrentOrders" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

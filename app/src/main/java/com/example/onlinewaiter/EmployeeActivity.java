@@ -648,7 +648,12 @@ public class EmployeeActivity extends AppCompatActivity {
                     @Override
                     public boolean onQueryTextChange(String query) {
                         if(!query.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
-                            menuDrinksQuery(query);
+                            if(query.length() <= 25) {
+                                menuDrinksQuery(query);
+                            }
+                            else {
+                                svEmployeeAppBar.setQuery(query.substring(0, 25), false);
+                            }
                         }
                         return false;
                     }
@@ -659,6 +664,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 searchMenuItem.setVisible(true);
                 svEmployeeAppBar.setQueryHint(getResources().getString(R.string.act_employee_search_query_menu));
                 svEmployeeAppBar.setInputType(InputType.TYPE_CLASS_NUMBER);
+
                 svEmployeeAppBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String query) {
@@ -671,7 +677,12 @@ public class EmployeeActivity extends AppCompatActivity {
                             pendingOrdersViewModel.setSearchedOrder(Integer.parseInt(AppConstValue.variableConstValue.ZERO_VALUE));
                         }
                         else {
-                            pendingOrdersViewModel.setSearchedOrder(Integer.parseInt(query));
+                            if(query.length() <= 4) {
+                                pendingOrdersViewModel.setSearchedOrder(Integer.parseInt(query));
+                            }
+                            else {
+                                svEmployeeAppBar.setQuery(query.substring(0, 4), false);
+                            }
                         }
                         return false;
                     }

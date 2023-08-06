@@ -58,6 +58,7 @@ import java.util.Objects;
 
 public class RegisteredNumbersFragment extends Fragment {
     //fragment views
+    private TextView tvSwitchDescription;
     private RecyclerView rvRegisteredNumbers;
     private FloatingActionButton fabRegisterNumber;
     private SwitchCompat scRegisteredNumber;
@@ -80,6 +81,7 @@ public class RegisteredNumbersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRegisteredNumbersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        tvSwitchDescription = binding.tvRNSwitch;
         fabRegisterNumber = binding.fabRegisterNumbers;
         rvRegisteredNumbers = binding.rvRegisteredNumbers;
         scRegisteredNumber = binding.scRegisteredNumber;
@@ -104,6 +106,12 @@ public class RegisteredNumbersFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 stopAdapterListening();
+                if(b) {
+                    tvSwitchDescription.setText(getResources().getString(R.string.registered_numbers_switch_owner));
+                }
+                else {
+                    tvSwitchDescription.setText(getResources().getString(R.string.registered_numbers_switch_emplyoees));
+                }
                 populateRvRegisteredNumbers(b);
             }
         });
@@ -396,6 +404,7 @@ public class RegisteredNumbersFragment extends Fragment {
 
     private void editRegisteredNumber(RegisteredNumber registeredNumber, String phoneNumber) {
         View editNumberView = getLayoutInflater().inflate(R.layout.dialog_edit_number, null);
+        TextView tvEditNumberTitle = (TextView) editNumberView.findViewById(R.id.tvEditNumberTitle);
         TextView tvEditNumberIncorrect = (TextView) editNumberView.findViewById(R.id.tvEditNumberIncorrect);
         TextView tvEditNumberMemoryIncorrect = (TextView) editNumberView.findViewById(R.id.tvEditNumberMemoryIncorrect);
         EditText etEditNumber = (EditText) editNumberView.findViewById(R.id.etEditNumber);
@@ -403,6 +412,7 @@ public class RegisteredNumbersFragment extends Fragment {
         Button btnEditNumber = (Button) editNumberView.findViewById(R.id.btnEditNumber);
         ImageButton ibCloseEditNumber = (ImageButton) editNumberView.findViewById(R.id.ibCloseEditNumber);
 
+        tvEditNumberTitle.setText(getResources().getString(R.string.registered_numbers_edit_title) + AppConstValue.characterConstValue.CHARACTER_SPACING + phoneNumber);
         etEditNumber.setText(phoneNumber);
         etEditNumberMemory.setText(registeredNumber.getMemoryWord());
 

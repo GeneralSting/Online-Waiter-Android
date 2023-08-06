@@ -16,16 +16,32 @@
             android:id="@+id/scRegisteredNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:text="@string/registered_numbers_sc_text"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:scaleX="2"
+            android:scaleY="2"
+            app:switchMinWidth="128dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvRNSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="@string/registered_numbers_switch_emplyoees"
+            app:layout_constraintBottom_toBottomOf="@+id/scRegisteredNumber"
+            app:layout_constraintEnd_toEndOf="@+id/scRegisteredNumber"
+            app:layout_constraintStart_toStartOf="@+id/scRegisteredNumber"
+            app:layout_constraintTop_toTopOf="@+id/scRegisteredNumber" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRegisteredNumbers"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="64dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

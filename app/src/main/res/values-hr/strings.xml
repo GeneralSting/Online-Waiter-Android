@@ -135,7 +135,8 @@
     <string name="pending_orders_drink_amount_col">Količina</string>
     <string name="pending_orders_drink_price_col">Cijena</string>
     <string name="pending_orders_drink_name_total">UKUPNO</string>
-    <string name="pending_orders_switch_txt">Sve narudžbe</string>
+    <string name="pending_orders_switch_all">Sve narudžbe</string>
+    <string name="pending_orders_switch_mine">Moje narudžbe</string>
     <string name="pending_orders_order_removal_request">Čekanje na prihvat odbijanja narudžbe za stol:</string>
     <string name="pending_orders_btn_order_removal_request">Poništi zahtjev</string>
     <string name="pending_orders_payment_received">Primljeno:</string>
@@ -228,7 +229,8 @@
     <string name="registered_numbers_edit_no_change">Nema promjena</string>
     <string name="registered_numbers_edit_successful">Uspješno ažuriranje</string>
     <string name="registered_numbers_registered_successfully">Novi broj dodan</string>
-
+    <string name="registered_numbers_switch_emplyoees">Zaposlenici</string>
+    <string name="registered_numbers_switch_owner">Vlasnik</string>
 
     <!--Owner activity logout fragment-->
     <string name="logout_owner_title">Odjava</string>
