@@ -31,7 +31,7 @@ import com.example.onlinewaiter.Functions.ViewMargins;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.Services.MailService;
@@ -211,9 +211,10 @@ public class RegisteredNumbersFragment extends Fragment {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -274,9 +275,10 @@ public class RegisteredNumbersFragment extends Fragment {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -381,9 +383,10 @@ public class RegisteredNumbersFragment extends Fragment {
                         appError = new AppError(
                                 mainViewModel.getOwnerCafeId().getValue(),
                                 mainViewModel.getOwnerPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                                 error.getMessage().toString(),
-                                currentDateTime
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }

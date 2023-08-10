@@ -55,6 +55,10 @@
     <string name="act_employee_drink_quantity_change_body">Drink in current order does not have required quantity, the remaining amount is set to drink</string>
     <string name="act_employee_drink_negative_quantity_title">Negative quantity:</string>
     <string name="act_employee_drink_negative_quantity_body">Drink quantity was negative. App set quantity to zero (0), please check drink availability</string>
+    <string name="act_employee_report_bug_title">Bug Report</string>
+    <string name="act_employee_report_bug_et_hint">Bug description</string>
+    <string name="act_employee_report_bug_condition">Enter at least 10 characters</string>
+    <string name="act_emplyoee_report_bug_successful">Report sent. Thank you!</string>
 
 
     <!--Employe activity menu fragment-->
@@ -152,6 +156,7 @@
     <string name="employee_nav_pending_orders_title">Pending Orders</string>
     <string name="employee_nav_cafe_update_title">Cafe Update</string>
     <string name="employee_nav_logout_title">Logout</string>
+    <string name="employee_nav_bug_report_title">Bug Report</string>
     <string name="employee_nav_cafe_name_not_found">Welcome!</string>
 
     <!--Employee activity-->
@@ -257,6 +262,7 @@
     <string name="i_understand">I Understand</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
+    <string name="send">Send</string>
     <string name="country_currency">$</string>
     <string name="etc_dots" translatable="false">…</string>
     <string name="drink_btn_add_placeholder" translatable="false">+</string>

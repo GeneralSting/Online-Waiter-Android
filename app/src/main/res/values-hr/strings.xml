@@ -57,6 +57,10 @@
     <string name="act_employee_drink_quantity_change_body">Nema dovoljne količine za piće u trenutnoj narudžbi, postavljena je preostala količina</string>
     <string name="act_employee_drink_negative_quantity_title">Negativna količina:</string>
     <string name="act_employee_drink_negative_quantity_body">Nova količina je bila negativna. Aplikacija je postavila stanje na nulu (0), molimo provjerite dostupnost.</string>
+    <string name="act_employee_report_bug_title">Prijava greške</string>
+    <string name="act_employee_report_bug_et_hint">Opis greške</string>
+    <string name="act_employee_report_bug_condition">Unesite barem 10 znakova</string>
+    <string name="act_emplyoee_report_bug_successful">Poslano. Hvala Vam!</string>
 
     <!--Employee activity menu fragment-->
     <string name="menu_drink_name_placeholder">Naziv Pića</string>
@@ -152,6 +156,7 @@
     <string name="employee_nav_pending_orders_title">Narudžbe u tijeku</string>
     <string name="employee_nav_cafe_update_title">Ažuriranje kafića</string>
     <string name="employee_nav_logout_title">Odjava</string>
+    <string name="employee_nav_bug_report_title">Prijava greške</string>
     <string name="employee_nav_cafe_name_not_found">Dobrodošao!</string>
 
     <!--Employee Activity-->
@@ -250,6 +255,7 @@
     <string name="i_understand">Razumijem</string>
     <string name="accept">Prihvati</string>
     <string name="cancel">Odustani</string>
+    <string name="send">Pošalji</string>
     <string name="country_currency">€</string>
     <string name="description_close_dialog">Zatvorite dialog</string>
 

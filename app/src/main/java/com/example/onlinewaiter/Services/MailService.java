@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
@@ -77,9 +77,10 @@ public class MailService {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.SENDING_EMAIL_FAILED_OWNER,
+                        AppErrorMessage.Title.SENDING_EMAIL_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }

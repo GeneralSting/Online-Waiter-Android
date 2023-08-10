@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="5dp"
+        android:orientation="vertical"
+        android:paddingBottom="32dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/ibCloseBugReport"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:padding="10dp"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            android:background="@drawable/rounded_ripple_bg"
+            android:src="@drawable/icon_baseline_close_24"
+            android:contentDescription="@string/description_close_dialog" />
+
+        <TextView
+            android:id="@+id/tvBugReportTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:text="@string/act_employee_report_bug_title"
+            android:layout_marginTop="4dp"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+
+        <View
+            android:layout_width="200dp"
+            android:layout_height="1dp"
+            android:background="#000"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            android:layout_gravity="center"/>
+
+        <!--
+        <EditText
+            android:id="@+id/etBugReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="6"
+            android:minLines="4"
+            android:paddingTop="2dp"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp"
+            android:paddingBottom="2dp"
+            android:gravity="start"
+            android:maxLines="12"
+            android:scrollbars="vertical"
+            android:scrollHorizontally="false"
+            android:scrollbarTrackVertical="@color/grey"
+            android:maxLength="200"
+            android:hint="@string/act_employee_report_bug_et_hint"
+            android:textColor="@color/black"
+            android:textColorHint="@color/grey"
+            android:backgroundTint="@color/tumbleweed"
+            android:background="@drawable/edittext_border"/>
+        -->
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ftfBugReport"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:boxBackgroundMode="outline"
+            app:counterTextColor="@color/black"
+            app:counterEnabled="true"
+            app:counterMaxLength="200"
+            android:hint="@string/act_employee_report_bug_et_hint"
+            android:textColorHint="@color/tumbleweed"
+            app:helperTextTextColor="@color/red_negative"
+            app:startIconDrawable="@drawable/icon_baseline_bug_report_24"
+            app:startIconTint="@color/tumbleweed"
+            app:errorEnabled="true"
+            app:hintAnimationEnabled="false"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etBugReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:paddingBottom="24dp"
+                android:maxLength="200"
+                android:lines="4"
+                android:minLines="2"
+                android:maxLines="10"
+                android:scrollHorizontally="false"
+                android:scrollbars="vertical"
+                android:scrollbarTrackVertical="@color/grey"
+                android:textColor="@color/black"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnBugReportConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_ripple_bg" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/action_dialog"
+        android:elevation="10dp"
+        android:padding="15dp"
+        android:src="@drawable/dialog_bug_report"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

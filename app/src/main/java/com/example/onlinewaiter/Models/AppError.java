@@ -6,22 +6,17 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class AppError {
     private String cafeId, phoneNumber, errorTitle, errorMessage, dateTime;
+    private int errorSender;
 
     public AppError() {}
 
-    public AppError(String cafeId, String phoneNumber, String errorMessage, String dateTime) {
-        this.cafeId = cafeId;
-        this.phoneNumber = phoneNumber;
-        this.errorMessage = errorMessage;
-        this.dateTime = dateTime;
-    }
-
-    public AppError(String cafeId, String phoneNumber, String errorTitle, String errorMessage, String dateTime) {
+    public AppError(String cafeId, String phoneNumber, String errorTitle, String errorMessage, String dateTime, int errorSender) {
         this.cafeId = cafeId;
         this.phoneNumber = phoneNumber;
         this.errorTitle = errorTitle;
         this.errorMessage = errorMessage;
         this.dateTime = dateTime;
+        this.errorSender = errorSender;
     }
 
     public String getCafeId() {
@@ -62,6 +57,14 @@ public class AppError {
 
     public void setErrorTitle(String errorTitle) {
         this.errorTitle = errorTitle;
+    }
+
+    public int getErrorSender() {
+        return errorSender;
+    }
+
+    public void setErrorSender(int errorSender) {
+        this.errorSender = errorSender;
     }
 
     public void sendError(AppError appError) {

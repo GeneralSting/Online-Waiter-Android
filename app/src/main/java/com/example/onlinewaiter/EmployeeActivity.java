@@ -1,18 +1,24 @@
 package com.example.onlinewaiter;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Models.AppError;
@@ -22,7 +28,7 @@ import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Services.OnAppKilledService;
@@ -39,6 +45,7 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -52,6 +59,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onlinewaiter.databinding.ActivityEmployeeBinding;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -182,6 +190,14 @@ public class EmployeeActivity extends AppCompatActivity {
             return false;
         });
 
+        ConstraintLayout clBugReport = binding.clItemBugReport;
+        clBugReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bugReportDialog();
+            }
+        });
+
         getCafeInfo(navigationView);
     }
 
@@ -193,8 +209,8 @@ public class EmployeeActivity extends AppCompatActivity {
                 Cafe cafe = snapshot.getValue(Cafe.class);
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
-                tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNavHeader);
-                tvNumberMemoryWord = (TextView) navHeaderView.findViewById(R.id.tvEmployeeNumberAlias);
+                tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvNavHeaderCafe);
+                tvNumberMemoryWord = (TextView) navHeaderView.findViewById(R.id.tvNavHeaderNumber);
                 tvNumberMemoryWord.setText(orderViewModel.getNumberMemoryWord().getValue());
                 if (!cafe.getCafeName().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                     tvCafeName.setText(cafe.getCafeName());
@@ -210,9 +226,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -275,9 +292,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -297,9 +315,10 @@ public class EmployeeActivity extends AppCompatActivity {
                     appError = new AppError(
                             menuViewModel.getCafeId().getValue(),
                             menuViewModel.getPhoneNumber().getValue(),
-                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
-                            AppErrorMessages.ErrorsMessage.FIREBASE_PATH_REGISTERED_COUNTRY,
-                            currentDateTime
+                            AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessage.Message.FIREBASE_PATH_REGISTERED_COUNTRY,
+                            currentDateTime,
+                            AppConstValue.errorSender.APP
                     );
                     appError.sendError(appError);
                     return;
@@ -320,9 +339,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -393,9 +413,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -445,9 +466,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -567,9 +589,10 @@ public class EmployeeActivity extends AppCompatActivity {
                             appError = new AppError(
                                     menuViewModel.getCafeId().getValue(),
                                     menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                    AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                                     error.getMessage().toString(),
-                                    currentDateTime
+                                    currentDateTime,
+                                    AppConstValue.errorSender.APP
                             );
                             appError.sendError(appError);
                         }
@@ -615,9 +638,10 @@ public class EmployeeActivity extends AppCompatActivity {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
-                                currentDateTime
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }
@@ -732,9 +756,10 @@ public class EmployeeActivity extends AppCompatActivity {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -751,6 +776,55 @@ public class EmployeeActivity extends AppCompatActivity {
         if (registeredNumberRef != null) {
             registeredNumberRef.removeEventListener(registeredNumberListener);
         }
+    }
+
+    private void bugReportDialog() {
+        View bugReportView = getLayoutInflater().inflate(R.layout.dialog_bug_report, null);
+        EditText etBugReport = bugReportView.findViewById(R.id.etBugReport);
+        Button btnBugReportConfirm = bugReportView.findViewById(R.id.btnBugReportConfirm);
+        ImageButton ibCloseBugReport = bugReportView.findViewById(R.id.ibCloseBugReport);
+
+        final AlertDialog bugReportDialog = new AlertDialog.Builder(this)
+                .setView(bugReportView)
+                .create();
+        bugReportDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bugReportDialog.setCanceledOnTouchOutside(false);
+        bugReportDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                etBugReport.requestFocus();
+                btnBugReportConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(etBugReport.getText().toString().length() < 10) {
+                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.ftfBugReport);
+                            ftfBugReport.setError(getResources().getString(R.string.act_employee_report_bug_condition));
+                        }
+                        else {
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    menuViewModel.getCafeId().getValue(),
+                                    menuViewModel.getPhoneNumber().getValue(),
+                                    AppErrorMessage.Title.USER_BUG_REPORT,
+                                    etBugReport.getText().toString(),
+                                    currentDateTime,
+                                    AppConstValue.errorSender.USER_EMPLOYEE
+                            );
+                            appError.sendError(appError);
+                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
+                            bugReportDialog.dismiss();
+                        }
+                    }
+                });
+                ibCloseBugReport.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bugReportDialog.dismiss();
+                    }
+                });
+            }
+        });
+        bugReportDialog.show();
     }
 
     private void logout(boolean showChangeDialog) {

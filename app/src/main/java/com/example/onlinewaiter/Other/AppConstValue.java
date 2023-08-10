@@ -138,4 +138,11 @@ public class AppConstValue {
         public static final String OWNER = "owner";
         public static final String WAITER = "waiter";
     }
+
+    public static class errorSender {
+        public static final int APP = 0;
+        public static final int USER_EMPLOYEE = 1;
+        public static final int USER_OWNER = 2;
+        public static final int WEB = 3;
+    }
 }

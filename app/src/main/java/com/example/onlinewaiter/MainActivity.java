@@ -20,7 +20,7 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.AppInfo;
 import com.example.onlinewaiter.Models.ViewPagerItem;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -197,10 +197,12 @@ public class MainActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
             String currentDateTime = simpleDateFormat.format(new Date());
             AppError appError = new AppError(
-                    AppErrorMessages.Message.CAFE_NOT_FOUND,
+                    AppErrorMessage.Other.CAFE_NOT_FOUND,
                     currentUser.getPhoneNumber(),
-                    AppErrorMessages.Message.USER_NOT_LOGGED_OUT,
-                    currentDateTime
+                    AppErrorMessage.Title.USER_NOT_LOGGED_OUT,
+                    AppErrorMessage.Message.USER_NOT_LOGGED_OUT,
+                    currentDateTime,
+                    AppConstValue.errorSender.APP
             );
             appError.sendError(appError);
 

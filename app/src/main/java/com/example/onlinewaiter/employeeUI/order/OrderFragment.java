@@ -32,7 +32,7 @@ import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -160,9 +160,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     appError = new AppError(
                             menuViewModel.getCafeId().getValue(),
                             menuViewModel.getPhoneNumber().getValue(),
-                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                             error.getMessage().toString(),
-                            currentDateTime
+                            currentDateTime,
+                            AppConstValue.errorSender.APP
                     );
                     appError.sendError(appError);
                 }
@@ -443,9 +444,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
-                                AppErrorMessages.ErrorsMessage.DRINK_QUANTITY_UNDER_ZERO,
-                                currentDateTime
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessage.Message.DRINK_QUANTITY_UNDER_ZERO,
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }
@@ -460,9 +462,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     appError = new AppError(
                             menuViewModel.getCafeId().getValue(),
                             menuViewModel.getPhoneNumber().getValue(),
-                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                            AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                             error.getMessage().toString(),
-                            currentDateTime
+                            currentDateTime,
+                            AppConstValue.errorSender.APP
                     );
                     appError.sendError(appError);
                 }

@@ -15,7 +15,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,17 +22,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.onlinewaiter.Adapter.OrderDrinksAdapter;
 import com.example.onlinewaiter.Adapter.OwnerCafeAdapter;
-import com.example.onlinewaiter.Functions.SortHashMap;
-import com.example.onlinewaiter.Interfaces.ItemClickListener;
 import com.example.onlinewaiter.Interfaces.OwnerCafeClick;
 import com.example.onlinewaiter.Interfaces.SmsBroadcastReceiverListener;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.RegisteredNumber;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.CustomAlertDialog;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
@@ -246,11 +242,12 @@ public class LoginActivity extends AppCompatActivity implements OwnerCafeClick {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
                 String currentDateTime = simpleDateFormat.format(new Date());
                 appError = new AppError(
-                        AppErrorMessages.Message.CAFE_NOT_FOUND,
+                        AppErrorMessage.Other.CAFE_NOT_FOUND,
                         phoneNumber,
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -443,11 +440,12 @@ public class LoginActivity extends AppCompatActivity implements OwnerCafeClick {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
                 String currentDateTime = simpleDateFormat.format(new Date());
                 appError = new AppError(
-                        AppErrorMessages.Message.CAFE_NOT_FOUND,
+                        AppErrorMessage.Other.CAFE_NOT_FOUND,
                         phoneNumber,
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }

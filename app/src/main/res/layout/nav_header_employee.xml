@@ -15,42 +15,66 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/ivEmployeeNavHeader"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginStart="16dp"
+            android:id="@+id/ivNavHeaderCafe"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:contentDescription="@string/nav_header_desc"
+            android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/vglNavHeaderEqual"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/nav_header_img" />
+            app:srcCompat="@drawable/location" />
 
         <TextView
-            android:id="@+id/tvEmployeeNavHeader"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvNavHeaderCafe"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/employee_nav_cafe_name_not_found"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/ivEmployeeNavHeader"
-            app:layout_constraintStart_toStartOf="@+id/ivEmployeeNavHeader"
-            app:layout_constraintTop_toBottomOf="@+id/ivEmployeeNavHeader" />
+            app:layout_constraintEnd_toStartOf="@+id/vglNavHeaderEqual"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivNavHeaderCafe" />
+
+        <ImageView
+            android:id="@+id/ivNavHeaderNumber"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/nav_header_desc"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/ivNavHeaderCafe"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/vglNavHeaderEqual"
+            app:layout_constraintTop_toTopOf="@+id/ivNavHeaderCafe"
+            app:srcCompat="@drawable/dialog_change_number" />
 
         <TextView
-            android:id="@+id/tvEmployeeNumberAlias"
+            android:id="@+id/tvNavHeaderNumber"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tvEmployeeNavHeader"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/ivEmployeeNavHeader"
-            app:layout_constraintTop_toTopOf="@+id/ivEmployeeNavHeader" />
+            app:layout_constraintStart_toStartOf="@+id/vglNavHeaderEqual"
+            app:layout_constraintTop_toBottomOf="@+id/ivNavHeaderNumber" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/vglNavHeaderEqual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

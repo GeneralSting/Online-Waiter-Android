@@ -10,7 +10,7 @@ import android.os.Bundle;
 
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.employeeUI.menu.MenuViewModel;
 import com.yalantis.ucrop.UCrop;
 
@@ -64,7 +64,7 @@ public class ImageCropperActivity extends AppCompatActivity {
         }
         else if(resultCode == UCrop.RESULT_ERROR) {
             final Throwable cropError = UCrop.getError(data);
-            String errorMessage = AppErrorMessages.Message.IMAGE_CROPPER_RESULT_ERROR;
+            String errorMessage = AppErrorMessage.Title.IMAGE_CROPPER_RESULT_ERROR;
             if(!cropError.getMessage().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE) && cropError.getMessage() != null) {
                 errorMessage = cropError.getMessage().toString();
             }
@@ -74,9 +74,10 @@ public class ImageCropperActivity extends AppCompatActivity {
             AppError appError = new AppError(
                     menuViewModel.getCafeId().getValue(),
                     menuViewModel.getPhoneNumber().getValue(),
-                    AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                    AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                     errorMessage,
-                    currentDateTime
+                    currentDateTime,
+                    AppConstValue.errorSender.APP
             );
             appError.sendError(appError);
         }

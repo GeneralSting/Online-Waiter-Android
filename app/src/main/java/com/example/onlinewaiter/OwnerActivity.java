@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -150,9 +150,10 @@ public class OwnerActivity extends AppCompatActivity {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -172,9 +173,10 @@ public class OwnerActivity extends AppCompatActivity {
                     appError = new AppError(
                             mainViewModel.getOwnerCafeId().getValue(),
                             mainViewModel.getOwnerPhoneNumber().getValue(),
-                            AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
-                            AppErrorMessages.ErrorsMessage.FIREBASE_PATH_REGISTERED_COUNTRY_OWNER,
-                            currentDateTime
+                            AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                            AppErrorMessage.Message.FIREBASE_PATH_REGISTERED_COUNTRY_OWNER,
+                            currentDateTime,
+                            AppConstValue.errorSender.APP
                     );
                     appError.sendError(appError);
                     return;
@@ -192,9 +194,10 @@ public class OwnerActivity extends AppCompatActivity {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
@@ -236,9 +239,10 @@ public class OwnerActivity extends AppCompatActivity {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }

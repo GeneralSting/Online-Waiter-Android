@@ -25,7 +25,7 @@ import com.example.onlinewaiter.Models.CafeDrinksCategory;
 import com.example.onlinewaiter.Models.CategoryDrink;
 import com.example.onlinewaiter.Other.ActionDialog;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -198,9 +198,10 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
-                                currentDateTime
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }
@@ -353,9 +354,10 @@ public class MenuFragment extends Fragment implements CallBackOrder, DrinkShorte
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
-                                currentDateTime
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }

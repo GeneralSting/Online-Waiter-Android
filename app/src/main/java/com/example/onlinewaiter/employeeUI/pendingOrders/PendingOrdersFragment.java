@@ -35,7 +35,7 @@ import com.example.onlinewaiter.Models.CafeBill;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Models.CafeCurrentOrder;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -386,9 +386,10 @@ public class PendingOrdersFragment extends Fragment {
                         appError = new AppError(
                                 menuViewModel.getCafeId().getValue(),
                                 menuViewModel.getPhoneNumber().getValue(),
-                                AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                                AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                                 error.getMessage().toString(),
-                                currentDateTime
+                                currentDateTime,
+                                AppConstValue.errorSender.APP
                         );
                         appError.sendError(appError);
                     }
@@ -497,9 +498,10 @@ public class PendingOrdersFragment extends Fragment {
                 appError = new AppError(
                         menuViewModel.getCafeId().getValue(),
                         menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }

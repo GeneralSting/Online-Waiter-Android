@@ -25,7 +25,7 @@ import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.CafeBill;
 import com.example.onlinewaiter.Models.CafeBillDrink;
 import com.example.onlinewaiter.Other.AppConstValue;
-import com.example.onlinewaiter.Other.AppErrorMessages;
+import com.example.onlinewaiter.Other.AppErrorMessage;
 import com.example.onlinewaiter.Other.FirebaseRefPaths;
 import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
@@ -643,9 +643,10 @@ public class StatisticsFragment extends Fragment {
                 appError = new AppError(
                         mainViewModel.getOwnerCafeId().getValue(),
                         mainViewModel.getOwnerPhoneNumber().getValue(),
-                        AppErrorMessages.Message.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED_OWNER,
                         error.getMessage().toString(),
-                        currentDateTime
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
                 );
                 appError.sendError(appError);
             }
