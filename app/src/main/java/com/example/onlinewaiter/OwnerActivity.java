@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.onlinewaiter.Functions.BugReportDialog;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
@@ -95,12 +96,17 @@ public class OwnerActivity extends AppCompatActivity {
         });
 
         navView.getMenu().findItem(R.id.nav_owner_bug).setOnMenuItemClickListener(menuItem -> {
-            bugReportDialog();
+            BugReportDialog.bugReport(
+                    this,
+                    AppConstValue.errorSender.USER_OWNER,
+                    mainViewModel.getOwnerCafeId().getValue(),
+                    mainViewModel.getOwnerPhoneNumber().getValue(),
+                    toastMessage
+            );
             return true;
         });
 
-
-            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
         NavigationUI.setupWithNavController(binding.navOwnerView, navController);
 
         collectCafeCountry();
@@ -145,54 +151,7 @@ public class OwnerActivity extends AppCompatActivity {
 
     }
 
-    private void bugReportDialog() {
-        View bugReportView = getLayoutInflater().inflate(R.layout.dialog_bug_report, null);
-        EditText etBugReport = bugReportView.findViewById(R.id.etBugReport);
-        Button btnBugReportConfirm = bugReportView.findViewById(R.id.btnBugReportConfirm);
-        ImageButton ibCloseBugReport = bugReportView.findViewById(R.id.ibCloseBugReport);
 
-        final AlertDialog bugReportDialog = new AlertDialog.Builder(this)
-                .setView(bugReportView)
-                .create();
-        bugReportDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bugReportDialog.setCanceledOnTouchOutside(false);
-        bugReportDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                etBugReport.requestFocus();
-                btnBugReportConfirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(etBugReport.getText().toString().length() < 10) {
-                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.ftfBugReport);
-                            ftfBugReport.setError(getResources().getString(R.string.act_employee_report_bug_condition));
-                        }
-                        else {
-                            String currentDateTime = simpleDateFormat.format(new Date());
-                            appError = new AppError(
-                                    mainViewModel.getOwnerCafeId().getValue(),
-                                    mainViewModel.getOwnerPhoneNumber().getValue(),
-                                    AppErrorMessage.Title.USER_BUG_REPORT,
-                                    etBugReport.getText().toString(),
-                                    currentDateTime,
-                                    AppConstValue.errorSender.USER_OWNER
-                            );
-                            appError.sendError(appError);
-                            bugReportDialog.dismiss();
-                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
-                        }
-                    }
-                });
-                ibCloseBugReport.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        bugReportDialog.dismiss();
-                    }
-                });
-            }
-        });
-        bugReportDialog.show();
-    }
 
     private void collectCafeCountry() {
         DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCountryOwner(mainViewModel.getOwnerCafeId().getValue()));

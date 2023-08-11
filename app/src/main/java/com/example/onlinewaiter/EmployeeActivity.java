@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.onlinewaiter.Functions.BugReportDialog;
 import com.example.onlinewaiter.Models.AppError;
 import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.CafeBillDrink;
@@ -194,7 +195,13 @@ public class EmployeeActivity extends AppCompatActivity {
         clBugReport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                bugReportDialog();
+                BugReportDialog.bugReport(
+                        EmployeeActivity.this,
+                        AppConstValue.errorSender.USER_EMPLOYEE,
+                        menuViewModel.getCafeId().getValue(),
+                        menuViewModel.getPhoneNumber().getValue(),
+                        toastMessage
+                );
             }
         });
 
@@ -776,55 +783,6 @@ public class EmployeeActivity extends AppCompatActivity {
         if (registeredNumberRef != null) {
             registeredNumberRef.removeEventListener(registeredNumberListener);
         }
-    }
-
-    private void bugReportDialog() {
-        View bugReportView = getLayoutInflater().inflate(R.layout.dialog_bug_report, null);
-        EditText etBugReport = bugReportView.findViewById(R.id.etBugReport);
-        Button btnBugReportConfirm = bugReportView.findViewById(R.id.btnBugReportConfirm);
-        ImageButton ibCloseBugReport = bugReportView.findViewById(R.id.ibCloseBugReport);
-
-        final AlertDialog bugReportDialog = new AlertDialog.Builder(this)
-                .setView(bugReportView)
-                .create();
-        bugReportDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        bugReportDialog.setCanceledOnTouchOutside(false);
-        bugReportDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                etBugReport.requestFocus();
-                btnBugReportConfirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if(etBugReport.getText().toString().length() < 10) {
-                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.ftfBugReport);
-                            ftfBugReport.setError(getResources().getString(R.string.act_employee_report_bug_condition));
-                        }
-                        else {
-                            String currentDateTime = simpleDateFormat.format(new Date());
-                            appError = new AppError(
-                                    menuViewModel.getCafeId().getValue(),
-                                    menuViewModel.getPhoneNumber().getValue(),
-                                    AppErrorMessage.Title.USER_BUG_REPORT,
-                                    etBugReport.getText().toString(),
-                                    currentDateTime,
-                                    AppConstValue.errorSender.USER_EMPLOYEE
-                            );
-                            appError.sendError(appError);
-                            bugReportDialog.dismiss();
-                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
-                        }
-                    }
-                });
-                ibCloseBugReport.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        bugReportDialog.dismiss();
-                    }
-                });
-            }
-        });
-        bugReportDialog.show();
     }
 
     private void logout(boolean showChangeDialog) {
