@@ -166,8 +166,9 @@
     <!--Owner nav header-->
     <string name="owner_nav_main_title">Početna</string>
     <string name="owner_nav_statistics_title">Statistika</string>
-    <string name="owner_nav_registered_numbers_title">Registrirani brojevi</string>
+    <string name="owner_nav_registered_numbers_title">Brojevi</string>
     <string name="owner_nav_logout_title">Odjava</string>
+    <string name="owner_nav_bug_title">Pogreška</string>
 
 
     <!--Owner activity main fragment-->

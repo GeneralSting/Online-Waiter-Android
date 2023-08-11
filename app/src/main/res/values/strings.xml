@@ -167,8 +167,9 @@
     <!--Owner nav header-->
     <string name="owner_nav_main_title">Main</string>
     <string name="owner_nav_statistics_title">Statistics</string>
-    <string name="owner_nav_registered_numbers_title">Registered numbers</string>
+    <string name="owner_nav_registered_numbers_title">Numbers</string>
     <string name="owner_nav_logout_title">Logout</string>
+    <string name="owner_nav_bug_title">Bug</string>
 
     <!--Owner activity main fragment-->
     <string name="main_employee_name_title">First name</string>

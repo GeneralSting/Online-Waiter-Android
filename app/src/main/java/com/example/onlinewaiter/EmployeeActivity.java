@@ -811,8 +811,8 @@ public class EmployeeActivity extends AppCompatActivity {
                                     AppConstValue.errorSender.USER_EMPLOYEE
                             );
                             appError.sendError(appError);
-                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
                             bugReportDialog.dismiss();
+                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
                         }
                     }
                 });

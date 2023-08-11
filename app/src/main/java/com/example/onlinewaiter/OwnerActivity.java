@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.onlinewaiter.databinding.ActivityOwnerBinding;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -88,49 +90,108 @@ public class OwnerActivity extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.nav_owner_view);
         navView.getMenu().findItem(R.id.nav_owner_logout).setOnMenuItemClickListener(menuItem -> {
-            View ownerLogoutView = getLayoutInflater().inflate(R.layout.dialog_owner_logout, null);
-            TextView tvOwnerLogoutNumberChanged = ownerLogoutView.findViewById(R.id.tvOwnerLogoutNumberChanged);
-            ImageButton ibCloseOwnerLogout = ownerLogoutView.findViewById(R.id.ibCloseOwnerLogout);
-            Button btnOwnerLogoutAccept = ownerLogoutView.findViewById(R.id.btnOwnerLogoutAccept);
-            RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(this).get(RegisteredNumbersViewModel.class);
-            if(registeredNumbersViewModel.getPhoneNumberChanged().getValue()) {
-                tvOwnerLogoutNumberChanged.setText(getResources().getString(R.string.logout_owner_number_changed));
-            }
-
-            final AlertDialog ownerLogoutDialog = new AlertDialog.Builder(this)
-                    .setView(ownerLogoutView)
-                    .create();
-            ownerLogoutDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            ownerLogoutDialog.setCanceledOnTouchOutside(false);
-            ownerLogoutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialogInterface) {
-                    ibCloseOwnerLogout.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ownerLogoutDialog.dismiss();
-                        }
-                    });
-
-                    btnOwnerLogoutAccept.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            logout();
-                            ownerLogoutDialog.dismiss();
-                        }
-                    });
-                }
-            });
-            ownerLogoutDialog.show();
-
+            logoutDialog();
             return true;
         });
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
+        navView.getMenu().findItem(R.id.nav_owner_bug).setOnMenuItemClickListener(menuItem -> {
+            bugReportDialog();
+            return true;
+        });
+
+
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
         NavigationUI.setupWithNavController(binding.navOwnerView, navController);
 
         collectCafeCountry();
         setCafeListener();
+    }
+
+    private void logoutDialog() {
+        View ownerLogoutView = getLayoutInflater().inflate(R.layout.dialog_owner_logout, null);
+        TextView tvOwnerLogoutNumberChanged = ownerLogoutView.findViewById(R.id.tvOwnerLogoutNumberChanged);
+        ImageButton ibCloseOwnerLogout = ownerLogoutView.findViewById(R.id.ibCloseOwnerLogout);
+        Button btnOwnerLogoutAccept = ownerLogoutView.findViewById(R.id.btnOwnerLogoutAccept);
+        RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(this).get(RegisteredNumbersViewModel.class);
+        if(registeredNumbersViewModel.getPhoneNumberChanged().getValue()) {
+            tvOwnerLogoutNumberChanged.setText(getResources().getString(R.string.logout_owner_number_changed));
+        }
+
+        final AlertDialog ownerLogoutDialog = new AlertDialog.Builder(this)
+                .setView(ownerLogoutView)
+                .create();
+        ownerLogoutDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        ownerLogoutDialog.setCanceledOnTouchOutside(false);
+        ownerLogoutDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                ibCloseOwnerLogout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ownerLogoutDialog.dismiss();
+                    }
+                });
+
+                btnOwnerLogoutAccept.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        logout();
+                        ownerLogoutDialog.dismiss();
+                    }
+                });
+            }
+        });
+        ownerLogoutDialog.show();
+
+    }
+
+    private void bugReportDialog() {
+        View bugReportView = getLayoutInflater().inflate(R.layout.dialog_bug_report, null);
+        EditText etBugReport = bugReportView.findViewById(R.id.etBugReport);
+        Button btnBugReportConfirm = bugReportView.findViewById(R.id.btnBugReportConfirm);
+        ImageButton ibCloseBugReport = bugReportView.findViewById(R.id.ibCloseBugReport);
+
+        final AlertDialog bugReportDialog = new AlertDialog.Builder(this)
+                .setView(bugReportView)
+                .create();
+        bugReportDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        bugReportDialog.setCanceledOnTouchOutside(false);
+        bugReportDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                etBugReport.requestFocus();
+                btnBugReportConfirm.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if(etBugReport.getText().toString().length() < 10) {
+                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.ftfBugReport);
+                            ftfBugReport.setError(getResources().getString(R.string.act_employee_report_bug_condition));
+                        }
+                        else {
+                            String currentDateTime = simpleDateFormat.format(new Date());
+                            appError = new AppError(
+                                    mainViewModel.getOwnerCafeId().getValue(),
+                                    mainViewModel.getOwnerPhoneNumber().getValue(),
+                                    AppErrorMessage.Title.USER_BUG_REPORT,
+                                    etBugReport.getText().toString(),
+                                    currentDateTime,
+                                    AppConstValue.errorSender.USER_OWNER
+                            );
+                            appError.sendError(appError);
+                            bugReportDialog.dismiss();
+                            toastMessage.showToast(getResources().getString(R.string.act_emplyoee_report_bug_successful), 0);
+                        }
+                    }
+                });
+                ibCloseBugReport.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        bugReportDialog.dismiss();
+                    }
+                });
+            }
+        });
+        bugReportDialog.show();
     }
 
     private void collectCafeCountry() {
