@@ -39,9 +39,8 @@ import java.util.Map;
 
 public class MainFragment extends Fragment {
     //fragment views
-    private TextView tvMainCafeName, tvMainTables, tvMainEmployees, tvMainCategories, tvMainDrinks;
+    private TextView tvMainTables, tvMainEmployees, tvMainCategories, tvMainDrinks;
     private CardView cvMainTables, cvMainEmployees, cvMainCategories, cvMainDrinks;
-    private TableLayout tlOwnerMainEmployees;
 
 
     //global variables/objects
@@ -65,7 +64,6 @@ public class MainFragment extends Fragment {
 
         toastMessage = new ToastMessage(getActivity());
         firebaseRefPaths = new FirebaseRefPaths();
-        tvMainCafeName = binding.tvOwnerMainCafeName;
         tvMainTables = binding.tvOwnerMainTables;
         tvMainEmployees = binding.tvOwnerMainEmployees;
         tvMainCategories = binding.tvOwnerMainCategories;
@@ -74,7 +72,6 @@ public class MainFragment extends Fragment {
         cvMainEmployees = binding.cvOwnerMainEmployees;
         cvMainCategories = binding.cvOwnerMainCategories;
         cvMainDrinks = binding.cvOwnerMainDrinks;
-        tlOwnerMainEmployees = binding.tlOwnerMainEmployees;
 
         cvClickMessage();
         mainViewModelObservers();
@@ -142,8 +139,6 @@ public class MainFragment extends Fragment {
                 }
                 int cafeTotalDrinks = 0;
                 Cafe cafe = cafeSnapshot.getValue(Cafe.class);
-                tvMainCafeName.setText(cafe.getCafeName());
-                tvMainCafeName.setPaintFlags(tvMainCafeName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
                 tvMainTables.setText(String.valueOf(cafe.getCafeTables()));
                 tvMainEmployees.setText(String.valueOf(cafe.getCafeEmployees().size()));
                 tvMainCategories.setText(String.valueOf(cafe.getCafeDrinksCategories().size()));
@@ -153,30 +148,6 @@ public class MainFragment extends Fragment {
                     cafeTotalDrinks += cafeDrinksCategory.getCategoryDrinks().size();
                 }
                 tvMainDrinks.setText(String.valueOf(cafeTotalDrinks));
-
-                while(tlOwnerMainEmployees.getChildCount() > 0) {
-                    tlOwnerMainEmployees.removeView(tlOwnerMainEmployees.getChildAt(tlOwnerMainEmployees.getChildCount() - 1));
-                }
-                for(CafeEmployee cafeEmployee : cafe.getCafeEmployees().values()) {
-                    View trCafeEmployeeView = getLayoutInflater().inflate(R.layout.row_cafe_employee, tlOwnerMainEmployees, false);
-
-                    TextView tvCafeEmployeeName = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeName);
-                    tvCafeEmployeeName.setText(cafeEmployee.getEmployeeName());
-
-                    TextView tvCafeEmployeeLastname = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeLastname);
-                    tvCafeEmployeeLastname.setText(cafeEmployee.getEmployeeLastname());
-
-                    TextView tvCafeEmployeeBirthDate = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeBirthDate);
-                    tvCafeEmployeeBirthDate.setText(cafeEmployee.getEmployeeBirthDate());
-
-                    TextView tvCafeEmployeeGender = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeGender);
-                    tvCafeEmployeeGender.setText(cafeEmployee.getEmployeeGender());
-
-                    TextView tvCafeEmployeeGmail = (TextView) trCafeEmployeeView.findViewById(R.id.tvCafeEmployeeGmail);
-                    tvCafeEmployeeGmail.setText(cafeEmployee.getEmployeeGmail());
-
-                    tlOwnerMainEmployees.addView(trCafeEmployeeView);
-                }
             }
 
             @Override

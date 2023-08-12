@@ -55,6 +55,8 @@
     <color name="light_pewter_blue">#adc0c4</color>
     <color name="grey_transparent">#8080806e</color>
     <color name="light_tumbleweed">#dbc4b1</color>
+    <color name="pewter_blue_transparent">#4D92ABB1</color>
+
 
     <!--Pie chart palette colors-->
     <color name="pie_chart_darker_blue">#167288</color>

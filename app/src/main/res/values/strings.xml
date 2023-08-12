@@ -35,8 +35,8 @@
     <string name="act_login_dialog_no_user_header">Number not found!</string>
     <string name="act_login_dialog_no_user_body">The number you entered is not included in the system, so it is not possible to log in with the entered number.</string>
     <string name="act_login_verification_failed">An error occurred, please try again</string>
-    <string name="act_login_number_not_allowed">Cafe owner disabled login with that number</string>
-    <string name="act_login_select_cafe_title">Select cafe</string>
+    <string name="act_login_number_not_allowed">Object owner disabled login with that number</string>
+    <string name="act_login_select_cafe_title">Select object</string>
 
     <!--Employee activity-->
     <string name="act_employee_back_button_pressed">One more time to logout.</string>
@@ -118,7 +118,7 @@
     <string name="cafe_update_current_tables">Current tables:</string>
     <string name="cafe_update_new_tables_state">New state:</string>
     <string name="cafe_update_new_tables_state_hint">1234</string>
-    <string name="cafe_update_update_tables_title">Update cafe tables state</string>
+    <string name="cafe_update_update_tables_title">Update object tables state</string>
     <string name="cafe_update_tables_state_zero">Table number cannot be 0</string>
     <string name="cafe_update_table_state_empty">Enter new tables state</string>
     <string name="cafe_update_tables_state_updated">Tables state updated</string>
@@ -154,7 +154,7 @@
     <string name="employee_nav_menu_title">Menu</string>
     <string name="employee_nav_orders_title">Order</string>
     <string name="employee_nav_pending_orders_title">Pending Orders</string>
-    <string name="employee_nav_cafe_update_title">Cafe Update</string>
+    <string name="employee_nav_cafe_update_title">Object Update</string>
     <string name="employee_nav_logout_title">Logout</string>
     <string name="employee_nav_bug_report_title">Bug Report</string>
     <string name="employee_nav_cafe_name_not_found">Welcome!</string>
@@ -177,10 +177,10 @@
     <string name="main_employee_birth_date_title">Birth date</string>
     <string name="main_employee_gender_title">Gender</string>
     <string name="main_employee_gmail_title">Gmail</string>
-    <string name="main_cv_tables">Tables in your cafe</string>
-    <string name="main_cv_employees">Employees working in your cafe</string>
-    <string name="main_cv_categories">Categories in your cafe menu</string>
-    <string name="main_cv_drinks">Total drinks in your cafe menu</string>
+    <string name="main_cv_tables">Tables in your object</string>
+    <string name="main_cv_employees">Registered phone numbers in object</string>
+    <string name="main_cv_categories">Categories in object\'s menu</string>
+    <string name="main_cv_drinks">Total drinks in object\'s menu</string>
     <string name="main_drink_unavailable">Unavailable quantity</string>
 
 

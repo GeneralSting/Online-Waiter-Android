@@ -36,8 +36,8 @@
     <string name="act_login_dialog_no_user_header">Broj nije pronađen!</string>
     <string name="act_login_dialog_no_user_body">Broj koji ste unijeli nije sadržan u sustavu te nije moguća prijava s unesenim brojem.</string>
     <string name="act_login_verification_failed">Dogodila se pogreška, pokušajte ponovno</string>
-    <string name="act_login_number_not_allowed">Vlasnik kafića je onemogućio prijavu s tim brojem</string>
-    <string name="act_login_select_cafe_title">Odaberite kafić</string>
+    <string name="act_login_number_not_allowed">Vlasnik objekta je onemogućio prijavu s tim brojem</string>
+    <string name="act_login_select_cafe_title">Odaberite objekt</string>
 
 
     <!--Employee activity-->
@@ -154,7 +154,7 @@
     <string name="employee_nav_menu_title">Meni</string>
     <string name="employee_nav_orders_title">Narudža</string>
     <string name="employee_nav_pending_orders_title">Narudžbe u tijeku</string>
-    <string name="employee_nav_cafe_update_title">Ažuriranje kafića</string>
+    <string name="employee_nav_cafe_update_title">Ažuriranje objekta</string>
     <string name="employee_nav_logout_title">Odjava</string>
     <string name="employee_nav_bug_report_title">Prijava greške</string>
     <string name="employee_nav_cafe_name_not_found">Dobrodošao!</string>
@@ -177,10 +177,10 @@
     <string name="main_employee_birth_date_title">Datum rođenja</string>
     <string name="main_employee_gender_title">Spol</string>
     <string name="main_employee_gmail_title">E-mail adresa</string>
-    <string name="main_cv_tables">Stolova u kafiću</string>
-    <string name="main_cv_employees">Zaposlenih u kafiću</string>
-    <string name="main_cv_categories">Kategorija u meniju kafića</string>
-    <string name="main_cv_drinks">Ukupno pića u meniju kafića</string>
+    <string name="main_cv_tables">Stolova u objektu</string>
+    <string name="main_cv_employees">Prijavljeni brojevi mobitela objekta</string>
+    <string name="main_cv_categories">Kategorija u meniju objekta</string>
+    <string name="main_cv_drinks">Ukupno pića u meniju objekta</string>
     <string name="main_drink_unavailable">Količinski nedostupno</string>
 
 

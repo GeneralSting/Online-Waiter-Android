@@ -4,36 +4,225 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/owner_main_bg"
+    android:background="@drawable/owner_main_cafe_bg"
     tools:context=".ownerUI.main.MainFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/tvOwnerMainCafeName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textSize="30sp"
-            android:textStyle="bold|italic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:layout_margin="16dp">
 
         <GridLayout
-            android:id="@+id/gridLayout"
+            android:id="@+id/glCafeInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:layout_marginTop="64dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="64dp"
             android:columnCount="2"
             android:elevation="100dp"
             android:rowCount="2"
+            app:layout_constraintBottom_toTopOf="@+id/vCafeInfoDivider"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvOwnerMainCafeName">
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@drawable/owner_cv_cafe_info"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/icon_baseline_drive_file_rename_outline_48" />
+
+                    <TextView
+                        android:id="@+id/tvMainCafeName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="2dp"
+                        android:text="Lokacija kafića dugacak tekst ne znam proba"
+                        android:textAlignment="center"
+                        android:textColor="@color/pewter_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="0"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@drawable/owner_cv_cafe_info"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/icon_baseline_location_on_48" />
+
+                    <TextView
+                        android:id="@+id/tvMainCafeLocation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="2dp"
+                        android:text="Lokacija kafića dugacak tekst ne znam proba"
+                        android:textAlignment="center"
+                        android:textColor="@color/pewter_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="0"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@drawable/owner_cv_cafe_info"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/icon_baseline_language_48" />
+
+                    <TextView
+                        android:id="@+id/tvMainCafeCountry"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:text="HR"
+                        android:textAlignment="center"
+                        android:textColor="@color/pewter_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_row="1"
+                android:layout_rowWeight="1"
+                android:layout_column="1"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"
+                    android:background="@drawable/owner_cv_cafe_info"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/icon_baseline_drive_file_rename_outline_48" />
+
+                    <TextView
+                        android:id="@+id/tvMainCafeEmail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_margin="2dp"
+                        android:text="Email"
+                        android:textAlignment="center"
+                        android:textColor="@color/pewter_blue"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+
+        <View
+            android:id="@+id/vCafeInfoDivider"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="@color/white_background_transparent"
+            app:layout_constraintBottom_toTopOf="@+id/glOtherInfo"
+            app:layout_constraintEnd_toEndOf="@+id/glCafeInfo"
+            app:layout_constraintStart_toStartOf="@+id/glCafeInfo" />
+
+        <GridLayout
+            android:id="@+id/glOtherInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="64dp"
+            android:columnCount="2"
+            android:elevation="100dp"
+            android:rowCount="2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/glCafeInfo"
+            app:layout_constraintStart_toStartOf="@+id/glCafeInfo">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvOwnerMainTables"
@@ -57,7 +246,6 @@
                     android:background="@drawable/owner_cv_content_rounded"
                     android:gravity="center"
                     android:orientation="vertical">
-
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -105,7 +293,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/icon_baseline_people_48" />
+                        android:src="@drawable/icon_baseline_phone_android_48" />
 
                     <TextView
                         android:id="@+id/tvOwnerMainEmployees"
@@ -143,7 +331,6 @@
                     android:background="@drawable/owner_cv_content_rounded"
                     android:gravity="center"
                     android:orientation="vertical">
-
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -207,7 +394,9 @@
 
         </GridLayout>
 
+        <!---->
 
+        <!--
         <HorizontalScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -306,6 +495,7 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </HorizontalScrollView>
+        -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
