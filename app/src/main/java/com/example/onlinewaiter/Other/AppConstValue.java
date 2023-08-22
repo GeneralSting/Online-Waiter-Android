@@ -125,6 +125,7 @@ public class AppConstValue {
         public static final String LOGIN_OTP_VALIDATOR = "(|^)\\d{6}";
         public static final String WHITESPACE_CHARACHTERS = "\\s+";
         public static final String FILTER_ONLY_DIGITS_PART = "[^\\d?!.]";
+        public static final String EMAIL_ADDRESS_VALIDATOR = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
     }
 
     public static class recyclerViewDisplayed {
@@ -144,5 +145,12 @@ public class AppConstValue {
         public static final int USER_EMPLOYEE = 1;
         public static final int USER_OWNER = 2;
         public static final int WEB = 3;
+    }
+
+    public static class cafeInfoClicked {
+        public static final int CAFE_NAME = 0;
+        public static final int CAFE_LOCATION = 1;
+        public static final int CAFE_COUNTRY = 2;
+        public static final int CAFE_EMAIL = 3;
     }
 }

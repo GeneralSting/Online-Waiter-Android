@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/ibCloseBugReport"
+            android:id="@+id/ibCloseCafeUpdate"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="end"
@@ -36,7 +36,7 @@
             android:contentDescription="@string/description_close_dialog" />
 
         <TextView
-            android:id="@+id/tvBugReportTitle"
+            android:id="@+id/tvCafeChangeTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
@@ -54,59 +54,37 @@
             android:layout_marginBottom="32dp"
             android:layout_gravity="center"/>
 
-        <!--
-        <EditText
-            android:id="@+id/etBugReport"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:lines="6"
-            android:minLines="4"
-            android:paddingTop="2dp"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:paddingBottom="2dp"
-            android:gravity="start"
-            android:maxLines="12"
-            android:scrollbars="vertical"
-            android:scrollHorizontally="false"
-            android:scrollbarTrackVertical="@color/grey"
-            android:maxLength="200"
-            android:hint="@string/act_employee_report_bug_et_hint"
-            android:textColor="@color/black"
-            android:textColorHint="@color/grey"
-            android:backgroundTint="@color/tumbleweed"
-            android:background="@drawable/edittext_border"/>
-        -->
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilBugReport"
+            android:id="@+id/tilOwnerEmailUpdate"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:boxBackgroundMode="outline"
             app:counterTextColor="@color/black"
             app:counterEnabled="true"
-            app:counterMaxLength="200"
-            android:hint="@string/act_employee_report_bug_et_hint"
+            app:counterMaxLength="254"
+            android:hint="@string/main_cafe_email_hint"
             android:textColorHint="@color/tumbleweed"
             app:helperTextTextColor="@color/red_negative"
-            app:startIconDrawable="@drawable/icon_baseline_bug_report_24"
+            app:startIconDrawable="@drawable/icon_baseline_drive_file_rename_outline_24"
             app:startIconTint="@color/tumbleweed"
             app:errorEnabled="true"
             app:hintAnimationEnabled="false"
+            android:visibility="gone"
             >
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etBugReport"
+                android:id="@+id/etOwnerEmailUpdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:paddingBottom="24dp"
-                android:maxLength="200"
-                android:lines="4"
+                android:maxLength="254"
                 android:minLines="2"
+                android:lines="4"
                 android:maxLines="10"
+                android:textColorHint="@color/grey"
                 android:scrollHorizontally="false"
                 android:scrollbars="vertical"
                 android:scrollbarTrackVertical="@color/grey"
@@ -114,11 +92,46 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btnBugReportConfirm"
+        <EditText
+            android:id="@+id/etCafeUpdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/send"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="@color/tumbleweed"
+            android:hint="@string/main_cafe_name_hint"
+            android:textColorHint="@color/grey"
+            android:inputType="textMultiLine"
+            android:maxLength="25"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:visibility="gone"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:id="@+id/tilCountryStandards"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/main_cafe_country_spinner_hint"
+            android:textColorHint="@color/pewter_blue"
+            app:hintAnimationEnabled="false"
+            app:startIconDrawable="@drawable/icon_baseline_language_24">
+
+            <AutoCompleteTextView
+                android:id="@+id/actvCountryStandards"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/grey_transparent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:inputType="none" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnCafeUpdateConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/accept"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
@@ -132,7 +145,7 @@
         android:background="@drawable/action_dialog"
         android:elevation="10dp"
         android:padding="15dp"
-        android:src="@drawable/dialog_bug_report"
+        android:src="@drawable/dialog_edit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

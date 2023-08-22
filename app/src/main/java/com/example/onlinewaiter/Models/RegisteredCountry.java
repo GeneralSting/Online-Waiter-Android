@@ -1,11 +1,19 @@
 package com.example.onlinewaiter.Models;
 
+import androidx.annotation.NonNull;
+
 public class RegisteredCountry {
     private String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag,
             mailBody, mailBodyInfo, mailSubject, name, nameLocale;
 
     public RegisteredCountry() {
 
+    }
+
+    public RegisteredCountry(String name, String code, String flag) {
+        this.name = name;
+        this.code = code;
+        this.flag = flag;
     }
 
     public RegisteredCountry(String code, String codeLocale, String countryNumberCode, String currency, String dateFormat,
@@ -128,5 +136,11 @@ public class RegisteredCountry {
 
     public void setNameLocale(String nameLocale) {
         this.nameLocale = nameLocale;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getNameLocale();
     }
 }

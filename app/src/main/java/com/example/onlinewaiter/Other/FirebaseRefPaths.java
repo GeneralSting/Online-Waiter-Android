@@ -17,6 +17,9 @@ public class FirebaseRefPaths {
     /*cafes*/
     //paths
     private final String refCafes = "cafes/";
+    private final String refCafeName = "/cafeName";
+    private final String refcafeLocation = "/cafeLocation";
+    private final String refCafeOwnerEmail = "/cafeOwnerGmail";
     private final String refCafeCategories = "/cafeDrinksCategories/";
     private final String refCategoryDrinks = "/categoryDrinks/";
     private final String refCafeBills = "/cafeBills/";
@@ -225,6 +228,18 @@ public class FirebaseRefPaths {
 
     public String getCafeCountry() {
         return getCafe() + refCafeCountry;
+    }
+
+    public String getCafeNameOwner(String cafeId) {
+        return getCafeOwner(cafeId) + refCafeName;
+    }
+
+    public String getCafeLocationOwner(String cafeId) {
+        return getCafeOwner(cafeId) + refcafeLocation;
+    }
+
+    public String getCafeOwnerEmail(String cafeId) {
+        return getCafeOwner(cafeId) + refCafeOwnerEmail;
     }
 
     /*countriesNumber*/

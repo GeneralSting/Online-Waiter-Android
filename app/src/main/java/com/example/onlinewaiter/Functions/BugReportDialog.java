@@ -44,7 +44,7 @@ public class BugReportDialog {
                     @Override
                     public void onClick(View view) {
                         if(etBugReport.getText().toString().length() < 10) {
-                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.ftfBugReport);
+                            TextInputLayout ftfBugReport = bugReportView.findViewById(R.id.tilBugReport);
                             ftfBugReport.setError(context.getResources().getString(R.string.act_employee_report_bug_condition));
                         }
                         else {

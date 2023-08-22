@@ -7,15 +7,13 @@ public class Cafe {
     private Integer cafeTables;
     private HashMap<String, CafeDrinksCategory> cafeDrinksCategories;
     private HashMap<String, CafeBill> cafeBills;
-    private HashMap<String, CafeEmployee> cafeEmployees;
 
     public Cafe() {
         // Default constructor required for calls to DataSnapshot.getValue(Cafe.class)
     }
 
     public Cafe(String cafeCountry, String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String getCafeOwnerLastname, String cafeOwnerName,
-                String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories,
-                HashMap<String, CafeEmployee> cafeEmployees) {
+                String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories) {
         this.cafeCountry = cafeCountry;
         this.cafeLocation = cafeLocation;
         this.cafeName = cafeName;
@@ -26,7 +24,6 @@ public class Cafe {
         this.cafeOwnerOib = cafeOwnerOib;
         this.cafeOwnerPhoneNumber = cafeOwnerPhoneNumber;
         this.cafeDrinksCategories = cafeDrinksCategories;
-        this.cafeEmployees = cafeEmployees;
     }
 
     public String getCafeLocation() {
@@ -107,14 +104,6 @@ public class Cafe {
 
     public void setCafeBills(HashMap<String, CafeBill> cafeBills) {
         this.cafeBills = cafeBills;
-    }
-
-    public HashMap<String, CafeEmployee> getCafeEmployees() {
-        return cafeEmployees;
-    }
-
-    public void setCafeEmployees(HashMap<String, CafeEmployee> cafeEmployees) {
-        this.cafeEmployees = cafeEmployees;
     }
 
     public String getCafeCountry() {

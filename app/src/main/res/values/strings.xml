@@ -182,7 +182,19 @@
     <string name="main_cv_categories">Categories in object\'s menu</string>
     <string name="main_cv_drinks">Total drinks in object\'s menu</string>
     <string name="main_drink_unavailable">Unavailable quantity</string>
-
+    <string name="main_cafe_info_name">Name update</string>
+    <string name="main_cafe_info_location">Location update</string>
+    <string name="main_cafe_info_country">Country standards update</string>
+    <string name="main_cafe_info_email">Owner e-mail update</string>
+    <string name="main_cafe_info_email_hint">New e-mail</string>
+    <string name="main_cafe_info_update">Successfully updated!</string>
+    <string name="main_cafe_info_update_fail">Enter at least one character</string>
+    <string name="main_cafe_country_update_fail">No changes to update</string>
+    <string name="main_cafe_email_fail">Enter valid Email</string>
+    <string name="main_cafe_country_spinner_hint">localization</string>
+    <string name="main_cafe_name_hint">Update object name</string>
+    <string name="main_cafe_location_hint">Update object\'s location</string>
+    <string name="main_cafe_email_hint">Update e-mail address</string>
 
     <!--Owner Activity statistics fragment-->
     <string name="statistics_tv_title">Statistics</string>
@@ -202,7 +214,7 @@
     <string name="statistics_table_value_title">Amount</string>
     <string name="statistics_table_percent_title">Percent</string>
     <string name="statistics_btn_show_table">Table</string>
-    <string name="statistics_query_size_failed">Statistic requires at least 1 bill</string>
+    <string name="statistics_query_size_failed">Statistic requires at least one bill</string>
     <string name="statistics_btn_employees">Employees (numbers)</string>
     <string name="statistics_btn_drinks">Drinks</string>
     <string name="statistics_btn_tables">Tables</string>
