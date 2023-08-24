@@ -62,7 +62,7 @@ public class MainFragment extends Fragment {
 
     //global variables/objects
     private FragmentMainBinding binding;
-    private String selectedCodeLocale;
+    private String selectedCodeLocale, oldInfoValue;
     private MainViewModel mainViewModel;
     private ToastMessage toastMessage;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
@@ -288,11 +288,14 @@ public class MainFragment extends Fragment {
                     tilCountryStandards.setVisibility(View.GONE);
                     etCafeUpdate.setVisibility(View.VISIBLE);
 
+                    oldInfoValue = AppConstValue.variableConstValue.EMPTY_VALUE;
                     if(clickedInfo == AppConstValue.cafeInfoClicked.CAFE_NAME) {
+                        oldInfoValue = tvMainCafeName.getText().toString();
                         etCafeUpdate.setText(tvMainCafeName.getText().toString());
                         etCafeUpdate.setHint(getResources().getString(R.string.main_cafe_name_hint));
                     }
                     else {
+                        oldInfoValue = tvMainCafeLocation.getText().toString();
                         etCafeUpdate.setText(tvMainCafeLocation.getText().toString());
                         etCafeUpdate.setHint(getResources().getString(R.string.main_cafe_location_hint));
                     }
@@ -302,6 +305,9 @@ public class MainFragment extends Fragment {
                         public void onClick(View view) {
                             if(etCafeUpdate.getText().toString().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                                 toastMessage.showToast(getResources().getString(R.string.main_cafe_info_update_fail), 0);
+                            }
+                            else if(etCafeUpdate.getText().toString().equals(oldInfoValue)) {
+                                toastMessage.showToast(getResources().getString(R.string.main_cafe_info_no_update), 0);
                             }
                             else {
 
@@ -340,14 +346,14 @@ public class MainFragment extends Fragment {
                         @Override
                         public void onClick(View view) {
                             if(selectedCodeLocale.equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
-                                toastMessage.showToast(getResources().getString(R.string.main_cafe_country_update_fail), 0);
+                                toastMessage.showToast(getResources().getString(R.string.main_cafe_info_no_update), 0);
                             }
                             else {
                                 DatabaseReference cafeCountryRef = firebaseDatabase.getReference(
                                         firebaseRefPaths.getCafeCountryOwner(mainViewModel.getOwnerCafeId().getValue()));
                                 cafeCountryRef.setValue(selectedCodeLocale);
                                 updateCafeInfoDialog.dismiss();
-                                toastMessage.showToast(getResources().getString(R.string.main_cafe_country_update_fail), 0);
+                                toastMessage.showToast(getResources().getString(R.string.main_cafe_info_update), 0);
                             }
                         }
                     });
@@ -426,7 +432,10 @@ public class MainFragment extends Fragment {
                     btnCafeUpdateConfirm.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(EmailValidator.isEmailValid(etOwnerEmailUpdate.getText().toString())) {
+                            if(etOwnerEmailUpdate.getText().toString().equals(tvMainCafeEmail.getText().toString())) {
+                                toastMessage.showToast(getResources().getString(R.string.main_cafe_info_no_update), 0);
+                            }
+                            else if(EmailValidator.isEmailValid(etOwnerEmailUpdate.getText().toString())) {
                                 DatabaseReference cafeOwnerEmailRef = firebaseDatabase.getReference(
                                         firebaseRefPaths.getCafeOwnerEmail(mainViewModel.getOwnerCafeId().getValue()));
                                 cafeOwnerEmailRef.setValue(etOwnerEmailUpdate.getText().toString());

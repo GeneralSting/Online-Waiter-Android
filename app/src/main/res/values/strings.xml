@@ -189,12 +189,13 @@
     <string name="main_cafe_info_email_hint">New e-mail</string>
     <string name="main_cafe_info_update">Successfully updated!</string>
     <string name="main_cafe_info_update_fail">Enter at least one character</string>
-    <string name="main_cafe_country_update_fail">No changes to update</string>
+    <string name="main_cafe_info_no_update">No changes to update</string>
     <string name="main_cafe_email_fail">Enter valid Email</string>
     <string name="main_cafe_country_spinner_hint">localization</string>
     <string name="main_cafe_name_hint">Update object name</string>
     <string name="main_cafe_location_hint">Update object\'s location</string>
     <string name="main_cafe_email_hint">Update e-mail address</string>
+    <string name="main_cafe_info_update_title">Object info update</string>
 
     <!--Owner Activity statistics fragment-->
     <string name="statistics_tv_title">Statistics</string>

@@ -2,6 +2,7 @@ package com.example.onlinewaiter.Other;
 
 public class AppErrorMessage {
     public static class Title {
+        public static final String LOGIN_SMS_BROADCAST_RECEIVER_FAILED = "Login SMS Broadcast Receiver";
         public static final String USER_NOT_LOGGED_OUT = "User not logged out";
         public static final String DOWNLOAD_IMAGE_URI_FAILED = "Failed to download image uri";
         public static final String IMAGE_UPLOAD_TASK_FAILED = "Failed task for updating drink image";
@@ -17,6 +18,7 @@ public class AppErrorMessage {
     }
     
     public static class Message {
+        public static final String LOGIN_SMS_BROADCAST_RECEIVER_FAILED = "SMS Broadcast Receiver listener initialization failed";
         public static final String USER_NOT_LOGGED_OUT = "On start of application user was not logged out, on app killed service not executed";
         public static final String FIREBASE_PATH_REGISTERED_COUNTRY = "Path for registered country code not found, country standards are not collected";
         public static final String FIREBASE_PATH_REGISTERED_COUNTRY_OWNER = "Owner's side, path for registered country code not found, country standards are not collected";

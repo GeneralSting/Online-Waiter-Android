@@ -189,12 +189,13 @@
     <string name="main_cafe_info_email_hint">Novi e-mail</string>
     <string name="main_cafe_info_update">Uspješno ažurirano!</string>
     <string name="main_cafe_info_update_fail">Unesite barem jedan znak</string>
-    <string name="main_cafe_country_update_fail">Nema promjena za ažuriranje</string>
+    <string name="main_cafe_info_no_update">Nema promjena za ažuriranje</string>
     <string name="main_cafe_email_fail">Unesite ispravan oblika e-maila</string>
     <string name="main_cafe_country_spinner_hint">Lokalizacija</string>
     <string name="main_cafe_name_hint">Ažurirajte naziv objekta</string>
     <string name="main_cafe_location_hint">Ažurirajte lokaciju objekta</string>
     <string name="main_cafe_email_hint">Ažurirajte e-mail adresu</string>
+    <string name="main_cafe_info_update_title">Ažuriranje informacija objekta</string>
 
     <!--Owner Activity statistics fragment-->
     <string name="statistics_tv_title">Statistika</string>

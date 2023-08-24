@@ -36,11 +36,11 @@
             android:contentDescription="@string/description_close_dialog" />
 
         <TextView
-            android:id="@+id/tvCafeChangeTitle"
+            android:id="@+id/tvCafeUpdateTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/act_employee_report_bug_title"
+            android:text="@string/main_cafe_info_update_title"
             android:layout_marginTop="4dp"
             android:textSize="24sp"
             android:textStyle="bold"

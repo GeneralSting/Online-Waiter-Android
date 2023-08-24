@@ -282,7 +282,18 @@ public class LoginActivity extends AppCompatActivity implements OwnerCafeClick {
 
             @Override
             public void onFailure() {
-
+                AppError appError;
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
+                String currentDateTime = simpleDateFormat.format(new Date());
+                appError = new AppError(
+                        AppErrorMessage.Other.CAFE_NOT_FOUND,
+                        phoneNumber,
+                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Message.LOGIN_SMS_BROADCAST_RECEIVER_FAILED,
+                        currentDateTime,
+                        AppConstValue.errorSender.APP
+                );
+                appError.sendError(appError);
             }
         });
 
