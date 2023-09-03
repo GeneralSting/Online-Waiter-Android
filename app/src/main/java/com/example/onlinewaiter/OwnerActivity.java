@@ -238,6 +238,9 @@ public class OwnerActivity extends AppCompatActivity {
                         Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeBillsChild())) {
                 }
                 else {
+                    if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeCountryChild()))) {
+                        collectCountryStandards(cafeSnapshot.getValue(String.class));
+                    }
                     mainViewModel.setUpdateInfo(updateCafeInfo);
                     updateCafeInfo++;
                 }

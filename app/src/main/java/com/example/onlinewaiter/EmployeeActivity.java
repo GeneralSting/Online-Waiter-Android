@@ -400,6 +400,7 @@ public class EmployeeActivity extends AppCompatActivity {
                 }
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeCountryChild()))) {
                     cafeUpdateViewModel.setCafeCountry(cafeSnapshot.getValue(String.class));
+                    collectCountryStandards(cafeSnapshot.getValue(String.class));
                 }
             }
 
@@ -438,7 +439,7 @@ public class EmployeeActivity extends AppCompatActivity {
             @Override
             public void onChildChanged(@NonNull DataSnapshot orderSnapshot, @Nullable String previousChildName) {
                 CafeCurrentOrder cafeCurrentOrder = orderSnapshot.getValue(CafeCurrentOrder.class);
-                if(cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
+                if(cafeCurrentOrder.getCurrentOrderDelivererNum().equals(menuViewModel.getPhoneNumber().getValue()) &&
                 cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_READY) {
                     if (ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                         builder.setContentTitle(getResources().getString(R.string.act_employee_notification_header) + AppConstValue.characterConstValue.CHARACTER_SPACING +
@@ -446,7 +447,7 @@ public class EmployeeActivity extends AppCompatActivity {
                         notificationManagerCompat.notify(notificationId++, builder.build());
                     }
                 }
-                if (cafeCurrentOrder.getCurrentOrderDelivererEmployee().equals(menuViewModel.getPhoneNumber().getValue()) &&
+                if (cafeCurrentOrder.getCurrentOrderDelivererNum().equals(menuViewModel.getPhoneNumber().getValue()) &&
                         cafeCurrentOrder.getCurrentOrderStatus() == AppConstValue.orderStatusConstValue.ORDER_STATUS_DECLINED &&
                         ActivityCompat.checkSelfPermission(EmployeeActivity.this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED &&
                         cafeCurrentOrder.getCurrentOrderMessage() == null) {

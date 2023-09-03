@@ -43,7 +43,7 @@ public class FirebaseRefPaths {
     private final String refCafeCategoriesChild = "cafeDrinksCategories";
     private final String refCafeTablesChild = "cafeTables";
     private final String refCategoryDrinksChild = "categoryDrinks";
-    private final String refCurrentOrderDelivererChild = "currentOrderDelivererEmployee";
+    private final String refCurrentOrderDelivererChild = "currentOrderDelivererNum";
     private final String refCurrentOrderStatusChild = "currentOrderStatus";
     private final String refCurrentOrderMessageChild = "currentOrderMessage";
     private final String refCafeNameChild = "cafeName";

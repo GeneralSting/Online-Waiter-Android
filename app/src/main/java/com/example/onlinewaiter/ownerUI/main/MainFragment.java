@@ -38,7 +38,6 @@ import com.example.onlinewaiter.Other.ServerAlertDialog;
 import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.R;
 import com.example.onlinewaiter.databinding.FragmentMainBinding;
-import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

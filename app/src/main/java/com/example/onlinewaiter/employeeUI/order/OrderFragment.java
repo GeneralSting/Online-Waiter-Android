@@ -396,8 +396,10 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         if(myOrder) {
             cafeCurrentOrder = new CafeCurrentOrder(
                     currentDateTime,
-                    cafeBillDrinkTotalPrice,
+                    cafeBillDrinkTotalPrice.replaceAll(
+                            AppConstValue.regex.NON_NUMERIC_CHARACHTERS, AppConstValue.variableConstValue.DEFAULT_DECIMAL_SEPERATOR),
                     menuViewModel.getPhoneNumber().getValue(),
+                    orderViewModel.getNumberMemoryWord().getValue(),
                     menuViewModel.getPhoneNumber().getValue(),
                     orderViewModel.getNumberMemoryWord().getValue(),
                     cafeBillDrinkAmount,
@@ -409,7 +411,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
         else {
             cafeCurrentOrder = new CafeCurrentOrder(
                     currentDateTime,
-                    cafeBillDrinkTotalPrice,
+                    cafeBillDrinkTotalPrice.replaceAll(
+                            AppConstValue.regex.NON_NUMERIC_CHARACHTERS, AppConstValue.variableConstValue.DEFAULT_DECIMAL_SEPERATOR),
                     menuViewModel.getPhoneNumber().getValue(),
                     orderViewModel.getNumberMemoryWord().getValue(),
                     cafeBillDrinkAmount,

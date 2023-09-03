@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -147,7 +146,6 @@ public class PendingOrdersFragment extends Fragment {
     }
 
     private void populateOrdersRv(Integer searchedOrder) {
-        final int[] proba = {0};
         boolean allOrders = scCafeCurrentOrders.isChecked();
 
         DatabaseReference cafeCurrentOrdersRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCurrentOrders());
@@ -175,8 +173,6 @@ public class PendingOrdersFragment extends Fragment {
                         if(!currentOrderSnapshot.exists()) {
                             return;
                         }
-                        Log.d("PROBA123", String.valueOf(proba[0]));
-                        proba[0]++;
                         CafeCurrentOrder cafeCurrentOrder = currentOrderSnapshot.getValue(CafeCurrentOrder.class);
 
                         holder.tvCafeCurrentOrderTable.setText(String.valueOf(cafeCurrentOrder.getCurrentOrderTableNumber()));
@@ -277,7 +273,9 @@ public class PendingOrdersFragment extends Fragment {
                                                                 cafeCurrentOrder.getCurrentOrderDatetime(),
                                                                 paymentDateTime,
                                                                 cafeCurrentOrder.getCurrentOrderTotalPrice(),
+                                                                cafeCurrentOrder.getCurrentOrderDelivererNum(),
                                                                 cafeCurrentOrder.getCurrentOrderDelivererEmployee(),
+                                                                cafeCurrentOrder.getCurrentOrderMakerNum(),
                                                                 cafeCurrentOrder.getCurrentOrderMakerEmployee(),
                                                                 cafeCurrentOrder.getCurrentOrderProductAmount(),
                                                                 cafeCurrentOrder.getCurrentOrderTableNumber(),

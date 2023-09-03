@@ -3,18 +3,20 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeBill {
-    private String cafeBillDate, cafeBillTotalPrice, cafeBillDelivererEmployee, cafeBillMakerEmployee, cafeBillPaymentDatetime;
+    private String cafeBillDate, cafeBillTotalPrice, cafeBillDelivererNum, cafeBillDelivererEmployee, cafeBillMakerNum, cafeBillMakerEmployee, cafeBillPaymentDatetime;
     private int cafeBillProductAmount, cafeBillTableNumber;
     private HashMap<String, CafeBillDrink> cafeBillDrinks;
 
     public CafeBill() {}
 
-    public CafeBill(String cafeBillDate, String cafeBillPaymentDatetime, String cafeBillTotalPrice, String cafeBillDelivererEmployee, String cafeBillMakerEmployee,
-                    int cafeBillProductAmount, int cafeBillTableNumber, HashMap<String, CafeBillDrink> cafeBillDrinks) {
+    public CafeBill(String cafeBillDate, String cafeBillPaymentDatetime, String cafeBillTotalPrice, String cafeBillDelivererNum, String cafeBillDelivererEmployee,
+                    String cafeBillMakerNum, String cafeBillMakerEmployee, int cafeBillProductAmount, int cafeBillTableNumber, HashMap<String, CafeBillDrink> cafeBillDrinks) {
         this.cafeBillDate = cafeBillDate;
         this.cafeBillPaymentDatetime = cafeBillPaymentDatetime;
         this.cafeBillTotalPrice = cafeBillTotalPrice;
+        this.cafeBillDelivererNum = cafeBillDelivererNum;
         this.cafeBillDelivererEmployee = cafeBillDelivererEmployee;
+        this.cafeBillMakerNum = cafeBillMakerNum;
         this.cafeBillMakerEmployee = cafeBillMakerEmployee;
         this.cafeBillProductAmount = cafeBillProductAmount;
         this.cafeBillTableNumber = cafeBillTableNumber;
@@ -83,5 +85,21 @@ public class CafeBill {
 
     public void setCafeBillMakerEmployee(String cafeBillMakerEmployee) {
         this.cafeBillMakerEmployee = cafeBillMakerEmployee;
+    }
+
+    public String getCafeBillDelivererNum() {
+        return cafeBillDelivererNum;
+    }
+
+    public void setCafeBillDelivererNum(String cafeBillDelivererNum) {
+        this.cafeBillDelivererNum = cafeBillDelivererNum;
+    }
+
+    public String getCafeBillMakerNum() {
+        return cafeBillMakerNum;
+    }
+
+    public void setCafeBillMakerNum(String cafeBillMakerNum) {
+        this.cafeBillMakerNum = cafeBillMakerNum;
     }
 }

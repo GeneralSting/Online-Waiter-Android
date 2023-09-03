@@ -3,19 +3,21 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class CafeCurrentOrder {
-    private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererEmployee, currentOrderMakerEmployee, currentOrderMessage, numberMemoryWord;
+    private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererNum, currentOrderDelivererEmployee,
+            currentOrderMakerNum, currentOrderMakerEmployee, currentOrderMessage;
     private int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
     private HashMap<String, CafeBillDrink> currentOrderDrinks;
 
     public CafeCurrentOrder() {}
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
-                            String currentOrderMakerEmployee, int currentOrderProductAmount, int currentOrderTableNumber,
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
+                            String currentOrderMakerNum, String currentOrderMakerEmployee, int currentOrderProductAmount, int currentOrderTableNumber,
                             HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
+        this.currentOrderDelivererNum = currentOrderDelivererNum;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
-        this.numberMemoryWord = numberMemoryWord;
+        this.currentOrderMakerNum = currentOrderMakerNum;
         this.currentOrderMakerEmployee = currentOrderMakerEmployee;
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
@@ -23,13 +25,14 @@ public class CafeCurrentOrder {
         this.currentOrderStatus = currentOrderStatus;
     }
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
-                            String currentOrderMakerEmployee, String currentOrderMessage, int currentOrderProductAmount, int currentOrderTableNumber,
-                            HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
+                            String currentOrderMakerNum, String currentOrderMakerEmployee, String currentOrderMessage, int currentOrderProductAmount,
+                            int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
+        this.currentOrderDelivererNum = currentOrderDelivererNum;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
-        this.numberMemoryWord = numberMemoryWord;
+        this.currentOrderMakerNum = currentOrderMakerNum;
         this.currentOrderMakerEmployee = currentOrderMakerEmployee;
         this.currentOrderMessage = currentOrderMessage;
         this.currentOrderProductAmount = currentOrderProductAmount;
@@ -38,12 +41,12 @@ public class CafeCurrentOrder {
         this.currentOrderStatus = currentOrderStatus;
     }
 
-    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererEmployee, String numberMemoryWord,
+    public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
                             int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
+        this.currentOrderDelivererNum = currentOrderDelivererNum;
         this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
-        this.numberMemoryWord = numberMemoryWord;
         this.currentOrderProductAmount = currentOrderProductAmount;
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
@@ -64,14 +67,6 @@ public class CafeCurrentOrder {
 
     public void setCurrentOrderTotalPrice(String currentOrderTotalPrice) {
         this.currentOrderTotalPrice = currentOrderTotalPrice;
-    }
-
-    public String getCurrentOrderDelivererEmployee() {
-        return currentOrderDelivererEmployee;
-    }
-
-    public void setCurrentOrderDelivererEmployee(String currentOrderDelivererEmployee) {
-        this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
     }
 
     public String getCurrentOrderMakerEmployee() {
@@ -122,11 +117,27 @@ public class CafeCurrentOrder {
         this.currentOrderMessage = cafeCurrentOrderMessage;
     }
 
-    public String getNumberMemoryWord() {
-        return numberMemoryWord;
+    public String getCurrentOrderDelivererNum() {
+        return currentOrderDelivererNum;
     }
 
-    public void setNumberMemoryWord(String numberMemoryWord) {
-        this.numberMemoryWord = numberMemoryWord;
+    public void setCurrentOrderDelivererNum(String currentOrderDelivererNum) {
+        this.currentOrderDelivererNum = currentOrderDelivererNum;
+    }
+
+    public String getCurrentOrderDelivererEmployee() {
+        return currentOrderDelivererEmployee;
+    }
+
+    public void setCurrentOrderDelivererEmployee(String currentOrderDelivererEmployee) {
+        this.currentOrderDelivererEmployee = currentOrderDelivererEmployee;
+    }
+
+    public String getCurrentOrderMakerNum() {
+        return currentOrderMakerNum;
+    }
+
+    public void setCurrentOrderMakerNum(String currentOrderMakerNum) {
+        this.currentOrderMakerNum = currentOrderMakerNum;
     }
 }
