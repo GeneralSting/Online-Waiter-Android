@@ -5,14 +5,14 @@ import java.util.HashMap;
 public class CafeCurrentOrder {
     private String currentOrderDatetime, currentOrderTotalPrice, currentOrderDelivererNum, currentOrderDelivererEmployee,
             currentOrderMakerNum, currentOrderMakerEmployee, currentOrderMessage;
-    private int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus;
+    private int currentOrderProductAmount, currentOrderTableNumber, currentOrderStatus, currentOrderTablesStatistic;
     private HashMap<String, CafeBillDrink> currentOrderDrinks;
 
     public CafeCurrentOrder() {}
 
     public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
                             String currentOrderMakerNum, String currentOrderMakerEmployee, int currentOrderProductAmount, int currentOrderTableNumber,
-                            HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+                            HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus, int currentOrderTablesStatistic) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererNum = currentOrderDelivererNum;
@@ -23,11 +23,12 @@ public class CafeCurrentOrder {
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
         this.currentOrderStatus = currentOrderStatus;
+        this.currentOrderTablesStatistic = currentOrderTablesStatistic;
     }
 
     public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
                             String currentOrderMakerNum, String currentOrderMakerEmployee, String currentOrderMessage, int currentOrderProductAmount,
-                            int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+                            int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus,int currentOrderTablesStatistic) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererNum = currentOrderDelivererNum;
@@ -39,10 +40,12 @@ public class CafeCurrentOrder {
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
         this.currentOrderStatus = currentOrderStatus;
+        this.currentOrderTablesStatistic = currentOrderTablesStatistic;
     }
 
     public CafeCurrentOrder(String currentOrderDatetime, String currentOrderTotalPrice, String currentOrderDelivererNum, String currentOrderDelivererEmployee,
-                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks, int currentOrderStatus) {
+                            int currentOrderProductAmount, int currentOrderTableNumber, HashMap<String, CafeBillDrink> currentOrderDrinks,
+                            int currentOrderStatus, int currentOrderTablesStatistic) {
         this.currentOrderDatetime = currentOrderDatetime;
         this.currentOrderTotalPrice = currentOrderTotalPrice;
         this.currentOrderDelivererNum = currentOrderDelivererNum;
@@ -51,6 +54,7 @@ public class CafeCurrentOrder {
         this.currentOrderTableNumber = currentOrderTableNumber;
         this.currentOrderDrinks = currentOrderDrinks;
         this.currentOrderStatus = currentOrderStatus;
+        this.currentOrderTablesStatistic = currentOrderTablesStatistic;
     }
 
     public String getCurrentOrderDatetime() {
@@ -139,5 +143,13 @@ public class CafeCurrentOrder {
 
     public void setCurrentOrderMakerNum(String currentOrderMakerNum) {
         this.currentOrderMakerNum = currentOrderMakerNum;
+    }
+
+    public int getCurrentOrderTablesStatistic() {
+        return currentOrderTablesStatistic;
+    }
+
+    public void setCurrentOrderTablesStatistic(int currentOrderTablesStatistic) {
+        this.currentOrderTablesStatistic = currentOrderTablesStatistic;
     }
 }

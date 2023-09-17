@@ -71,6 +71,7 @@ public class StatisticsFragment extends Fragment {
     //global variables/objects
     private FragmentStatisticsBinding binding;
     final int databaseQuerySize = AppConstValue.variableConstValue.STATISTICS_DEFAULT_QUERY_SIZE;
+    private int tablesQuerySize;
     private boolean showChart;
     private HashMap<String, Integer> pieChartStatistic;
     private ToastMessage toastMessage;
@@ -79,6 +80,7 @@ public class StatisticsFragment extends Fragment {
     private DecimalFormat cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO);
     private DecimalFormatSymbols decimalFormatSymbols;
     private AppError appError;
+    private StatisticsViewModel statisticsViewModel;
     private StatisticsPieChartColors statisticsPieChartColors;
 
     //firebase
@@ -102,6 +104,7 @@ public class StatisticsFragment extends Fragment {
         decimalFormatSymbols = new DecimalFormatSymbols();
         decimalFormatSymbols.setDecimalSeparator(Objects.requireNonNull(ownerViewModel.getCafeCountryStandards().getValue().getDecimalSeperator()).charAt(0));
         cafeDecimalFormat = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_WITH_ZERO, decimalFormatSymbols);
+        statisticsViewModel = new ViewModelProvider(requireActivity()).get(StatisticsViewModel.class);
         statisticsPieChartColors = new StatisticsPieChartColors(requireActivity());
 
         btnEmploeesCLickEvent();
@@ -564,12 +567,12 @@ public class StatisticsFragment extends Fragment {
                 if(!cafeBillsSnapshot.exists()) {
                     return;
                 }
-                tvStatisticsSize.setText(
-                        String.valueOf(cafeBillsSnapshot.getChildrenCount()) );
+                tablesQuerySize = 0;
                 for(DataSnapshot cafeBillSnapshot : cafeBillsSnapshot.getChildren()) {
                     if(!cafeBillSnapshot.exists()) {
                         return;
                     }
+                    int tablesStatisticCounter = 0;
                     CafeBill cafeBill = cafeBillSnapshot.getValue(CafeBill.class);
                     switch (queryType) {
                         case QUERY_TYPE_EMPLOYEES: {
@@ -606,27 +609,37 @@ public class StatisticsFragment extends Fragment {
                             break;
                         }
                         case QUERY_TYPE_TABLES: {
-                            if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
-                                pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
-                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), 1);
-                            }
-                            else {
-                                if(pieChartStatistic.containsKey(getResources().getString(R.string.statistics_tables_table_number) +
-                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()))) {
-                                    pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
-                                            AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), pieChartStatistic.get(
-                                            getResources().getString(R.string.statistics_tables_table_number) +
-                                                    AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber())) + 1);
-                                }
-                                else {
+                            if(cafeBill.getCafeBillTablesStatistic() == statisticsViewModel.getTableStatisticsReset().getValue()) {
+                                tablesQuerySize++;
+                                if(pieChartStatistic == null || pieChartStatistic.isEmpty()) {
                                     pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
                                             AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), 1);
+                                }
+                                else {
+                                    if(pieChartStatistic.containsKey(getResources().getString(R.string.statistics_tables_table_number) +
+                                            AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()))) {
+                                        pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
+                                                AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), pieChartStatistic.get(
+                                                getResources().getString(R.string.statistics_tables_table_number) +
+                                                        AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber())) + 1);
+                                    }
+                                    else {
+                                        pieChartStatistic.put(getResources().getString(R.string.statistics_tables_table_number) +
+                                                AppConstValue.characterConstValue.CHARACTER_SPACING + String.valueOf(cafeBill.getCafeBillTableNumber()), 1);
+                                    }
                                 }
                             }
                             break;
                         }
                     }
                 }
+                if(queryType == QUERY_TYPE_TABLES) {
+                    tvStatisticsSize.setText(String.valueOf(tablesQuerySize));
+                }
+                else {
+                    tvStatisticsSize.setText(String.valueOf(cafeBillsSnapshot.getChildrenCount()));
+                }
+
                 if(showChart) {
                     makePieChart(false);
                 }

@@ -122,7 +122,7 @@ public class CafeUpdateFragment extends Fragment {
     private FirebaseRefPaths firebaseRefPaths;
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private DatabaseReference menuCategoriesRef, menuCategoryRef, menuCategoryDrinksRef, menuCategoryDrinkRef,
-            removeDrinkRef, deleteCafeCategoryRef, categoryDrinkRef, drinksCategoriesRef, drinksCategoryRef, cafeTablesRef;
+            removeDrinkRef, deleteCafeCategoryRef, categoryDrinkRef, drinksCategoriesRef, drinksCategoryRef, cafeTablesRef, tableStatResetRef;
     private FirebaseRecyclerAdapter<CafeDrinksCategory, MenuCategoryViewHolder> adapterCategories;
     private FirebaseRecyclerAdapter<CategoryDrink, UpdateDrinkViewHolder> adapterCategoryDrinks;
     private FirebaseRecyclerAdapter<DrinksCategory, MenuCategoryViewHolder> adapterDrinksCategory;
@@ -918,7 +918,8 @@ public class CafeUpdateFragment extends Fragment {
                 btnNewDrinkDialogAccept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0) {
+                        if(etNewDrinkName.getText().length() > 0 && etNewDrinkDescription.getText().length() > 0 && etNewDrinkPrice.getText().length() > 0 &&
+                        etNewDrinkQuantity.getText().length() > 0) {
                             DecimalFormat decimalFormatNoZero = new DecimalFormat(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_FORMAT_NO_ZERO);
                             double drinkPrice = Double.parseDouble(etNewDrinkPrice.getText().toString());
                             if(decimalFormatNoZero.format(drinkPrice).toString().equals(AppConstValue.decimalFormatConstValue.PRICE_DECIMAL_COMMA_NO_ZERO)
@@ -1233,6 +1234,8 @@ public class CafeUpdateFragment extends Fragment {
                                     Integer cafeTables = Integer.parseInt(String.valueOf(etNewTablesState.getText()));
                                     cafeTablesRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeTables());
                                     cafeTablesRef.setValue(cafeTables);
+                                    tableStatResetRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeTableStatistic());
+                                    tableStatResetRef.setValue(orderViewModel.getTableStatisticsReset().getValue() + 1);
 
                                     etCurrentTablesState.setText(String.valueOf(cafeTables));
                                     etNewTablesState.setText(AppConstValue.variableConstValue.EMPTY_VALUE);

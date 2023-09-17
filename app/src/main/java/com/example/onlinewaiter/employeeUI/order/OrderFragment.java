@@ -405,7 +405,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
+                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING,
+                    orderViewModel.getTableStatisticsReset().getValue()
             );
         }
         else {
@@ -418,7 +419,8 @@ public class OrderFragment extends Fragment implements CallBackOrder {
                     cafeBillDrinkAmount,
                     tableNumber,
                     cafeBillDrinks,
-                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING
+                    AppConstValue.orderStatusConstValue.ORDER_STATUS_PENDING,
+                    orderViewModel.getTableStatisticsReset().getValue()
             );
         }
         String dbKey = newCafeBillRef.push().getKey();

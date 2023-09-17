@@ -53,4 +53,12 @@ public class OrderViewModel extends ViewModel {
     public void setNumberMemoryWord(String value) {
         numberMemoryWord.setValue(value);
     }
+
+    private final MutableLiveData<Integer> tableStatisticsReset = new MutableLiveData<>();
+    public LiveData<Integer> getTableStatisticsReset() {
+        return tableStatisticsReset;
+    }
+    public void setTableStatisticsReset(Integer value) {
+        tableStatisticsReset.setValue(value);
+    }
 }

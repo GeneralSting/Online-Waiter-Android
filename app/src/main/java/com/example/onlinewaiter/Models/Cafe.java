@@ -3,8 +3,8 @@ package com.example.onlinewaiter.Models;
 import java.util.HashMap;
 
 public class Cafe {
-    private String cafeLocation, cafeName, cafeOwnerGmail, getCafeOwnerLastname, cafeOwnerName, cafeOwnerOib, cafeOwnerPhoneNumber, cafeCountry;
-    private Integer cafeTables;
+    private String cafeLocation, cafeName, cafeOwnerGmail, cafeOwnerLastname, cafeOwnerName, cafeOwnerOib, cafeOwnerPhoneNumber, cafeCountry;
+    private Integer cafeTables, cafeTablesStatistic;
     private HashMap<String, CafeDrinksCategory> cafeDrinksCategories;
     private HashMap<String, CafeBill> cafeBills;
 
@@ -12,18 +12,19 @@ public class Cafe {
         // Default constructor required for calls to DataSnapshot.getValue(Cafe.class)
     }
 
-    public Cafe(String cafeCountry, String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String getCafeOwnerLastname, String cafeOwnerName,
-                String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories) {
+    public Cafe(String cafeCountry, String cafeLocation, String cafeName, Integer cafeTables, String cafeOwnerGmail, String cafeOwnerLastname, String cafeOwnerName,
+                String cafeOwnerOib, String cafeOwnerPhoneNumber, HashMap<String, CafeDrinksCategory> cafeDrinksCategories, Integer cafeTablesStatistic) {
         this.cafeCountry = cafeCountry;
         this.cafeLocation = cafeLocation;
         this.cafeName = cafeName;
         this.cafeTables = cafeTables;
         this.cafeOwnerGmail = cafeOwnerGmail;
-        this.getCafeOwnerLastname = getCafeOwnerLastname;
+        this.cafeOwnerLastname = cafeOwnerLastname;
         this.cafeOwnerName = cafeOwnerName;
         this.cafeOwnerOib = cafeOwnerOib;
         this.cafeOwnerPhoneNumber = cafeOwnerPhoneNumber;
         this.cafeDrinksCategories = cafeDrinksCategories;
+        this.cafeTablesStatistic = cafeTablesStatistic;
     }
 
     public String getCafeLocation() {
@@ -50,12 +51,12 @@ public class Cafe {
         this.cafeOwnerGmail = cafeOwnerGmail;
     }
 
-    public String getGetCafeOwnerLastname() {
-        return getCafeOwnerLastname;
+    public String getCafeOwnerLastname() {
+        return cafeOwnerLastname;
     }
 
-    public void setGetCafeOwnerLastname(String getCafeOwnerLastname) {
-        this.getCafeOwnerLastname = getCafeOwnerLastname;
+    public void setCafeOwnerLastname(String cafeOwnerLastname) {
+        this.cafeOwnerLastname = cafeOwnerLastname;
     }
 
     public String getCafeOwnerName() {
@@ -112,5 +113,13 @@ public class Cafe {
 
     public void setCafeCountry(String cafeCountry) {
         this.cafeCountry = cafeCountry;
+    }
+
+    public Integer getCafeTablesStatistic() {
+        return cafeTablesStatistic;
+    }
+
+    public void setCafeTablesStatistic(Integer cafeTablesStatistic) {
+        this.cafeTablesStatistic = cafeTablesStatistic;
     }
 }

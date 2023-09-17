@@ -92,19 +92,34 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etCafeUpdate"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilOwnerCafeUpdate"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:backgroundTint="@color/tumbleweed"
-            android:hint="@string/main_cafe_name_hint"
-            android:textColorHint="@color/grey"
-            android:inputType="textMultiLine"
-            android:maxLength="25"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:visibility="gone"/>
+            app:boxBackgroundMode="outline"
+            app:counterTextColor="@color/black"
+            android:textColorHint="@color/tumbleweed"
+            app:helperTextTextColor="@color/red_negative"
+            app:startIconDrawable="@drawable/icon_baseline_drive_file_rename_outline_24"
+            app:startIconTint="@color/tumbleweed"
+            app:hintAnimationEnabled="false"
+            android:visibility="gone"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etCafeUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:textColorHint="@color/grey"
+                android:inputType="textMultiLine"
+                android:maxLength="25"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:paddingBottom="24dp"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -113,17 +128,19 @@
             android:layout_height="wrap_content"
             android:hint="@string/main_cafe_country_spinner_hint"
             android:textColorHint="@color/pewter_blue"
-            app:hintAnimationEnabled="false"
-            app:startIconDrawable="@drawable/icon_baseline_language_24">
+            app:startIconDrawable="@drawable/icon_baseline_language_24"
+            app:startIconTint="@color/tumbleweed"
+            app:endIconTint="@color/pewter_blue">
 
             <AutoCompleteTextView
                 android:id="@+id/actvCountryStandards"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/grey_transparent"
+                android:background="@color/white_background_transparent"
                 android:paddingTop="16dp"
                 android:paddingBottom="16dp"
-                android:inputType="none" />
+                android:inputType="none"
+                android:textColor="@color/black"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

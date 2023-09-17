@@ -4,13 +4,14 @@ import java.util.HashMap;
 
 public class CafeBill {
     private String cafeBillDate, cafeBillTotalPrice, cafeBillDelivererNum, cafeBillDelivererEmployee, cafeBillMakerNum, cafeBillMakerEmployee, cafeBillPaymentDatetime;
-    private int cafeBillProductAmount, cafeBillTableNumber;
+    private int cafeBillProductAmount, cafeBillTableNumber, cafeBillTablesStatistic;
     private HashMap<String, CafeBillDrink> cafeBillDrinks;
 
     public CafeBill() {}
 
     public CafeBill(String cafeBillDate, String cafeBillPaymentDatetime, String cafeBillTotalPrice, String cafeBillDelivererNum, String cafeBillDelivererEmployee,
-                    String cafeBillMakerNum, String cafeBillMakerEmployee, int cafeBillProductAmount, int cafeBillTableNumber, HashMap<String, CafeBillDrink> cafeBillDrinks) {
+                    String cafeBillMakerNum, String cafeBillMakerEmployee, int cafeBillProductAmount, int cafeBillTableNumber,
+                    HashMap<String, CafeBillDrink> cafeBillDrinks, int cafeBillTablesStatistic) {
         this.cafeBillDate = cafeBillDate;
         this.cafeBillPaymentDatetime = cafeBillPaymentDatetime;
         this.cafeBillTotalPrice = cafeBillTotalPrice;
@@ -21,6 +22,7 @@ public class CafeBill {
         this.cafeBillProductAmount = cafeBillProductAmount;
         this.cafeBillTableNumber = cafeBillTableNumber;
         this.cafeBillDrinks = cafeBillDrinks;
+        this.cafeBillTablesStatistic = cafeBillTablesStatistic;
     }
 
     public String getCafeBillDate() {
@@ -101,5 +103,13 @@ public class CafeBill {
 
     public void setCafeBillMakerNum(String cafeBillMakerNum) {
         this.cafeBillMakerNum = cafeBillMakerNum;
+    }
+
+    public int getCafeBillTablesStatistic() {
+        return cafeBillTablesStatistic;
+    }
+
+    public void setCafeBillTablesStatistic(int cafeBillTablesStatistic) {
+        this.cafeBillTablesStatistic = cafeBillTablesStatistic;
     }
 }

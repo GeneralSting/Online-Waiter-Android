@@ -1,24 +1,18 @@
 package com.example.onlinewaiter;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.onlinewaiter.Functions.BugReportDialog;
@@ -60,7 +54,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.onlinewaiter.databinding.ActivityEmployeeBinding;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -140,7 +133,6 @@ public class EmployeeActivity extends AppCompatActivity {
         setNavigationDrawer();
         creatingNotificationChannel();
         setDisplayingObserver();
-        collectCafeCountry();
         setFabAction();
         setListeners();
     }
@@ -212,8 +204,8 @@ public class EmployeeActivity extends AppCompatActivity {
         DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafe());
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Cafe cafe = snapshot.getValue(Cafe.class);
+            public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {
+                Cafe cafe = cafeSnapshot.getValue(Cafe.class);
                 orderViewModel.setCafeTablesNumber(cafe.getCafeTables());
                 View navHeaderView = navigationView.getHeaderView(0);
                 tvCafeName = (TextView) navHeaderView.findViewById(R.id.tvNavHeaderCafe);
@@ -222,72 +214,9 @@ public class EmployeeActivity extends AppCompatActivity {
                 if (!cafe.getCafeName().equals(AppConstValue.variableConstValue.EMPTY_VALUE)) {
                     tvCafeName.setText(cafe.getCafeName());
                 }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                ServerAlertDialog serverAlertDialog = new ServerAlertDialog(EmployeeActivity.this);
-                serverAlertDialog.makeAlertDialog();
-
-                String currentDateTime = simpleDateFormat.format(new Date());
-                appError = new AppError(
-                        menuViewModel.getCafeId().getValue(),
-                        menuViewModel.getPhoneNumber().getValue(),
-                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
-                        error.getMessage().toString(),
-                        currentDateTime,
-                        AppConstValue.errorSender.APP
-                );
-                appError.sendError(appError);
-            }
-        });
-    }
-
-    private void creatingNotificationChannel() {
-        PendingIntent notificationEmptyIntent =
-                PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
-
-        builder = new NotificationCompat.Builder(this, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.nav_header_img)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentIntent(notificationEmptyIntent);
-
-        createNotificationChannel();
-        notificationManagerCompat = NotificationManagerCompat.from(this);
-    }
-
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        int importance = NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(
-                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
-        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
-        // Register the channel with the system; you can't change the importance
-        // or other notification behaviors after this
-        NotificationManager notificationManager = getSystemService(NotificationManager.class);
-        notificationManager.createNotificationChannel(channel);
-    }
-
-    private void setDisplayingObserver() {
-        final Observer<Boolean> displayingCategoriesObserver = new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean aBoolean) {
-                isCategoriesDisplayed = aBoolean;
-            }
-        };
-        menuViewModel.getDisplayingCategories().observe(this, displayingCategoriesObserver);
-    }
-
-    private void collectCafeCountry() {
-        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCountry());
-        cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
-                cafeUpdateViewModel.setCafeCountry(countrySnapshot.getValue(String.class));
-                collectCountryStandards(countrySnapshot.getValue(String.class));
+                cafeUpdateViewModel.setCafeCountry(cafe.getCafeCountry());
+                orderViewModel.setTableStatisticsReset(cafe.getCafeTablesStatistic());
+                collectCountryStandards(cafe.getCafeCountry());
             }
 
             @Override
@@ -356,6 +285,43 @@ public class EmployeeActivity extends AppCompatActivity {
         });
     }
 
+    private void creatingNotificationChannel() {
+        PendingIntent notificationEmptyIntent =
+                PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), PendingIntent.FLAG_IMMUTABLE);
+
+        builder = new NotificationCompat.Builder(this, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID)
+                .setSmallIcon(R.drawable.nav_header_img)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentIntent(notificationEmptyIntent);
+
+        createNotificationChannel();
+        notificationManagerCompat = NotificationManagerCompat.from(this);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        int importance = NotificationManager.IMPORTANCE_HIGH;
+        NotificationChannel channel = new NotificationChannel(
+                AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_ID, AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_NAME, importance);
+        channel.setDescription(AppConstValue.notificationConstValue.NOTIFICATION_CHANNEL_DESCRIPTION);
+        // Register the channel with the system; you can't change the importance
+        // or other notification behaviors after this
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+    }
+
+    private void setDisplayingObserver() {
+        final Observer<Boolean> displayingCategoriesObserver = new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                isCategoriesDisplayed = aBoolean;
+            }
+        };
+        menuViewModel.getDisplayingCategories().observe(this, displayingCategoriesObserver);
+    }
     private void setFabAction() {
         binding.appBarEmployee.ordersNumberFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -401,6 +367,9 @@ public class EmployeeActivity extends AppCompatActivity {
                 else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getCafeCountryChild()))) {
                     cafeUpdateViewModel.setCafeCountry(cafeSnapshot.getValue(String.class));
                     collectCountryStandards(cafeSnapshot.getValue(String.class));
+                }
+                else if(Objects.requireNonNull(cafeSnapshot.getKey().equals(firebaseRefPaths.getTableStatReserChild()))) {
+                    orderViewModel.setTableStatisticsReset(cafeSnapshot.getValue(Integer.class));
                 }
             }
 
@@ -558,7 +527,8 @@ public class EmployeeActivity extends AppCompatActivity {
                                 CategoryDrink categoryDrink = categoryDrinkSnapshot.getValue(CategoryDrink.class);
                                 if(categoryDrinkSnapshot.getValue(CategoryDrink.class).getCategoryDrinkQuantity() == 0) {
                                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
-                                            getResources().getString(R.string.act_employee_drink_deleted_title),
+                                            getResources().getString(R.string.act_employee_drink_deleted_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                                                    orderDrinks.get(key).getDrinkName(),
                                             getResources().getString(R.string.act_employee_drink_no_quantity_body),
                                             getResources().getDrawable(R.drawable.modal_no_quantity));
                                     customAlertDialog.makeAlertDialog();
@@ -568,7 +538,8 @@ public class EmployeeActivity extends AppCompatActivity {
                                 }
                                 else {
                                     CustomAlertDialog customAlertDialog = new CustomAlertDialog(EmployeeActivity.this,
-                                            getResources().getString(R.string.act_employee_drink_quantity_change_title),
+                                            getResources().getString(R.string.act_employee_drink_quantity_change_title) + AppConstValue.characterConstValue.CHARACTER_SPACING +
+                                                    orderDrinks.get(key).getDrinkName(),
                                             getResources().getString(R.string.act_employee_drink_quantity_change_body),
                                             getResources().getDrawable(R.drawable.modal_unavailable_quantity));
                                     customAlertDialog.makeAlertDialog();

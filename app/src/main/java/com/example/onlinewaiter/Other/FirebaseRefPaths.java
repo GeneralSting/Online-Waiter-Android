@@ -29,6 +29,7 @@ public class FirebaseRefPaths {
     private final String refCafeCategoryImage = "/cafeCategoryImage/";
     private final String refCategoryDrinkImage = "/categoryDrinkImage";
     private final String refCafeTables = "/cafeTables/";
+    private final String refTableStatistic = "/cafeTablesStatistic";
     private final String refCurrentOrderDrinks = "/currentOrderDrinks/";
     private final String refCafeCountry = "/cafeCountry";
     private final String refCategoryDrinkQuantity = "/categoryDrinkQuantity";
@@ -49,6 +50,7 @@ public class FirebaseRefPaths {
     private final String refCafeNameChild = "cafeName";
     private final String refCurrentOrderTableNumberChild = "currentOrderTableNumber";
     private final String refCafeCountryChild = "cafeCountry";
+    private final String refCafeTablesStatisticChild = "cafeTablesStatistic";
 
     /*countriesNumber*/
 
@@ -205,6 +207,10 @@ public class FirebaseRefPaths {
         return getCafe() + refCafeTables;
     }
 
+    public String getCafeTableStatistic() {
+        return getCafe() + refTableStatistic;
+    }
+
     public String getCategoryDrinksChild() {
         return refCategoryDrinksChild;
     }
@@ -216,7 +222,6 @@ public class FirebaseRefPaths {
     public String getCafeBillsChild() {
         return refCafeBillsChild;
     }
-
 
     public String getCurrentOrderTableNumberChild() {
         return refCurrentOrderTableNumberChild;
@@ -240,6 +245,10 @@ public class FirebaseRefPaths {
 
     public String getCafeOwnerEmail(String cafeId) {
         return getCafeOwner(cafeId) + refCafeOwnerEmail;
+    }
+
+    public String getTableStatReserChild() {
+        return refCafeTablesStatisticChild;
     }
 
     /*countriesNumber*/

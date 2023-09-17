@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,6 +153,7 @@ public class MainFragment extends Fragment {
     }
 
     private void cafeDetails(String cafeId) {
+        Log.d("PROBA123", cafeId);
         //firebase
         DatabaseReference cafeRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeOwner(cafeId));
         cafeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -167,13 +169,18 @@ public class MainFragment extends Fragment {
                 tvMainCafeCountry.setText(cafe.getCafeCountry());
                 tvMainCafeEmail.setText(cafe.getCafeOwnerGmail());
                 tvMainTables.setText(String.valueOf(cafe.getCafeTables()));
-                tvMainCategories.setText(String.valueOf(cafe.getCafeDrinksCategories().size()));
-
-                for(Map.Entry<String, CafeDrinksCategory> cafeDrinksCategoryEntry : cafe.getCafeDrinksCategories().entrySet()) {
-                    CafeDrinksCategory cafeDrinksCategory = cafeDrinksCategoryEntry.getValue();
-                    cafeTotalDrinks += cafeDrinksCategory.getCategoryDrinks().size();
+                if(cafe.getCafeDrinksCategories() != null) {
+                    tvMainCategories.setText(String.valueOf(cafe.getCafeDrinksCategories().size()));
+                    for(Map.Entry<String, CafeDrinksCategory> cafeDrinksCategoryEntry : cafe.getCafeDrinksCategories().entrySet()) {
+                        CafeDrinksCategory cafeDrinksCategory = cafeDrinksCategoryEntry.getValue();
+                        cafeTotalDrinks += cafeDrinksCategory.getCategoryDrinks().size();
+                    }
+                    tvMainDrinks.setText(String.valueOf(cafeTotalDrinks));
                 }
-                tvMainDrinks.setText(String.valueOf(cafeTotalDrinks));
+                else {
+                    tvMainCategories.setText(AppConstValue.variableConstValue.ZERO_VALUE);
+                    tvMainDrinks.setText(AppConstValue.variableConstValue.ZERO_VALUE);
+                }
 
                 collectRegisteredNumbers(cafeId);
             }
@@ -265,6 +272,7 @@ public class MainFragment extends Fragment {
         final int clickedInfo = clickedCafeInfo;
         View updateCafeInfoView = getLayoutInflater().inflate(R.layout.dialog_cafe_update, null);
         TextInputLayout tilOwnerEmailUpdate = (TextInputLayout) updateCafeInfoView.findViewById(R.id.tilOwnerEmailUpdate);
+        TextInputLayout tilOwnerCafeUpdate = (TextInputLayout) updateCafeInfoView.findViewById(R.id.tilOwnerCafeUpdate);
         TextInputLayout tilCountryStandards = (TextInputLayout) updateCafeInfoView.findViewById(R.id.tilCountryStandards);
         EditText etOwnerEmailUpdate = (EditText) updateCafeInfoView.findViewById(R.id.etOwnerEmailUpdate);
         EditText etCafeUpdate = (EditText) updateCafeInfoView.findViewById(R.id.etCafeUpdate);
@@ -283,9 +291,16 @@ public class MainFragment extends Fragment {
             case 0:
             case 1: {
                 updateCafeInfoDialog.setOnShowListener(dialogInterface -> {
+                    if(clickedInfo == 0) {
+                        tilOwnerCafeUpdate.setHint(getResources().getString(R.string.main_cafe_name_hint));
+                    }
+                    else {
+                        tilOwnerCafeUpdate.setHint(getResources().getString(R.string.main_cafe_location_hint));
+                    }
                     tilOwnerEmailUpdate.setVisibility(View.GONE);
                     tilCountryStandards.setVisibility(View.GONE);
-                    etCafeUpdate.setVisibility(View.VISIBLE);
+                    tilOwnerCafeUpdate.setVisibility(View.VISIBLE);
+                    etCafeUpdate.requestFocus();
 
                     oldInfoValue = AppConstValue.variableConstValue.EMPTY_VALUE;
                     if(clickedInfo == AppConstValue.cafeInfoClicked.CAFE_NAME) {
@@ -337,7 +352,7 @@ public class MainFragment extends Fragment {
             }
             case 2: {
                 updateCafeInfoDialog.setOnShowListener(dialogInterface -> {
-                    etCafeUpdate.setVisibility(View.GONE);
+                    tilOwnerCafeUpdate.setVisibility(View.GONE);
                     tilOwnerEmailUpdate.setVisibility(View.GONE);
                     tilCountryStandards.setVisibility(View.VISIBLE);
 
@@ -422,7 +437,7 @@ public class MainFragment extends Fragment {
             }
             case 3: {
                 updateCafeInfoDialog.setOnShowListener(dialogInterface -> {
-                    etCafeUpdate.setVisibility(View.GONE);
+                    tilOwnerCafeUpdate.setVisibility(View.GONE);
                     tilCountryStandards.setVisibility(View.GONE);
                     tilOwnerEmailUpdate.setVisibility(View.VISIBLE);
                     etOwnerEmailUpdate.requestFocus();

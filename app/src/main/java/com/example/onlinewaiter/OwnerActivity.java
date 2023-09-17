@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.onlinewaiter.Functions.BugReportDialog;
 import com.example.onlinewaiter.Models.AppError;
+import com.example.onlinewaiter.Models.Cafe;
 import com.example.onlinewaiter.Models.RegisteredCountry;
 import com.example.onlinewaiter.Other.AppConstValue;
 import com.example.onlinewaiter.Other.AppErrorMessage;
@@ -23,6 +24,7 @@ import com.example.onlinewaiter.Other.ToastMessage;
 import com.example.onlinewaiter.ownerUI.GlobalViewModel.OwnerViewModel;
 import com.example.onlinewaiter.ownerUI.main.MainViewModel;
 import com.example.onlinewaiter.ownerUI.registeredNumbers.RegisteredNumbersViewModel;
+import com.example.onlinewaiter.ownerUI.statistics.StatisticsViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -52,19 +54,19 @@ import java.util.Objects;
 public class OwnerActivity extends AppCompatActivity {
     //global variables/objects
     private FirebaseAuth firebaseAuth;
-    ToastMessage toastMessage;
-    String ownerNumber, ownerCafeId;
-    int updateCafeInfo = 0;
+    private ToastMessage toastMessage;
+    private int updateCafeInfo = 0;
     private static long back_pressed;
-    MainViewModel mainViewModel;
+    private MainViewModel mainViewModel;
     private OwnerViewModel ownerViewModel;
+    private StatisticsViewModel statisticsViewModel;
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(AppConstValue.dateConstValue.DATE_TIME_FORMAT_DEFAULT, Locale.CANADA);
     private AppError appError;
 
     //firebase
     private DatabaseReference cafeRef;
     private FirebaseRefPaths firebaseRefPaths;
-    ChildEventListener cafeChildListener;
+    private ChildEventListener cafeChildListener;
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
 
@@ -77,14 +79,15 @@ public class OwnerActivity extends AppCompatActivity {
         toastMessage = new ToastMessage(this);
         firebaseRefPaths = new FirebaseRefPaths(this);
         Bundle bundle = getIntent().getExtras();
-        ownerNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
-        ownerCafeId = bundle.getString(AppConstValue.bundleConstValue.LOGIN_CAFE_ID);
+        String ownerNumber = bundle.getString(AppConstValue.bundleConstValue.LOGIN_PHONE_NUMBER);
+        String ownerCafeId = bundle.getString(AppConstValue.bundleConstValue.LOGIN_CAFE_ID);
         if(Objects.equals(ownerNumber, AppConstValue.variableConstValue.EMPTY_VALUE) ||
                 Objects.equals(ownerCafeId, AppConstValue.variableConstValue.EMPTY_VALUE)) {
             logout();
         }
 
         ownerViewModel = new ViewModelProvider(OwnerActivity.this).get(OwnerViewModel.class);
+        statisticsViewModel = new ViewModelProvider(OwnerActivity.this).get(StatisticsViewModel.class);
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mainViewModel.setOwnerPhoneNumber(ownerNumber);
         mainViewModel.setOwnerCafeId(ownerCafeId);
@@ -109,7 +112,7 @@ public class OwnerActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_owner);
         NavigationUI.setupWithNavController(binding.navOwnerView, navController);
 
-        collectCafeCountry();
+        collectCafe();
         setCafeListener();
     }
 
@@ -151,14 +154,13 @@ public class OwnerActivity extends AppCompatActivity {
 
     }
 
-
-
-    private void collectCafeCountry() {
-        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeCountryOwner(mainViewModel.getOwnerCafeId().getValue()));
+    private void collectCafe() {
+        DatabaseReference cafeCountryRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeOwner(mainViewModel.getOwnerCafeId().getValue()));
         cafeCountryRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot countrySnapshot) {
-                collectCountryStandards(countrySnapshot.getValue(String.class));
+            public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {
+                statisticsViewModel.setTableStatisticsReset(cafeSnapshot.getValue(Cafe.class).getCafeTablesStatistic());
+                collectCountryStandards(cafeSnapshot.getValue(Cafe.class).getCafeCountry());
             }
 
             @Override
@@ -234,7 +236,10 @@ public class OwnerActivity extends AppCompatActivity {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot cafeSnapshot, @Nullable String previousChildName) {
-                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeCurrentOrdersChild()) ||
+                if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getTableStatReserChild())) {
+                    statisticsViewModel.setTableStatisticsReset(cafeSnapshot.getValue(Integer.class));
+                }
+                else if(Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeCurrentOrdersChild()) ||
                         Objects.requireNonNull(cafeSnapshot.getKey()).equals(firebaseRefPaths.getCafeBillsChild())) {
                 }
                 else {

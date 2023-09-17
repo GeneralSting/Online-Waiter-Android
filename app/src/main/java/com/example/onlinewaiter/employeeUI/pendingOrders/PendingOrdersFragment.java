@@ -279,7 +279,8 @@ public class PendingOrdersFragment extends Fragment {
                                                                 cafeCurrentOrder.getCurrentOrderMakerEmployee(),
                                                                 cafeCurrentOrder.getCurrentOrderProductAmount(),
                                                                 cafeCurrentOrder.getCurrentOrderTableNumber(),
-                                                                cafeCurrentOrder.getCurrentOrderDrinks()
+                                                                cafeCurrentOrder.getCurrentOrderDrinks(),
+                                                                cafeCurrentOrder.getCurrentOrderTablesStatistic()
                                                         );
                                                         cafeBillsRef = firebaseDatabase.getReference(firebaseRefPaths.getCafeBills()).child(Objects.requireNonNull(currentOrderSnapshot.getKey()));
                                                         cafeBillsRef.setValue(cafeBill);

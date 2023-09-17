@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 public class RegisteredCountry {
     private String code, codeLocale, countryNumberCode, currency, dateFormat, dateTimeFormat, decimalSeperator, flag,
-            mailBody, mailBodyInfo, mailSubject, name, nameLocale;
+            mailBody, mailBodyInfo, mailSubject, name, nameLocale, timeZone, timeZoneLocale;
 
     public RegisteredCountry() {
 
@@ -17,8 +17,8 @@ public class RegisteredCountry {
     }
 
     public RegisteredCountry(String code, String codeLocale, String countryNumberCode, String currency, String dateFormat,
-                             String dateTimeFormat, String decimalSeperator, String flag,
-                             String mailBody, String mailBodyInfo, String mailSubject, String name, String nameLocale) {
+                             String dateTimeFormat, String decimalSeperator, String flag, String mailBody, String mailBodyInfo,
+                             String mailSubject, String name, String nameLocale, String timeZone, String timeZoneLocale) {
         this.code = code;
         this.codeLocale = codeLocale;
         this.countryNumberCode = countryNumberCode;
@@ -32,6 +32,8 @@ public class RegisteredCountry {
         this.mailSubject = mailSubject;
         this.name = name;
         this.nameLocale = nameLocale;
+        this.timeZone = timeZone;
+        this.timeZoneLocale = timeZoneLocale;
     }
 
     public String getCode() {
@@ -136,6 +138,22 @@ public class RegisteredCountry {
 
     public void setNameLocale(String nameLocale) {
         this.nameLocale = nameLocale;
+    }
+
+    public String getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(String timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public String getTimeZoneLocale() {
+        return timeZoneLocale;
+    }
+
+    public void setTimeZoneLocale(String timeZoneLocale) {
+        this.timeZoneLocale = timeZoneLocale;
     }
 
     @NonNull

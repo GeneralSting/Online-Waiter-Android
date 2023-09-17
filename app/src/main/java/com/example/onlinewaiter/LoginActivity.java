@@ -288,7 +288,7 @@ public class LoginActivity extends AppCompatActivity implements OwnerCafeClick {
                 appError = new AppError(
                         AppErrorMessage.Other.CAFE_NOT_FOUND,
                         phoneNumber,
-                        AppErrorMessage.Title.RETRIEVING_FIREBASE_DATA_FAILED,
+                        AppErrorMessage.Title.LOGIN_SMS_BROADCAST_RECEIVER_FAILED,
                         AppErrorMessage.Message.LOGIN_SMS_BROADCAST_RECEIVER_FAILED,
                         currentDateTime,
                         AppConstValue.errorSender.APP
