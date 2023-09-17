@@ -420,6 +420,7 @@ public class PendingOrdersFragment extends Fragment {
         trTotalView.setLayoutParams(trTotalViewParams);
 
         switch(cafeCurrentOrder.getCurrentOrderStatus()) {
+            case order_removal_request:
             case order_pending: {
                 trCurrenOrderDrinksTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
                 trTotalView.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_blue_overlay));
@@ -433,11 +434,6 @@ public class PendingOrdersFragment extends Fragment {
             case order_declined: {
                 trCurrenOrderDrinksTitle.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_purple_overlay));
                 trTotalView.setBackgroundColor(getResources().getColor(R.color.cv_cafe_update_purple_overlay));
-                break;
-            }
-            case order_removal_request: {
-                trCurrenOrderDrinksTitle.setBackgroundColor(getResources().getColor(R.color.pager_background_grey));
-                trTotalView.setBackgroundColor(getResources().getColor(R.color.pager_background_grey));
                 break;
             }
         }

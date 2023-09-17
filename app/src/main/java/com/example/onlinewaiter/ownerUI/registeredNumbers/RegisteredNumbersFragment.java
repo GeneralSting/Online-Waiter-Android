@@ -230,7 +230,7 @@ public class RegisteredNumbersFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot registeredNumbersSnapshot) {
                 for(DataSnapshot registeredNumberSnapshot : registeredNumbersSnapshot.getChildren()) {
-                    if(Objects.equals(registeredNumberSnapshot.getKey(), phoneNumber)) {
+                    if(Objects.equals(registeredNumberSnapshot.getKey(), phoneNumber) && !Objects.equals(phoneNumber, oldPhoneNumber)) {
                         numberMatched[0] = true;
                         tvEditNumberIncorrect.setText(getResources().getString(R.string.registered_numbers_number_existing));
                         return;
