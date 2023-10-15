@@ -32,8 +32,8 @@ import java.util.Random;
 import papaya.in.sendmail.SendMail;
 
 public class MailService {
-    private final String onlineWaiterMail = "AAppOnlineWaiter@gmail.com";
-    private final String onlineWaiterPass = "bejkzlhbqpwnikia";
+    private final String onlineWaiterMail = "";
+    private final String onlineWaiterPass = "";
     private final Context context;
     private final ViewModelStoreOwner viewModelStoreOwner;
     private final MainViewModel mainViewModel;
@@ -52,7 +52,6 @@ public class MailService {
             @Override
             public void onDataChange(@NonNull DataSnapshot cafeSnapshot) {
                 String receiverMail = Objects.requireNonNull(cafeSnapshot.getValue(Cafe.class)).getCafeOwnerGmail();
-                Log.d("PROBA123", receiverMail);
                 final int randomCode = new Random().nextInt((AppConstValue.emailConstValue.RANDOM_BOUND - AppConstValue.emailConstValue.RANDOM_ORIGIN) +
                         1) + AppConstValue.emailConstValue.RANDOM_ORIGIN;
                 RegisteredNumbersViewModel registeredNumbersViewModel = new ViewModelProvider(viewModelStoreOwner).get(RegisteredNumbersViewModel.class);
