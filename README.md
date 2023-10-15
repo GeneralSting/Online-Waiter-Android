@@ -3,8 +3,10 @@
 ## Mobile Android Application for organizing orders in catering establishments in the "Bars" category
 
 The mobile application is intended for waiters to facilitate the process of creating and managing orders and organizing the facility's beverage menu. On the other hand, the application enables the owners of catering establishments to have a comprehensive view of the relevant information as well as updating facility information and mobile phone numbers that employees use to log in.
-  * Through the [web application](https://github.com/GeneralSting/Online-Waiter-WebApp), waiters can view the created orders (the web application is an integral part of this android application)
+   - Through the [web application](https://github.com/GeneralSting/Online-Waiter-WebApp), waiters can view the created orders (the web application is an integral part of this android application) ❗
 
+
+### Keywords
 * Mobile Android application
 * Firebase - Realtime Database - google-services.json included for establishing connection with database
 * Waiters
